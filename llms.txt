@@ -1,0 +1,29 @@
+# Abrechnungs-Navi
+
+> Abrechnungs-Navi erstellt Nebenkostenabrechnungen (Betriebskostenabrechnungen) als Komplett-Service für private Vermieter in ganz Deutschland. Der Vermieter lädt seine Unterlagen über einen persönlichen, geschützten Upload-Link hoch und erhält für jede Wohnung eine fertige, doppelt geprüfte Abrechnung.
+
+## Leistung
+- Kosten nach Mietvertrag und Betriebskostenverordnung auf die Mieter verteilen
+- CO₂-Kostenaufteilung (Pflicht seit 2023)
+- Zweite Prüfung aus Sicht der Mieter, Abrechnung in klarer Sprache mit allen Belegen
+- Erinnerung an die Frist: 12 Monate nach Ende des Abrechnungsjahres
+- Keine Rechtsberatung
+
+## Preise
+- 99 € für die erste Wohnung pro Jahr
+- 49 € für jede weitere Wohnung im selben Haus pro Jahr
+- Kleinunternehmer gemäß § 19 UStG, keine Umsatzsteuer
+
+## Ablauf
+1. Anfrage per E-Mail an kontakt@abrechnungs-navi.de (Anzahl Wohnungen, Abrechnungsjahr)
+2. Fester Preis und persönlicher Upload-Link; Unterlagen als Foto oder PDF hochladen
+3. Fertige Abrechnung im Normalfall nach 3 Werktagen, spätestens nach 10 Werktagen ab vollständigen Unterlagen
+
+## Datenschutz
+- Verschlüsselte Übertragung, Speicherung auf einem Server in Deutschland
+- Unterlagen werden spätestens 6 Monate nach Auftragsende automatisch gelöscht
+
+## Links
+- [Startseite](https://abrechnungs-navi.de/)
+- [Impressum](https://abrechnungs-navi.de/impressum.html)
+- [Datenschutz](https://abrechnungs-navi.de/datenschutz.html)

@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /verwaltung
+Disallow: /hochladen/
+
+Sitemap: https://abrechnungs-navi.de/sitemap.xml

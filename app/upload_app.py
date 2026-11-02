@@ -25,6 +25,7 @@ ALLOWED_EXT = {".pdf", ".jpg", ".jpeg", ".png", ".heic", ".heif", ".webp"}
 TOKEN_RE = re.compile(r"^[A-Za-z0-9_-]{20,64}$")
 LOCK = threading.Lock()
 DB = os.path.join(DATA_DIR, "kunden.json")
+KEEP_DAYS = 183                       # Dateien 6 Monate nach Auftragsende automatisch loeschen
 
 
 # ---------- Datenhaltung ----------
@@ -41,6 +42,36 @@ def save(db):
     with open(tmp, "w", encoding="utf-8") as f:
         json.dump(db, f, ensure_ascii=False, indent=1)
     os.replace(tmp, DB)
+
+
+def delete_at(c):
+    """Zeitpunkt der automatischen Loeschung: 6 Monate nach Abschluss,
+    bei nie abgeschlossenen Auftraegen 6 Monate nach Ablauf des Links."""
+    return (c.get("done") or c["expires"]) + KEEP_DAYS * 86400
+
+
+def cleanup():
+    """Loescht alle Kunden, deren Aufbewahrungsfrist abgelaufen ist."""
+    now = time.time()
+    with LOCK:
+        db = load()
+        gone = [t for t, c in db.items() if delete_at(c) <= now]
+        for t in gone:
+            db.pop(t)
+            shutil.rmtree(customer_dir(t), ignore_errors=True)
+        if gone:
+            save(db)
+    if gone:
+        print(f"Automatisch geloescht: {len(gone)} Kunde(n)", flush=True)
+
+
+def cleanup_loop():
+    while True:
+        try:
+            cleanup()
+        except Exception as e:  # nie abstuerzen
+            print(f"Fehler bei automatischer Loeschung: {e}", flush=True)
+        time.sleep(3600)
 
 
 def customer_dir(token):
@@ -133,14 +164,24 @@ def admin_page(db, msg="", base=""):
     for token, c in sorted(db.items(), key=lambda kv: -kv[1]["created"]):
         files = list_files(token)
         exp = datetime.fromtimestamp(c["expires"])
-        status = "abgelaufen" if exp < datetime.now() else f"gültig bis {exp:%d.%m.%Y}"
+        if c.get("done"):
+            status = f"<b>Auftrag abgeschlossen</b> am {datetime.fromtimestamp(c['done']):%d.%m.%Y} – Upload geschlossen"
+        else:
+            status = "Link abgelaufen" if exp < datetime.now() else f"Link gültig bis {exp:%d.%m.%Y}"
+        status += f"<br>Automatische Löschung am {datetime.fromtimestamp(delete_at(c)):%d.%m.%Y}"
+        if c.get("done"):
+            toggle = (f"<form method='post' action='/verwaltung/offen'><input type='hidden' name='token' value='{token}'>"
+                      f"<button class='btn small' style='background:#56656f'>Wieder öffnen</button></form>")
+        else:
+            toggle = (f"<form method='post' action='/verwaltung/fertig'><input type='hidden' name='token' value='{token}'>"
+                      f"<button class='btn small'>Auftrag abgeschlossen</button></form>")
         flist = "".join(
             f"<div><a href='/verwaltung/datei/{token}/{urllib.parse.quote(n)}'>{html.escape(n)}</a> "
             f"<span class='muted'>({fmt_size(s)}, {datetime.fromtimestamp(m):%d.%m. %H:%M})</span></div>"
             for n, s, m in files) or "<span class='muted'>noch keine</span>"
         link = f"{base}/hochladen/{token}"
         rows.append(f"""<tr><td><b>{html.escape(c['name'])}</b><br><span class='muted'>{status}</span><br>
-<code>{html.escape(link)}</code></td><td>{flist}</td><td>
+<code>{html.escape(link)}</code></td><td>{flist}</td><td>{toggle}<br>
 <form method="post" action="/verwaltung/loeschen" onsubmit="return this.querySelector('input[name=ok]').checked">
 <input type="hidden" name="token" value="{token}"><label style="font-size:13px"><input type="checkbox" name="ok"> sicher</label><br>
 <button class="btn red small">Kunde + Dateien löschen</button></form></td></tr>""")
@@ -152,6 +193,8 @@ def admin_page(db, msg="", base=""):
 <form method="post" action="/verwaltung/neu"><label>Name des Kunden (z. B. „Müller, Bahnhofstr. 3“)</label>
 <input type="text" name="name" required maxlength="100"><label>Link gültig für Tage</label>
 <input type="number" name="tage" value="30" min="1" max="365"><button class="btn">Link anlegen</button></form></div>
+<p class="muted" style="font-size:14px">Nach „Auftrag abgeschlossen“ ist der Upload geschlossen. Die Dateien werden 6 Monate danach
+automatisch gelöscht. Wird ein Auftrag nie abgeschlossen, löscht der Server 6 Monate nach Ablauf des Links.</p>
 <div class="card"><h2>Kunden</h2>{table}</div>""")
 
 
@@ -183,7 +226,7 @@ class H(BaseHTTPRequestHandler):
         if not TOKEN_RE.match(token or ""):
             return None
         c = load().get(token)
-        if not c or c["expires"] < time.time():
+        if not c or c["expires"] < time.time() or c.get("done"):
             return None
         return c
 
@@ -292,6 +335,21 @@ class H(BaseHTTPRequestHandler):
                     msg = f"„{html.escape(name)}“ und alle Dateien gelöscht."
                 else:
                     msg = "Nichts gelöscht (bitte Häkchen „sicher“ setzen)."
+            elif path in ("/verwaltung/fertig", "/verwaltung/offen"):
+                token = form.get("token", [""])[0]
+                if TOKEN_RE.match(token) and token in db:
+                    c = db[token]
+                    if path.endswith("fertig"):
+                        c["done"] = time.time()
+                        msg = (f"„{html.escape(c['name'])}“ abgeschlossen. Automatische Löschung am "
+                               f"{datetime.fromtimestamp(delete_at(c)):%d.%m.%Y}.")
+                    else:
+                        c.pop("done", None)
+                        c["expires"] = max(c["expires"], time.time() + 14 * 86400)
+                        msg = f"„{html.escape(c['name'])}“ wieder geöffnet (Link mind. 14 Tage gültig)."
+                    save(db)
+                else:
+                    msg = "Kunde nicht gefunden."
             else:
                 return self.send(404, "Nicht gefunden", "text/plain; charset=utf-8")
         self.send(200, admin_page(load(), msg, base=self.base_url()))
@@ -299,6 +357,7 @@ class H(BaseHTTPRequestHandler):
 
 def main():
     os.makedirs(os.path.join(DATA_DIR, "kunden"), mode=0o700, exist_ok=True)
+    threading.Thread(target=cleanup_loop, daemon=True).start()
     srv = ThreadingHTTPServer(("127.0.0.1", PORT), H)
     print(f"Abrechnungs-Navi Upload läuft auf 127.0.0.1:{PORT}", flush=True)
     srv.serve_forever()

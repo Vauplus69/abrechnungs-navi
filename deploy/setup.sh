@@ -28,7 +28,7 @@ SRC=$(find "$TMP" -maxdepth 1 -mindepth 1 -type d | head -n1)
 
 echo "== 2/6 Webseite"
 mkdir -p "$SITE_DIR"
-find "$SRC" -maxdepth 1 -type f \( -name '*.html' -o -name '*.css' -o -name '*.js' -o -name '*.png' -o -name '*.jpg' -o -name '*.svg' -o -name '*.ico' -o -name 'robots.txt' \) -exec cp {} "$SITE_DIR"/ \;
+find "$SRC" -maxdepth 1 -type f \( -name '*.html' -o -name '*.css' -o -name '*.js' -o -name '*.png' -o -name '*.jpg' -o -name '*.svg' -o -name '*.ico' -o -name '*.txt' -o -name '*.xml' \) -exec cp {} "$SITE_DIR"/ \;
 chmod -R a+rX "$SITE_DIR"
 
 echo "== 3/6 Upload-Programm"
