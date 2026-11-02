@@ -11,7 +11,7 @@ if [ "$P1" != "$P2" ]; then echo "Die beiden Eingaben sind verschieden. Bitte no
 if ! [[ "$P1" =~ ^[A-Xa-x0-9]{12,}$ ]]; then echo "Nicht erlaubt (nur a-x, A-X, 0-9, mind. 12 Zeichen). Bitte nochmal: an-passwort"; exit 1; fi
 HASH=$(caddy hash-password --plaintext "$P1")
 unset P1 P2
-printf 'basic_auth {\n\tvolker %s\n}\n' "$HASH" > /etc/caddy/an-admin-auth.caddy
+printf 'basicauth {\n\tvolker %s\n}\n' "$HASH" > /etc/caddy/an-admin-auth.caddy
 chmod 640 /etc/caddy/an-admin-auth.caddy
 chgrp caddy /etc/caddy/an-admin-auth.caddy 2>/dev/null || true
 caddy validate --config /etc/caddy/Caddyfile --adapter caddyfile >/dev/null 2>&1 && systemctl reload caddy

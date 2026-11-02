@@ -45,7 +45,7 @@ cp "$SRC/deploy/abrechnungs-navi.caddy" "$SNIPPET"
 if [ ! -f "$AUTH" ]; then
   # Bis ein Passwort gesetzt ist, kommt niemand in die Verwaltung (zufaelliger, unbekannter Schluessel)
   RAND=$(head -c 48 /dev/urandom | base64 | tr -dc 'A-Za-z0-9' | head -c 40)
-  printf 'basic_auth {\n\tvolker %s\n}\n' "$(caddy hash-password --plaintext "$RAND")" > "$AUTH"
+  printf 'basicauth {\n\tvolker %s\n}\n' "$(caddy hash-password --plaintext "$RAND")" > "$AUTH"
   unset RAND
 fi
 chmod 640 "$AUTH"; chgrp caddy "$AUTH" 2>/dev/null || true
