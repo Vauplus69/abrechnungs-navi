@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+# Hinterlegt das Passwort von kontakt@abrechnungs-navi.de, damit Formular-Anfragen per Mail ankommen.
+set -euo pipefail
+[ "$(id -u)" = 0 ] || { echo "Bitte als root ausfuehren."; exit 1; }
+mkdir -p /etc/an-upload
+read -r -s -p "Passwort von kontakt@abrechnungs-navi.de: " PW; echo
+[ -n "$PW" ] || { echo "Leer - nichts geaendert."; exit 1; }
+umask 077
+printf '%s' "$PW" > /etc/an-upload/smtp.conf
+chown root:annavi /etc/an-upload/smtp.conf; chmod 640 /etc/an-upload/smtp.conf
+chown root:annavi /etc/an-upload; chmod 750 /etc/an-upload
+unset PW
+echo "Gespeichert. Neue Anfragen werden ab jetzt per Mail geschickt."

@@ -321,12 +321,22 @@
           <li>Für Vermieter in ganz Deutschland</li>
         </ul>
       </div>
-      <div style="align-self:center;text-align:center">
-        <p style="color:var(--muted);margin-bottom:12px">Schreiben Sie uns an:</p>
-        <p style="font-size:22px;font-weight:700;margin-bottom:22px">kontakt@abrechnungs-navi.de</p>
-        <a class="btn" href="mailto:kontakt@abrechnungs-navi.de?subject=Anfrage%20Nebenkostenabrechnung">E-Mail schreiben</a>
-        <p class="small" style="margin-top:14px">Bitte nennen Sie kurz: Anzahl der Wohnungen und das Abrechnungsjahr.</p>
-      </div>
+      <form method="post" action="/anfrage" id="anfrage-form">
+        <label for="f-name">Ihr Name *</label>
+        <input id="f-name" name="name" type="text" required maxlength="100" autocomplete="name">
+        <label for="f-mail">E-Mail-Adresse *</label>
+        <input id="f-mail" name="email" type="email" required maxlength="150" autocomplete="email">
+        <label for="f-we">Anzahl der Wohnungen *</label>
+        <input id="f-we" name="wohnungen" type="number" required min="1" max="200" value="1">
+        <label for="f-jahr">Abrechnungsjahr *</label>
+        <select id="f-jahr" name="jahr" required><option>2025</option><option>2026</option><option>2024</option><option>anderes</option></select>
+        <label for="f-text">Nachricht (freiwillig)</label>
+        <textarea id="f-text" name="nachricht" maxlength="2000" placeholder="z. B. Ort, Besonderheiten, Mieterwechsel"></textarea>
+        <div style="position:absolute;left:-9999px" aria-hidden="true"><label>Bitte leer lassen<input name="website" tabindex="-1" autocomplete="off"></label></div>
+        <p class="small" style="margin-bottom:14px">Mit dem Absenden verarbeiten wir Ihre Angaben zur Beantwortung der Anfrage. Mehr dazu in der <a href="/datenschutz.html">Datenschutzerklärung</a>.</p>
+        <button class="btn" type="submit">Anfrage senden</button>
+        <p class="small" style="margin-top:12px">Lieber per E-Mail? <a href="mailto:kontakt@abrechnungs-navi.de?subject=Anfrage%20Nebenkostenabrechnung">kontakt@abrechnungs-navi.de</a></p>
+      </form>
     </div>
   </div>
 </section>

@@ -16,6 +16,14 @@ abrechnungs-navi.de {
 		max_size 26MB
 	}
 
+	request_body /anfrage {
+		max_size 20KB
+	}
+
+	handle /anfrage {
+		reverse_proxy 127.0.0.1:8790
+	}
+
 	handle /hochladen/* {
 		reverse_proxy 127.0.0.1:8790
 	}

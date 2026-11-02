@@ -40,6 +40,8 @@ chown -R annavi:annavi "$DATA_DIR"; chmod 700 /srv/an-upload/data "$DATA_DIR/kun
 chmod 755 /srv/an-upload
 cp "$SRC/deploy/an-upload.service" /etc/systemd/system/an-upload.service
 install -m 755 "$SRC/deploy/an-passwort" /usr/local/bin/an-passwort
+install -m 755 "$SRC/deploy/an-mailpasswort" /usr/local/bin/an-mailpasswort
+mkdir -p /etc/an-upload; chown root:annavi /etc/an-upload; chmod 750 /etc/an-upload
 install -m 755 "$SRC/deploy/setup.sh" /usr/local/bin/an-aktualisieren
 cp "$SRC/deploy/an-aktualisieren.service" "$SRC/deploy/an-aktualisieren.timer" /etc/systemd/system/
 systemctl daemon-reload

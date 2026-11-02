@@ -10,6 +10,10 @@ import os
 import re
 import secrets
 import shutil
+import smtplib
+import ssl
+from collections import deque
+from email.message import EmailMessage
 import sys
 import threading
 import time
@@ -26,6 +30,12 @@ TOKEN_RE = re.compile(r"^[A-Za-z0-9_-]{20,64}$")
 LOCK = threading.Lock()
 DB = os.path.join(DATA_DIR, "kunden.json")
 KEEP_DAYS = 183                       # Dateien 6 Monate nach Auftragsende automatisch loeschen
+ANFRAGEN = os.path.join(DATA_DIR, "anfragen.json")
+SMTP_FILE = os.environ.get("AN_SMTP_FILE", "/etc/an-upload/smtp.conf")   # enthaelt nur das Mail-Passwort
+SMTP_HOST, SMTP_PORT = "smtp.hostinger.com", 465
+MAIL_ADDR = "kontakt@abrechnungs-navi.de"
+EMAIL_RE = re.compile(r"^[^@\s<>]{1,64}@[^@\s<>]{1,150}\.[A-Za-z]{2,24}$")
+RECENT = deque()                      # Zeitpunkte der letzten Anfragen (Schutz vor Massen-Spam)
 
 
 # ---------- Datenhaltung ----------
@@ -50,10 +60,68 @@ def delete_at(c):
     return (c.get("done") or c["expires"]) + KEEP_DAYS * 86400
 
 
+def load_anfragen():
+    try:
+        with open(ANFRAGEN, encoding="utf-8") as f:
+            return json.load(f)
+    except FileNotFoundError:
+        return []
+
+
+def save_anfragen(lst):
+    tmp = ANFRAGEN + ".tmp"
+    with open(tmp, "w", encoding="utf-8") as f:
+        json.dump(lst, f, ensure_ascii=False, indent=1)
+    os.replace(tmp, ANFRAGEN)
+
+
+def send_mail(a):
+    """Schickt die Anfrage an das eigene Postfach. Ohne hinterlegtes Passwort: nur speichern."""
+    try:
+        with open(SMTP_FILE, encoding="utf-8") as f:
+            pw = f.read().strip()
+    except OSError:
+        return False
+    if not pw:
+        return False
+    msg = EmailMessage()
+    msg["Subject"] = f"Neue Anfrage: {a['name']} – {a['wohnungen']} Wohnung(en), Jahr {a['jahr']}"
+    msg["From"] = f"Abrechnungs-Navi Webseite <{MAIL_ADDR}>"
+    msg["To"] = MAIL_ADDR
+    msg["Reply-To"] = a["email"]
+    msg.set_content(
+        f"Neue Anfrage über abrechnungs-navi.de\n\n"
+        f"Name: {a['name']}\nE-Mail: {a['email']}\nWohnungen: {a['wohnungen']}\nAbrechnungsjahr: {a['jahr']}\n"
+        f"Eingang: {datetime.fromtimestamp(a['zeit']):%d.%m.%Y %H:%M}\n\nNachricht:\n{a['nachricht'] or '-'}\n\n"
+        f"Antworten: einfach auf diese Mail antworten (geht an den Kunden).\n")
+    try:
+        with smtplib.SMTP_SSL(SMTP_HOST, SMTP_PORT, context=ssl.create_default_context(), timeout=20) as smtp:
+            smtp.login(MAIL_ADDR, pw)
+            smtp.send_message(msg)
+        return True
+    except Exception as e:
+        print(f"Mail-Versand fehlgeschlagen: {type(e).__name__}", flush=True)
+        return False
+
+
+def mail_and_mark(a):
+    ok = send_mail(a)
+    with LOCK:
+        lst = load_anfragen()
+        for x in lst:
+            if x["id"] == a["id"]:
+                x["mail"] = ok
+        save_anfragen(lst)
+
+
 def cleanup():
-    """Loescht alle Kunden, deren Aufbewahrungsfrist abgelaufen ist."""
+    """Loescht alle Kunden, deren Aufbewahrungsfrist abgelaufen ist, und alte Anfragen."""
     now = time.time()
     with LOCK:
+        lst = load_anfragen()
+        rest = [a for a in lst if a["zeit"] + KEEP_DAYS * 86400 > now]
+        if len(rest) != len(lst):
+            save_anfragen(rest)
         db = load()
         gone = [t for t, c in db.items() if delete_at(c) <= now]
         for t in gone:
@@ -188,7 +256,19 @@ def admin_page(db, msg="", base=""):
     table = ("<table><tr><th>Kunde / Upload-Link</th><th>Dateien</th><th></th></tr>" + "".join(rows) + "</table>") if rows \
         else "<p class='muted'>Noch keine Kunden angelegt.</p>"
     note = f"<div class='card'><span class='ok'>{msg}</span></div>" if msg else ""
-    return page("Verwaltung", f"""{note}
+    anfr = load_anfragen()
+    n30 = sum(1 for a in anfr if a["zeit"] > time.time() - 30 * 86400)
+    arows = "".join(
+        f"<tr><td>{datetime.fromtimestamp(a['zeit']):%d.%m. %H:%M}</td><td><b>{html.escape(a['name'])}</b><br>"
+        f"<a href='mailto:{html.escape(a['email'])}'>{html.escape(a['email'])}</a></td>"
+        f"<td>{a['wohnungen']} WE · {html.escape(str(a['jahr']))}<br><span class='muted'>{html.escape(a['nachricht'][:300])}</span></td>"
+        f"<td>{'✓ Mail' if a.get('mail') else '<span class=muted>nur hier</span>'}</td></tr>"
+        for a in sorted(anfr, key=lambda x: -x["zeit"])[:50])
+    anfragen_html = (f"<div class='card'><h2>Anfragen über das Formular</h2><p><b>{n30}</b> in den letzten 30 Tagen · "
+                     f"<b>{len(anfr)}</b> insgesamt (Anfragen werden nach 6 Monaten automatisch gelöscht)</p>"
+                     + (f"<table><tr><th>Eingang</th><th>Kunde</th><th>Angaben</th><th></th></tr>{arows}</table>" if arows
+                        else "<p class='muted'>Noch keine Anfragen.</p>") + "</div>")
+    return page("Verwaltung", f"""{note}{anfragen_html}
 <div class="card"><h1>Neuen Upload-Link anlegen</h1>
 <form method="post" action="/verwaltung/neu"><label>Name des Kunden (z. B. „Müller, Bahnhofstr. 3“)</label>
 <input type="text" name="name" required maxlength="100"><label>Link gültig für Tage</label>
@@ -305,8 +385,41 @@ class H(BaseHTTPRequestHandler):
         os.replace(tmp, final)
         return self.send(201, "OK", "text/plain; charset=utf-8")
 
+    def anfrage(self):
+        length = min(int(self.headers.get("Content-Length", "0") or 0), 20000)
+        form = urllib.parse.parse_qs(self.rfile.read(length).decode("utf-8", "replace"))
+        g = lambda k, n: (form.get(k, [""])[0]).strip()[:n]
+        if g("website", 50):                       # Falle fuer Spam-Programme: so tun, als ob alles gut ging
+            return self.send(303, "", extra={"Location": "/danke.html"})
+        name, email, jahr, nachricht = g("name", 100), g("email", 150), g("jahr", 10), g("nachricht", 2000)
+        try:
+            we = max(1, min(200, int(g("wohnungen", 5))))
+        except ValueError:
+            we = 0
+        if not name or not EMAIL_RE.match(email) or not we:
+            return self.send(400, page("Bitte prüfen", "<div class='card'><h1>Da fehlt noch etwas</h1><p>Bitte geben Sie "
+                             "Ihren Namen, eine gültige E-Mail-Adresse und die Anzahl der Wohnungen an.</p>"
+                             "<p><a class='btn' href='/#kontakt'>Zurück zum Formular</a></p></div>"))
+        now = time.time()
+        with LOCK:
+            while RECENT and RECENT[0] < now - 3600:
+                RECENT.popleft()
+            if len(RECENT) >= 30:
+                return self.send(429, page("Später erneut", "<div class='card'><h1>Gerade sehr viele Anfragen</h1>"
+                                 f"<p>Bitte schreiben Sie uns direkt an {MAIL_ADDR}.</p></div>"))
+            RECENT.append(now)
+            a = {"id": secrets.token_hex(8), "zeit": now, "name": name, "email": email, "wohnungen": we,
+                 "jahr": jahr or "?", "nachricht": nachricht, "mail": False}
+            lst = load_anfragen()
+            lst.append(a)
+            save_anfragen(lst)
+        threading.Thread(target=mail_and_mark, args=(a,), daemon=True).start()
+        return self.send(303, "", extra={"Location": "/danke.html"})
+
     def do_POST(self):
         path = urllib.parse.urlparse(self.path).path
+        if path == "/anfrage":
+            return self.anfrage()
         if not path.startswith("/verwaltung/"):
             return self.send(404, "Nicht gefunden", "text/plain; charset=utf-8")
         length = min(int(self.headers.get("Content-Length", "0") or 0), 10000)
