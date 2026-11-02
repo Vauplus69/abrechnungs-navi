@@ -1,0 +1,32 @@
+{
+  "_hinweis": "Erfundenes Beispiel zum Testen. Keine echten Personen.",
+  "vermieter": {"name": "Erika Beispiel", "anschrift": "Musterweg 1, 12345 Musterstadt", "ort": "Musterstadt"},
+  "objekt": {
+    "anschrift": "Lindenstraße 5, 12345 Musterstadt",
+    "wohnflaeche_gesamt": 210.0,
+    "einheiten_gesamt": 3,
+    "personen_gesamt": 5
+  },
+  "zeitraum": {"von": "2025-01-01", "bis": "2025-12-31"},
+  "kosten": [
+    {"name": "Grundsteuer", "betrag": 612.40, "schluessel": "wohnflaeche"},
+    {"name": "Wasser und Abwasser", "betrag": 1384.20, "schluessel": "verbrauch", "verbrauch_gesamt": 268.0, "einheit": "m³"},
+    {"name": "Müllabfuhr", "betrag": 498.00, "schluessel": "personen"},
+    {"name": "Gebäudeversicherung", "betrag": 845.10, "schluessel": "wohnflaeche"},
+    {"name": "Allgemeinstrom", "betrag": 186.30, "schluessel": "einheiten"},
+    {"name": "Schornsteinfeger", "betrag": 96.00, "schluessel": "einheiten"}
+  ],
+  "co2": {"kg_co2_gesamt": 6930.0},
+  "mieter": [
+    {"name": "Familie Muster", "wohnung": "EG", "wohnflaeche": 80.0, "personen": 3,
+     "vorauszahlungen": 2640.00, "verbrauch": {"Wasser und Abwasser": 142.0},
+     "heizkosten": 1105.60, "co2_kosten_anteil": 96.20},
+    {"name": "Max Probe", "wohnung": "1. OG", "wohnflaeche": 70.0, "personen": 1,
+     "vorauszahlungen": 1680.00, "verbrauch": {"Wasser und Abwasser": 51.0},
+     "heizkosten": 812.40, "co2_kosten_anteil": 70.70},
+    {"name": "Lena Test", "wohnung": "DG", "wohnflaeche": 60.0, "personen": 1,
+     "von": "2025-04-01", "bis": "2025-12-31",
+     "vorauszahlungen": 1260.00, "verbrauch": {"Wasser und Abwasser": 38.0},
+     "heizkosten": 540.90, "co2_kosten_anteil": 47.00}
+  ]
+}
