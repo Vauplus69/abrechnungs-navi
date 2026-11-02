@@ -60,6 +60,7 @@ if [ ! -f "$AUTH" ]; then
   printf 'basicauth {\n\tvolker %s\n}\n' "$(caddy hash-password --plaintext "$RAND")" > "$AUTH"
   unset RAND
 fi
+sed -i "s/basic_auth/basicauth/" "$AUTH"   # aeltere Caddy-Fassung auf dem Server
 chmod 640 "$AUTH"; chgrp caddy "$AUTH" 2>/dev/null || true
 python3 - "$CADDYFILE" "$SNIPPET" <<'PY'
 import sys, re
