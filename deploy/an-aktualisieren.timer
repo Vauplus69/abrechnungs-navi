@@ -1,0 +1,10 @@
+[Unit]
+Description=Abrechnungs-Navi alle 10 Minuten von GitHub aktualisieren
+
+[Timer]
+OnBootSec=2min
+OnUnitActiveSec=10min
+Persistent=true
+
+[Install]
+WantedBy=timers.target

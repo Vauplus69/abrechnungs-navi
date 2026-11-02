@@ -9,8 +9,18 @@ DATA_DIR=/srv/an-upload/data
 CADDYFILE=/etc/caddy/Caddyfile
 SNIPPET=/etc/caddy/abrechnungs-navi.caddy
 AUTH=/etc/caddy/an-admin-auth.caddy
+VERSION_FILE=/srv/an-upload/.version
 TMP=$(mktemp -d)
 trap 'rm -rf "$TMP"' EXIT
+
+# Automatischer Lauf: nur weitermachen, wenn es auf GitHub etwas Neues gibt
+if [ "${1:-}" = "--auto" ]; then
+  NEW=$(curl -fsS https://api.github.com/repos/Vauplus69/abrechnungs-navi/commits/main | python3 -c 'import sys,json;print(json.load(sys.stdin)["sha"])' 2>/dev/null || true)
+  [ -n "$NEW" ] || exit 0
+  [ "$NEW" = "$(cat "$VERSION_FILE" 2>/dev/null)" ] && exit 0
+  echo "Neue Fassung $NEW gefunden"
+fi
+NEW_SHA=$(curl -fsS https://api.github.com/repos/Vauplus69/abrechnungs-navi/commits/main | python3 -c 'import sys,json;print(json.load(sys.stdin)["sha"])' 2>/dev/null || true)
 
 echo "== 1/6 Dateien von GitHub holen"
 curl -fsSL https://codeload.github.com/Vauplus69/abrechnungs-navi/tar.gz/main | tar xz -C "$TMP"
@@ -31,7 +41,9 @@ chmod 755 /srv/an-upload
 cp "$SRC/deploy/an-upload.service" /etc/systemd/system/an-upload.service
 install -m 755 "$SRC/deploy/an-passwort" /usr/local/bin/an-passwort
 install -m 755 "$SRC/deploy/setup.sh" /usr/local/bin/an-aktualisieren
+cp "$SRC/deploy/an-aktualisieren.service" "$SRC/deploy/an-aktualisieren.timer" /etc/systemd/system/
 systemctl daemon-reload
+systemctl enable --now an-aktualisieren.timer >/dev/null 2>&1
 systemctl enable --now an-upload >/dev/null 2>&1
 systemctl restart an-upload
 
@@ -66,6 +78,7 @@ if caddy validate --config "$CADDYFILE" --adapter caddyfile >/dev/null 2>&1; the
   systemctl reload caddy
   sleep 1
   systemctl is-active --quiet an-upload && echo "Upload-Programm laeuft." || echo "WARNUNG: Upload-Programm laeuft nicht."
+  [ -n "$NEW_SHA" ] && echo "$NEW_SHA" > "$VERSION_FILE"
   echo "FERTIG. AnspruchsKompass laeuft unveraendert weiter."
 else
   echo "FEHLER in der Einstellung - stelle Sicherung wieder her."

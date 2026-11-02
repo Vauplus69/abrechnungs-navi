@@ -1,0 +1,7 @@
+[Unit]
+Description=Abrechnungs-Navi von GitHub aktualisieren
+After=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/an-aktualisieren --auto
