@@ -1,0 +1,20 @@
+[Unit]
+Description=Abrechnungs-Navi Unterlagen-Upload
+After=network.target
+
+[Service]
+User=annavi
+Group=annavi
+Environment=AN_DATA_DIR=/srv/an-upload/data
+Environment=AN_PORT=8790
+ExecStart=/usr/bin/python3 /srv/an-upload/app/upload_app.py
+Restart=on-failure
+UMask=0077
+NoNewPrivileges=yes
+ProtectSystem=strict
+ProtectHome=yes
+PrivateTmp=yes
+ReadWritePaths=/srv/an-upload/data
+
+[Install]
+WantedBy=multi-user.target
