@@ -32,7 +32,7 @@ DB = os.path.join(DATA_DIR, "kunden.json")
 KEEP_DAYS = 183                       # Dateien 6 Monate nach Auftragsende automatisch loeschen
 ANFRAGEN = os.path.join(DATA_DIR, "anfragen.json")
 SMTP_FILE = os.environ.get("AN_SMTP_FILE", "/etc/an-upload/smtp.conf")   # enthaelt nur das Mail-Passwort
-SMTP_HOST, SMTP_PORT = "smtp.hostinger.com", 465
+SMTP_HOST, SMTP_PORT = "smtp.hostinger.com", 587   # 465 ist bei Hetzner gesperrt, 587 mit STARTTLS ist erlaubt
 MAIL_ADDR = "kontakt@abrechnungs-navi.de"
 EMAIL_RE = re.compile(r"^[^@\s<>]{1,64}@[^@\s<>]{1,150}\.[A-Za-z]{2,24}$")
 RECENT = deque()                      # Zeitpunkte der letzten Anfragen (Schutz vor Massen-Spam)
@@ -95,7 +95,8 @@ def send_mail(a):
         f"Eingang: {datetime.fromtimestamp(a['zeit']):%d.%m.%Y %H:%M}\n\nNachricht:\n{a['nachricht'] or '-'}\n\n"
         f"Antworten: einfach auf diese Mail antworten (geht an den Kunden).\n")
     try:
-        with smtplib.SMTP_SSL(SMTP_HOST, SMTP_PORT, context=ssl.create_default_context(), timeout=20) as smtp:
+        with smtplib.SMTP(SMTP_HOST, SMTP_PORT, timeout=20) as smtp:
+            smtp.starttls(context=ssl.create_default_context())
             smtp.login(MAIL_ADDR, pw)
             smtp.send_message(msg)
         return True
