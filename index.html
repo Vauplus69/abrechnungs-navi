@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Abrechnungs-Navi – Nebenkostenabrechnung für private Vermieter</title>
+<meta name="description" content="Abrechnungs-Navi erstellt Ihre Nebenkostenabrechnung – fristgerecht, nachvollziehbar und doppelt geprüft.">
+<style>
+  :root{
+    --ink:#14212b; --muted:#56656f; --line:#dfe5e8; --bg:#f6f8f7; --card:#ffffff;
+    --accent:#1f6f5c; --accent-dark:#165244; --accent-soft:#e3f1ec; --warm:#e9a23b;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;color:var(--ink);background:var(--bg);line-height:1.6;font-size:17px}
+  a{color:var(--accent)}
+  .wrap{max-width:1080px;margin:0 auto;padding:0 24px}
+  header{background:var(--card);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:10}
+  .nav{display:flex;align-items:center;justify-content:space-between;height:68px}
+  .logo{font-weight:800;font-size:21px;letter-spacing:-.3px;color:var(--ink);text-decoration:none;display:flex;align-items:center;gap:10px}
+  .logo .mark{width:34px;height:34px;border-radius:9px;background:var(--accent);display:grid;place-items:center;color:#fff;font-size:18px}
+  .logo span.dash{color:var(--accent)}
+  .nav ul{list-style:none;display:flex;gap:26px}
+  .nav ul a{text-decoration:none;color:var(--muted);font-size:15px}
+  .nav ul a:hover{color:var(--ink)}
+  .btn{display:inline-block;background:var(--accent);color:#fff;text-decoration:none;padding:13px 24px;border-radius:10px;font-weight:600;font-size:16px;border:0;cursor:pointer}
+  .btn:hover{background:var(--accent-dark)}
+  .btn.ghost{background:transparent;color:var(--accent);border:2px solid var(--accent)}
+  .btn.ghost:hover{background:var(--accent-soft)}
+  .hero{padding:80px 0 70px;background:linear-gradient(180deg,#fff 0%,var(--bg) 100%)}
+  .hero-grid{display:grid;grid-template-columns:1.2fr .8fr;gap:48px;align-items:center}
+  .eyebrow{display:inline-block;background:var(--accent-soft);color:var(--accent-dark);font-size:14px;font-weight:600;padding:6px 12px;border-radius:20px;margin-bottom:18px}
+  h1{font-size:44px;line-height:1.15;letter-spacing:-.8px;margin-bottom:20px}
+  h2{font-size:32px;line-height:1.2;letter-spacing:-.5px;margin-bottom:14px}
+  h3{font-size:20px;margin-bottom:8px}
+  .lead{font-size:19px;color:var(--muted);margin-bottom:30px;max-width:560px}
+  .cta-row{display:flex;gap:14px;flex-wrap:wrap}
+  .hero-card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:28px;box-shadow:0 12px 30px rgba(20,33,43,.07)}
+  .hero-card h3{font-size:17px;margin-bottom:16px}
+  .check{list-style:none}
+  .check li{padding-left:32px;position:relative;margin-bottom:12px}
+  .check li:before{content:"✓";position:absolute;left:0;top:0;width:22px;height:22px;border-radius:50%;background:var(--accent-soft);color:var(--accent);font-weight:700;font-size:13px;display:grid;place-items:center}
+  section{padding:76px 0}
+  .center{text-align:center;max-width:680px;margin:0 auto 46px}
+  .center p{color:var(--muted)}
+  .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+  .grid2{display:grid;grid-template-columns:repeat(2,1fr);gap:24px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:28px}
+  .card p{color:var(--muted);font-size:16px}
+  .num{width:40px;height:40px;border-radius:10px;background:var(--accent);color:#fff;font-weight:700;display:grid;place-items:center;margin-bottom:16px}
+  .white{background:var(--card);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+  .price{border-radius:18px;padding:34px;background:var(--card);border:1px solid var(--line);display:flex;flex-direction:column}
+  .price.featured{border:2px solid var(--accent)}
+  .price .tag{font-size:14px;font-weight:600;color:var(--accent);margin-bottom:8px}
+  .amount{font-size:40px;font-weight:800;letter-spacing:-1px;margin:10px 0 2px}
+  .amount small{font-size:16px;font-weight:500;color:var(--muted);letter-spacing:0}
+  .price .sub{color:var(--muted);font-size:15px;margin-bottom:20px}
+  .price .check{margin-bottom:26px;flex:1}
+  .note{font-size:14px;color:var(--muted);margin-top:22px;text-align:center}
+  .tenant{display:grid;grid-template-columns:auto 1fr;gap:26px;align-items:center;background:var(--accent);color:#fff;border-radius:20px;padding:40px}
+  .tenant .icon{width:76px;height:76px;border-radius:18px;background:rgba(255,255,255,.15);display:grid;place-items:center;font-size:36px}
+  .tenant p{opacity:.92}
+  .faq details{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px 22px;margin-bottom:12px}
+  .faq summary{font-weight:600;cursor:pointer}
+  .faq details p{margin-top:10px;color:var(--muted);font-size:16px}
+  .contact{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:40px;display:grid;grid-template-columns:1fr 1fr;gap:40px}
+  form label{display:block;font-size:14px;font-weight:600;margin:0 0 6px}
+  form input,form select,form textarea{width:100%;padding:12px 14px;border:1px solid var(--line);border-radius:10px;font:inherit;font-size:16px;margin-bottom:16px;background:#fff}
+  form textarea{min-height:100px;resize:vertical}
+  .small{font-size:13px;color:var(--muted)}
+  footer{padding:40px 0;color:var(--muted);font-size:14px}
+  footer .row{display:flex;justify-content:space-between;flex-wrap:wrap;gap:20px}
+  footer a{color:var(--muted)}
+  .draft{background:var(--warm);color:#3b2600;text-align:center;font-size:14px;font-weight:600;padding:8px}
+  @media (max-width:860px){
+    .hero-grid,.grid3,.grid2,.contact{grid-template-columns:1fr}
+    .nav ul{display:none}
+    h1{font-size:34px}
+    .tenant{grid-template-columns:1fr}
+  }
+</style>
+</head>
+<body>
+
+
+<header>
+  <div class="wrap nav">
+    <a class="logo" href="#"><span class="mark">➜</span><span>Abrechnungs<span class="dash">-</span>Navi</span></a>
+    <ul>
+      <li><a href="#vermieter">Für Vermieter</a></li>
+      <li><a href="#preise">Preise</a></li>
+      <li><a href="#fragen">Fragen</a></li>
+    </ul>
+    <a class="btn" href="#kontakt">Anfrage stellen</a>
+  </div>
+</header>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <span class="eyebrow">Für private Vermieter mit wenigen Wohnungen</span>
+      <h1>Ihre Nebenkosten&shy;abrechnung – fertig, verständlich, pünktlich.</h1>
+      <p class="lead">Sie laden Ihre Unterlagen hoch, wir erstellen die Abrechnung – sorgfältig und doppelt geprüft, damit Ihre Mieter sie gut nachvollziehen können.</p>
+      <div class="cta-row">
+        <a class="btn" href="#kontakt">Abrechnung anfragen</a>
+        <a class="btn ghost" href="#so-gehts">So funktioniert's</a>
+      </div>
+    </div>
+    <div class="hero-card">
+      <h3>Das nehmen wir Ihnen ab</h3>
+      <ul class="check">
+        <li>Kosten richtig auf die Mieter verteilen</li>
+        <li>CO₂-Kosten aufteilen (Pflicht seit 2023)</li>
+        <li>Abrechnung in klarer Sprache, mit allen Belegen</li>
+        <li>Erinnerung an die Frist – 12 Monate nach Ende des Abrechnungsjahres</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- SO GEHT'S -->
+<section id="so-gehts">
+  <div class="wrap">
+    <div class="center">
+      <h2>In drei Schritten zur fertigen Abrechnung</h2>
+      <p>Kein Programm lernen, keine Tabellen. Sie laden die Unterlagen hoch – wir machen den Rest.</p>
+    </div>
+    <div class="grid3">
+      <div class="card"><div class="num">1</div><h3>Unterlagen hochladen</h3><p>Rechnungen für Grundsteuer, Wasser, Müll, Versicherung, Heizung usw. einfach hochladen – als Foto oder PDF.</p></div>
+      <div class="card"><div class="num">2</div><h3>Wir rechnen</h3><p>Wir verteilen die Kosten nach Mietvertrag und Gesetz und prüfen alles ein zweites Mal.</p></div>
+      <div class="card"><div class="num">3</div><h3>Fertig zum Versenden</h3><p>Sie erhalten für jede Wohnung eine fertige Abrechnung samt Übersicht – bereit zum Weitergeben an Ihre Mieter.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- MIETER-BLICK -->
+<section class="white" id="vermieter">
+  <div class="wrap">
+    <div class="tenant">
+      <div class="icon">🔍</div>
+      <div>
+        <h2 style="color:#fff">Doppelt geprüft – auch aus Sicht Ihrer Mieter</h2>
+        <p>Bevor Sie die Abrechnung bekommen, prüfen wir sie ein zweites Mal – so, wie Ihre Mieter sie lesen werden: Ist jede Kostenart umlagefähig? Stimmt die Verteilung? Ist alles klar und verständlich? Das schafft Vertrauen und spart Ihnen Rückfragen.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- PREISE -->
+<section class="white" id="preise">
+  <div class="wrap">
+    <div class="center">
+      <h2>Klare Preise</h2>
+      <p>Keine versteckten Kosten. Sie wissen vorher, was es kostet.</p>
+    </div>
+    <div style="max-width:520px;margin:0 auto">
+      <div class="price featured">
+        <div class="tag">Für Vermieter</div>
+        <h3>Nebenkostenabrechnung</h3>
+        <div class="amount">99 € <small>für die erste Wohnung / Jahr</small></div>
+        <div class="sub">jede weitere Wohnung im selben Haus: 49 € / Jahr<br>Gemäß § 19 UStG wird keine Umsatzsteuer berechnet.</div>
+        <ul class="check">
+          <li>Komplette Abrechnung pro Wohnung</li>
+          <li>Zweite Prüfung aus Sicht der Mieter</li>
+          <li>CO₂-Kostenaufteilung inklusive</li>
+          <li>Fristen-Erinnerung</li>
+        </ul>
+        <a class="btn" href="#kontakt">Jetzt anfragen</a>
+      </div>
+    </div>
+    <p class="note">Der Preis ist ein Vorschlag im Entwurf und wird vor dem Start festgelegt.</p>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section id="fragen">
+  <div class="wrap" style="max-width:780px">
+    <div class="center"><h2>Häufige Fragen</h2></div>
+    <div class="faq">
+      <details><summary>Bis wann muss die Nebenkostenabrechnung beim Mieter sein?</summary><p>Spätestens 12 Monate nach Ende des Abrechnungszeitraums. Wer zu spät abrechnet, kann in der Regel keine Nachzahlung mehr verlangen.</p></details>
+      <details><summary>Welche Unterlagen brauchen Sie?</summary><p>Den Mietvertrag (bzw. die Vereinbarung zu den Nebenkosten), die Rechnungen des Jahres und die Vorauszahlungen der Mieter. Eine Checkliste bekommen Sie von uns.</p></details>
+      <details><summary>Muss ich ein Programm installieren?</summary><p>Nein. Sie laden die Unterlagen einfach hoch – als Foto oder PDF, direkt vom Handy oder Computer.</p></details>
+      <details><summary>Bieten Sie auch Rechtsberatung an?</summary><p>Nein. Wir erstellen die Abrechnung und prüfen sie auf Nachvollziehbarkeit. Bei Streit mit einem Mieter wenden Sie sich bitte an einen Anwalt oder Haus- und Grundbesitzerverein.</p></details>
+    </div>
+  </div>
+</section>
+
+<!-- KONTAKT -->
+<section id="kontakt">
+  <div class="wrap">
+    <div class="contact">
+      <div>
+        <h2>Unverbindlich anfragen</h2>
+        <p style="color:var(--muted);margin-bottom:20px">Schreiben Sie uns kurz, worum es geht. Wir melden uns innerhalb von zwei Werktagen mit einem festen Preis.</p>
+        <ul class="check">
+          <li>Kostenlos und unverbindlich</li>
+          <li>Persönlicher Ansprechpartner</li>
+          <li>Für Vermieter in ganz Deutschland</li>
+        </ul>
+      </div>
+      <div style="align-self:center;text-align:center">
+        <p style="color:var(--muted);margin-bottom:12px">Schreiben Sie uns an:</p>
+        <p style="font-size:22px;font-weight:700;margin-bottom:22px">kontakt@abrechnungs-navi.de</p>
+        <a class="btn" href="mailto:kontakt@abrechnungs-navi.de?subject=Anfrage%20Nebenkostenabrechnung">E-Mail schreiben</a>
+        <p class="small" style="margin-top:14px">Bitte nennen Sie kurz: Anzahl der Wohnungen und das Abrechnungsjahr.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap row">
+    <div>© 2026 Abrechnungs-Navi</div>
+    <div><a href="impressum.html">Impressum</a> · <a href="datenschutz.html">Datenschutz</a></div>
+  </div>
+</footer>
+
+</body>
+</html>
