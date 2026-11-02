@@ -22,6 +22,7 @@
 ## Datenschutz
 - Verschlüsselte Übertragung, Speicherung auf einem Server in Deutschland
 - Unterlagen werden spätestens 6 Monate nach Auftragsende automatisch gelöscht
+- Belege werden mit KI-Unterstützung (Claude, Anthropic) ausgelesen; jede Abrechnung wird von einem Menschen geprüft und freigegeben
 
 ## Links
 - [Startseite](https://abrechnungs-navi.de/)
