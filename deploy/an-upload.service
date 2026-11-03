@@ -7,7 +7,7 @@ User=annavi
 Group=annavi
 Environment=AN_DATA_DIR=/srv/an-upload/data
 Environment=AN_PORT=8790
-ExecStart=/srv/an-upload/venv/bin/python /srv/an-upload/app/upload_app.py
+ExecStart=/usr/bin/python3 /srv/an-upload/app/upload_app.py
 Restart=on-failure
 UMask=0077
 NoNewPrivileges=yes

@@ -60,7 +60,7 @@ class EndToEnd(unittest.TestCase):
                 spec=importlib.util.spec_from_file_location('tested_upload',ROOT/'app/upload_app.py')
                 app=importlib.util.module_from_spec(spec);spec.loader.exec_module(app)
                 app.send_withdrawal_confirmation=lambda row:True
-                workflow.install(app)
+                app.install(app)
                 server=app.ThreadingHTTPServer(('127.0.0.1',0),app.H)
                 thread=threading.Thread(target=server.serve_forever,daemon=True);thread.start()
                 admin_cookie='';client_cookie=''
