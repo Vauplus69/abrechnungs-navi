@@ -6,7 +6,7 @@ Die Startseite enthält einen lokalen Preisrechner für ein Abrechnungsjahr: 89 
 
 `muster-nebenkostenabrechnung.pdf` wurde mit `abrechnung/rechner.py` aus dem vollständig erfundenen Testfall `abrechnung/beispiel.json` erzeugt. Die öffentliche Datei zeigt die erste Musterwohnung und ist deutlich als Muster gekennzeichnet. Sie enthält keine Kundenbelege oder echten Mieterdaten. Bei einer Änderung des Rechenwerks Muster neu erzeugen und visuell prüfen.
 
-Die 16 sichtbaren FAQ stimmen mit den FAQ-Daten im JSON-LD überein. Leistungsumfang und geschützter Uploadablauf werden erläutert; keine zusätzlichen kostenpflichtigen Leistungen eingeführt.
+Die sieben zusammengefassten sichtbaren FAQ stimmen mit den FAQ-Daten im JSON-LD überein. Leistungsumfang und geschützter Uploadablauf werden erläutert; keine zusätzlichen kostenpflichtigen Leistungen eingeführt.
 
 ### Kundenstimmen erst nach dokumentierter Freigabe
 
