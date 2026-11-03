@@ -254,7 +254,7 @@ def install(app):
             pass  # Auch gekuerzte Pfade koennen Zugangstoken verraten.
 
         def send(self, code, body, ctype='text/html; charset=utf-8', extra=None):
-            headers = {'Referrer-Policy': 'no-referrer', 'X-Content-Type-Options': 'nosniff'}
+            headers = {'Referrer-Policy': 'strict-origin', 'X-Content-Type-Options': 'nosniff'}
             headers.update(extra or {})
             return super().send(code, body, ctype, headers)
 
