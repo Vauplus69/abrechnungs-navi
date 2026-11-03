@@ -119,6 +119,86 @@
       "@type": "Answer",
       "text": "Nein. Wir erstellen die Abrechnung und prüfen sie auf Nachvollziehbarkeit. Bei Streit mit einem Mieter wenden Sie sich bitte an einen Anwalt oder Haus- und Grundbesitzerverein."
      }
+    },
+    {
+     "@type": "Question",
+     "name": "Was kostet die Abrechnung für mehrere Wohnungen?",
+     "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "Die erste Wohnung kostet 89 €, jede weitere Wohnung im selben Haus 59 € – jeweils für ein Abrechnungsjahr. Bei vier Wohnungen in einem Haus sind das beispielsweise 266 €. Im Preisrechner sehen Sie den Gesamtpreis vor Ihrer Anfrage."
+     }
+    },
+    {
+     "@type": "Question",
+     "name": "Wie wird der Preis bei mehreren Häusern berechnet?",
+     "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "Für jedes Haus werden 89 € für die erste Wohnung und 59 € für jede weitere Wohnung berechnet. Vier Wohnungen in zwei Häusern kosten insgesamt 296 € pro Abrechnungsjahr. Maßgeblich ist das Angebot vor Ihrer Beauftragung."
+     }
+    },
+    {
+     "@type": "Question",
+     "name": "Sind Mieterwechsel, Rückfragen und Korrekturen enthalten?",
+     "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "Ja. Mieterwechsel sowie Rückfragen und Korrekturen zur beauftragten Abrechnung sind ohne Aufpreis enthalten. Teilen Sie uns die Ein- und Auszugsdaten sowie die zugehörigen Vorauszahlungen mit. Ein weiteres Abrechnungsjahr ist ein neuer Auftrag."
+     }
+    },
+    {
+     "@type": "Question",
+     "name": "Was bekomme ich am Ende?",
+     "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "Sie erhalten für jede Wohnung die geprüfte Abrechnung mit Kostenaufteilung, Vorauszahlungen und dem daraus errechneten Guthaben oder der Nachzahlung sowie eine Übersicht. Die Bereitstellung erfolgt über Ihren geschützten Kundenbereich. Ein frei zugängliches Muster zeigt Ihnen den Aufbau."
+     }
+    },
+    {
+     "@type": "Question",
+     "name": "Kann ich meine Unterlagen als Handyfoto einreichen?",
+     "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "Ja, als gut lesbares Foto oder PDF über den persönlichen Upload-Link. Wichtig sind vollständige Seiten und erkennbare Beträge und Zeiträume. Bitte senden Sie Mieterdaten und Belege nicht über das öffentliche Anfrageformular."
+     }
+    },
+    {
+     "@type": "Question",
+     "name": "Kann ich direkt mit der Anfrage Belege hochladen?",
+     "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "Nein. Zuerst erhalten Sie unser Angebot. Nach Beauftragung, abgeschlossenem Vertrag zur Auftragsverarbeitung und Zahlung richten wir den geschützten Upload mit einem getrennten Zugangscode ein. Die Bearbeitung beginnt erst, wenn auch der zulässige Leistungsbeginn feststeht."
+     }
+    },
+    {
+     "@type": "Question",
+     "name": "Wie werden Heizkosten und CO₂-Kosten berücksichtigt?",
+     "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "Wir übernehmen die auf die Mieter entfallenden Heizkosten aus Ihrer Messdienstabrechnung. Eine eigene Verbrauchserfassung oder Messdienstleistung ist nicht enthalten. Die CO₂-Kostenaufteilung berücksichtigen wir anhand der erforderlichen Belege und prüfen dabei, ob ein Vermieteranteil bereits abgezogen wurde. Fehlende Angaben und Sonderfälle klären wir vor der Fertigstellung."
+     }
+    },
+    {
+     "@type": "Question",
+     "name": "Ist meine Anfrage schon ein kostenpflichtiger Auftrag?",
+     "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "Nein. Anfrage und Preisrechner sind kostenlos und unverbindlich. Sie erhalten zunächst ein Angebot mit Gesamtpreis und Verbraucherinformationen. Erst Ihre ausdrückliche Beauftragung per E-Mail schließt den Auftrag ab. Danach erhalten Sie den Zahlungslink. Es gibt kein Abonnement."
+     }
+    },
+    {
+     "@type": "Question",
+     "name": "Was passiert, wenn Unterlagen fehlen?",
+     "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "Wir melden uns und nennen Ihnen die fehlenden Angaben. Die Bearbeitungsfrist läuft erst ab vollständigen Unterlagen, Zahlungseingang und zulässigem Leistungsbeginn. Reichen Sie Ihre Anfrage deshalb mit ausreichend Vorlauf ein; wir bestätigen den Termin vor der Beauftragung."
+     }
+    },
+    {
+     "@type": "Question",
+     "name": "Wer verschickt die fertige Abrechnung an meine Mieter?",
+     "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "Sie laden die fertige Abrechnung aus Ihrem geschützten Kundenbereich herunter und geben sie selbst rechtzeitig an Ihre Mieter weiter. Die Zustellung an Mieter und die Vertretung bei Streitigkeiten sind nicht Bestandteil unseres Services."
+     }
     }
    ]
   }
@@ -197,6 +277,30 @@
     h1{font-size:34px}
     .tenant{grid-template-columns:1fr}
   }
+
+  html{scroll-padding-top:90px}
+  [hidden]{display:none!important}
+  a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,summary:focus-visible{outline:3px solid #a45b00;outline-offset:4px}
+  .calculator{max-width:700px;margin:30px auto 0;scroll-margin-top:90px}
+  .calculator p{margin-bottom:16px}
+  .calculator-inputs{margin:24px 0 8px}
+  .calculator label{display:block;font-size:15px;font-weight:600;margin-bottom:6px}
+  .calculator input{width:100%;font:inherit;border:1px solid var(--line);border-radius:10px;padding:12px;background:#fff;color:var(--ink)}
+  .calculator-result{padding:22px;background:var(--accent-soft);border-radius:12px;display:flex;flex-direction:column;margin:18px 0}
+  .calculator-result strong{font-size:38px;line-height:1.3;color:var(--accent-dark)}
+  .calculator-error{color:#9c2424!important;font-weight:600}
+  button:disabled{opacity:.55;cursor:not-allowed}
+  .sample-note{font-size:14px;color:var(--muted);margin:18px 0 24px}
+  .muster-grid{align-items:center}
+  .sample-preview{background:#fff;border:1px solid var(--line);border-top:5px solid var(--accent);border-radius:12px;padding:28px;box-shadow:0 12px 30px rgba(20,33,43,.06)}
+  .sample-label{font-size:12px;color:var(--accent-dark);font-weight:700;letter-spacing:.8px;margin-bottom:14px}
+  .sample-preview dl{margin:20px 0}
+  .sample-preview dl div{border-top:1px solid var(--line);padding:10px 0}
+  .sample-preview dt{font-weight:600;font-size:15px}
+  .sample-preview dd{font-size:14px;color:var(--muted)}
+  .sample-preview .small{margin-top:16px}
+  .customer-quote blockquote{margin-bottom:16px}
+  @media(max-width:520px){.wrap{padding:0 18px}.nav{gap:12px}.logo{font-size:17px;gap:7px}.logo .mark{width:28px;height:28px}.nav>.btn{font-size:13px;padding:10px 12px}.hero{padding:46px 0}.hero-grid{gap:28px}h1{font-size:32px}h2{font-size:27px}section{padding:48px 0}.card,.contact,.hero-card,.price,.tenant,.sample-preview{padding:22px}.calculator .btn{width:100%;white-space:normal}}
 </style>
 </head>
 <body>
@@ -221,19 +325,19 @@
     <div>
       <span class="eyebrow">Für private Vermieter mit wenigen Wohnungen</span>
       <h1>Ihre Nebenkosten&shy;abrechnung – fertig, verständlich, pünktlich.</h1>
-      <p class="lead">Sie laden Ihre Unterlagen hoch, wir erstellen die Abrechnung – sorgfältig und doppelt geprüft, damit Ihre Mieter sie gut nachvollziehen können.</p>
+      <p class="lead">Sie stellen die Unterlagen bereit. Wir übernehmen die Berechnung und die zweite Prüfung. Sie erhalten eine verständliche Abrechnung für jede Wohnung – ohne selbst Tabellen aufzubauen.</p>
       <div class="cta-row">
-        <a class="btn" href="#kontakt">Abrechnung anfragen</a>
-        <a class="btn ghost" href="#so-gehts">So funktioniert's</a>
+        <a class="btn" href="#preisrechner">Preis berechnen</a>
+        <a class="btn ghost" href="#muster">Musterabrechnung ansehen</a>
       </div>
     </div>
     <div class="hero-card">
       <h2>Das nehmen wir Ihnen ab</h2>
       <ul class="check">
         <li>Kosten richtig auf die Mieter verteilen</li>
-        <li>CO₂-Kosten aufteilen (Pflicht seit 2023)</li>
-        <li>Abrechnung in klarer Sprache, mit allen Belegen</li>
-        <li>Erinnerung an die Frist – 12 Monate nach Ende des Abrechnungsjahres</li>
+        <li>CO₂-Kosten anhand Ihrer Belege berücksichtigen</li>
+        <li>Abrechnung mit Kostenaufteilung und Ergebnis je Wohnung</li>
+        <li>Frist im Blick – Erinnerung zur beauftragten Abrechnung</li>
       </ul>
     </div>
   </div>
@@ -251,6 +355,19 @@
       <div class="card"><div class="num">2</div><h3>Wir rechnen</h3><p>Wir verteilen die Kosten nach Mietvertrag und Gesetz und prüfen alles ein zweites Mal. Im Normalfall ist Ihre Abrechnung nach 3 Werktagen fertig – spätestens nach 10 Werktagen ab vollständigen Unterlagen, Zahlungseingang und zulässigem Leistungsbeginn.</p></div>
       <div class="card"><div class="num">3</div><h3>Fertig zum Versenden</h3><p>Sie erhalten für jede Wohnung eine fertige Abrechnung samt Übersicht – bereit zum Weitergeben an Ihre Mieter.</p></div>
     </div>
+  </div>
+</section>
+
+<!-- LEISTUNG -->
+<section id="leistung" class="white">
+  <div class="wrap">
+    <div class="center"><h2>Sie liefern die Belege. Wir machen die Abrechnung.</h2><p>Ein klarer Auftrag für ein Haus und ein Abrechnungsjahr. Kein Abo und kein Programm, das Sie erst lernen müssen.</p></div>
+    <div class="grid3">
+      <div class="card"><h3>Das stellen Sie bereit</h3><p>Mietvereinbarungen, Rechnungen, Flächen und Verteilerschlüssel, Vorauszahlungen sowie bei Bedarf Verbrauchs- und Messdienstabrechnungen. Eine Checkliste hilft Ihnen beim Zusammenstellen.</p></div>
+      <div class="card"><h3>Das übernehmen wir</h3><p>Wir ordnen die Kosten zu, berechnen die Anteile und berücksichtigen Mieterwechsel und die CO₂-Aufteilung anhand Ihrer Unterlagen. Anschließend prüfen wir Zahlen und Darstellung ein zweites Mal.</p></div>
+      <div class="card"><h3>Das erhalten Sie</h3><p>Eine fertige Abrechnung pro Wohnung und eine Übersicht zum geschützten Download. Rückfragen und Korrekturen zur beauftragten Abrechnung sind inklusive. Sie geben das Ergebnis selbst an Ihre Mieter weiter.</p></div>
+    </div>
+    <p class="note">Heizkosten übernehmen wir aus der Messdienstabrechnung. Eigene Messdienstleistungen sowie Rechts- und Steuerberatung sind nicht enthalten. Besondere Fälle klären wir vor der Beauftragung. <a href="/leistungsbedingungen.html">Leistungsumfang im Detail</a>.</p>
   </div>
 </section>
 
@@ -290,9 +407,35 @@
         <a class="btn" href="#kontakt">Jetzt anfragen</a>
       </div>
     </div>
+    <div class="calculator card" id="preisrechner" aria-labelledby="rechner-titel">
+      <div><h3 id="rechner-titel">Ihr Gesamtpreis vor der Anfrage</h3><p>Für ein Abrechnungsjahr. Pro Haus kostet die erste Wohnung 89 €, jede weitere 59 €.</p></div>
+      <div class="grid2 calculator-inputs">
+        <div><label for="preis-wohnungen">Wohnungen insgesamt</label><input id="preis-wohnungen" type="number" min="1" max="200" step="1" value="1" inputmode="numeric" aria-describedby="rechner-fehler"></div>
+        <div><label for="preis-haeuser">Häuser insgesamt</label><input id="preis-haeuser" type="number" min="1" max="200" step="1" value="1" inputmode="numeric" aria-describedby="rechner-fehler"></div>
+      </div>
+      <p id="rechner-fehler" class="calculator-error" role="status" hidden></p>
+      <div class="calculator-result" aria-live="polite" aria-atomic="true"><span>Gesamtpreis pro Abrechnungsjahr</span><strong id="preis-gesamt">89 €</strong><span id="preis-aufteilung">1 erste Wohnung × 89 €</span></div>
+      <p class="small">Gemäß § 19 UStG wird keine Umsatzsteuer berechnet. Mehrere Abrechnungsjahre sind getrennte Aufträge. Der Rechner ist unverbindlich; das Angebot erhalten Sie vor Ihrer Beauftragung.</p>
+      <noscript><p>Für den interaktiven Rechner benötigen Sie JavaScript. Ohne JavaScript können Sie den Preis so berechnen: 89 € je Haus plus 59 € für jede weitere Wohnung im selben Haus. Das Anfrageformular funktioniert auch ohne JavaScript.</p></noscript>
+      <button class="btn" id="preis-uebernehmen" type="button" hidden>Mit dieser Anzahl unverbindlich anfragen</button>
+    </div>
     <p class="note">Kein Abo. Mieterwechsel, Korrekturen und Rückfragen zur beauftragten Abrechnung sind inklusive. Nach der Anfrage erhalten Sie ein Angebot mit Gesamtpreis und Verbraucherinformationen. Erst nach Ihrer Beauftragung folgt der Zahlungslink. <a href="/leistungsbedingungen.html">Leistungsbedingungen</a>.</p>
   </div>
 </section>
+
+<!-- MUSTER -->
+<section id="muster" class="white">
+  <div class="wrap grid2 muster-grid">
+    <div><span class="eyebrow">Vor der Beauftragung ansehen</span><h2>So sieht Ihre Abrechnung aus</h2><p>Das Muster zeigt die Kostenarten, die verwendeten Verteilerschlüssel, den Anteil einer Wohnung, die Vorauszahlungen und das Abrechnungsergebnis. Auch die CO₂-Aufteilung wird erläutert.</p><p class="sample-note">Alle Namen, Adressen, Belege und Zahlen im Muster sind erfunden. Es ist keine echte Kundenabrechnung und keine Vorlage zur ungeprüften Übernahme.</p><a class="btn" href="/muster-nebenkostenabrechnung.pdf" download>Musterabrechnung herunterladen (PDF)</a></div>
+    <div class="sample-preview" aria-label="Inhalt der Musterabrechnung"><div class="sample-label">MUSTER · fiktiver Fall</div><h3>Betriebskostenabrechnung 2025</h3><p>Wohnung EG · 80 m²</p><dl><div><dt>Kosten und Verteilung</dt><dd>übersichtlich aufgeschlüsselt</dd></div><div><dt>Heizung und CO₂</dt><dd>gesondert ausgewiesen</dd></div><div><dt>Vorauszahlungen</dt><dd>mit Kosten verrechnet</dd></div><div><dt>Ergebnis</dt><dd>Guthaben oder Nachzahlung</dd></div></dl><p class="small">Die Vorschau zeigt den Aufbau. Die vollständige Musterabrechnung finden Sie im PDF.</p></div>
+  </div>
+</section>
+
+<!-- Nur echte, dokumentiert freigegebene Kundenstimmen in der JSON-Liste pflegen. Ohne Einträge bleibt der Bereich verborgen. Keine Musterbewertungen oder Bewertungs-Sterne veröffentlichen. -->
+<section id="kundenstimmen" hidden>
+  <div class="wrap"><div class="center"><h2>Erfahrungen unserer Kunden</h2></div><div class="grid2" id="kundenstimmen-liste"></div></div>
+</section>
+<script id="freigegebene-bewertungen" type="application/json">[]</script>
 
 <!-- FAQ -->
 <section id="fragen">
@@ -305,6 +448,16 @@
       <details><summary>Muss ich ein Programm installieren?</summary><p>Nein. Sie bekommen von uns einen persönlichen Upload-Link und laden die Unterlagen darüber hoch – als Foto oder PDF, direkt vom Handy oder Computer.</p></details>
       <details><summary>Wie sicher sind meine Unterlagen?</summary><p>Die Übertragung erfolgt über HTTPS. Ihr Kundenbereich ist durch einen persönlichen Link und einen getrennten Zugangscode geschützt. Unterlagen und Abrechnung werden zum geschützten Download bereitgestellt. Aktive Auftragsdaten werden grundsätzlich spätestens 30 Tage nach Bereitstellung gelöscht. Konkrete Speicherorte, Dienstleister und Restfristen werden vor dem Upload im AV-Vertrag festgehalten. Derzeit werden keine Kundenbelege an KI-Dienste übermittelt.</p></details>
       <details><summary>Bieten Sie auch Rechtsberatung an?</summary><p>Nein. Wir erstellen die Abrechnung und prüfen sie auf Nachvollziehbarkeit. Bei Streit mit einem Mieter wenden Sie sich bitte an einen Anwalt oder Haus- und Grundbesitzerverein.</p></details>
+      <details><summary>Was kostet die Abrechnung für mehrere Wohnungen?</summary><p>Die erste Wohnung kostet 89 €, jede weitere Wohnung im selben Haus 59 € – jeweils für ein Abrechnungsjahr. Bei vier Wohnungen in einem Haus sind das beispielsweise 266 €. Im Preisrechner sehen Sie den Gesamtpreis vor Ihrer Anfrage.</p></details>
+      <details><summary>Wie wird der Preis bei mehreren Häusern berechnet?</summary><p>Für jedes Haus werden 89 € für die erste Wohnung und 59 € für jede weitere Wohnung berechnet. Vier Wohnungen in zwei Häusern kosten insgesamt 296 € pro Abrechnungsjahr. Maßgeblich ist das Angebot vor Ihrer Beauftragung.</p></details>
+      <details><summary>Sind Mieterwechsel, Rückfragen und Korrekturen enthalten?</summary><p>Ja. Mieterwechsel sowie Rückfragen und Korrekturen zur beauftragten Abrechnung sind ohne Aufpreis enthalten. Teilen Sie uns die Ein- und Auszugsdaten sowie die zugehörigen Vorauszahlungen mit. Ein weiteres Abrechnungsjahr ist ein neuer Auftrag.</p></details>
+      <details><summary>Was bekomme ich am Ende?</summary><p>Sie erhalten für jede Wohnung die geprüfte Abrechnung mit Kostenaufteilung, Vorauszahlungen und dem daraus errechneten Guthaben oder der Nachzahlung sowie eine Übersicht. Die Bereitstellung erfolgt über Ihren geschützten Kundenbereich. Ein frei zugängliches Muster zeigt Ihnen den Aufbau.</p></details>
+      <details><summary>Kann ich meine Unterlagen als Handyfoto einreichen?</summary><p>Ja, als gut lesbares Foto oder PDF über den persönlichen Upload-Link. Wichtig sind vollständige Seiten und erkennbare Beträge und Zeiträume. Bitte senden Sie Mieterdaten und Belege nicht über das öffentliche Anfrageformular.</p></details>
+      <details><summary>Kann ich direkt mit der Anfrage Belege hochladen?</summary><p>Nein. Zuerst erhalten Sie unser Angebot. Nach Beauftragung, abgeschlossenem Vertrag zur Auftragsverarbeitung und Zahlung richten wir den geschützten Upload mit einem getrennten Zugangscode ein. Die Bearbeitung beginnt erst, wenn auch der zulässige Leistungsbeginn feststeht.</p></details>
+      <details><summary>Wie werden Heizkosten und CO₂-Kosten berücksichtigt?</summary><p>Wir übernehmen die auf die Mieter entfallenden Heizkosten aus Ihrer Messdienstabrechnung. Eine eigene Verbrauchserfassung oder Messdienstleistung ist nicht enthalten. Die CO₂-Kostenaufteilung berücksichtigen wir anhand der erforderlichen Belege und prüfen dabei, ob ein Vermieteranteil bereits abgezogen wurde. Fehlende Angaben und Sonderfälle klären wir vor der Fertigstellung.</p></details>
+      <details><summary>Ist meine Anfrage schon ein kostenpflichtiger Auftrag?</summary><p>Nein. Anfrage und Preisrechner sind kostenlos und unverbindlich. Sie erhalten zunächst ein Angebot mit Gesamtpreis und Verbraucherinformationen. Erst Ihre ausdrückliche Beauftragung per E-Mail schließt den Auftrag ab. Danach erhalten Sie den Zahlungslink. Es gibt kein Abonnement.</p></details>
+      <details><summary>Was passiert, wenn Unterlagen fehlen?</summary><p>Wir melden uns und nennen Ihnen die fehlenden Angaben. Die Bearbeitungsfrist läuft erst ab vollständigen Unterlagen, Zahlungseingang und zulässigem Leistungsbeginn. Reichen Sie Ihre Anfrage deshalb mit ausreichend Vorlauf ein; wir bestätigen den Termin vor der Beauftragung.</p></details>
+      <details><summary>Wer verschickt die fertige Abrechnung an meine Mieter?</summary><p>Sie laden die fertige Abrechnung aus Ihrem geschützten Kundenbereich herunter und geben sie selbst rechtzeitig an Ihre Mieter weiter. Die Zustellung an Mieter und die Vertretung bei Streitigkeiten sind nicht Bestandteil unseres Services.</p></details>
     </div>
   </div>
 </section>
@@ -350,5 +503,6 @@
   </div>
 </footer>
 
+<script src="/site.js" defer></script>
 </body>
 </html>

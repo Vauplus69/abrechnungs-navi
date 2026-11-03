@@ -1,5 +1,19 @@
 # Abrechnungs Navi Betriebsstand
 
+## Öffentliche Website vom 03.11.2026
+
+Die Startseite enthält einen lokalen Preisrechner für ein Abrechnungsjahr: 89 Euro je Haus plus 59 Euro je weiterer Wohnung im selben Haus. Wohnungen und Häuser werden als ganze Zahlen zwischen 1 und 200 geprüft; Häuser dürfen die Wohnungszahl nicht überschreiten. Die Übernahme setzt nur Wohnungszahl und Preisnotiz in das bestehende Anfrageformular. Sie versendet keine Anfrage und begründet keinen Auftrag. Bestehende Freitextangaben bleiben erhalten. Ohne JavaScript bleiben Preisangaben und Anfrageformular nutzbar.
+
+`muster-nebenkostenabrechnung.pdf` wurde mit `abrechnung/rechner.py` aus dem vollständig erfundenen Testfall `abrechnung/beispiel.json` erzeugt. Die öffentliche Datei zeigt die erste Musterwohnung und ist deutlich als Muster gekennzeichnet. Sie enthält keine Kundenbelege oder echten Mieterdaten. Bei einer Änderung des Rechenwerks Muster neu erzeugen und visuell prüfen.
+
+Die 16 sichtbaren FAQ stimmen mit den FAQ-Daten im JSON-LD überein. Leistungsumfang und geschützter Uploadablauf werden erläutert; keine zusätzlichen kostenpflichtigen Leistungen eingeführt.
+
+### Kundenstimmen erst nach dokumentierter Freigabe
+
+Der Bewertungsbereich bleibt unsichtbar, solange die JSON-Liste `freigegebene-bewertungen` in `index.html` leer ist. Keine Musterzitate, Sterne oder Review-Schemadaten ergänzen. Nach Eingang einer echten Kundenstimme Originalwortlaut, veröffentlichte Namensangabe und Einwilligung separat dokumentieren. Erst danach einen Eintrag mit `text`, `name` und `freigegeben: true` eintragen. Die Freigabe wird durch diesen Schalter nicht ersetzt. Der Browser gibt Text ausschließlich als Text aus. Aktuell liegen keine freigegebenen Bewertungen vor.
+
+Zusatzprüfung: `node tests/test_preisrechner.js`. Rechnerübernahme, Fehleingaben und bestehende Notizen zusätzlich im Browser prüfen; keinen echten Testlead ohne gesonderte Freigabe absenden.
+
 Fassung 4 vom 03.11.2026. Keine externe KI fuer Kundenbelege. Keine Werbung oder Zahlung wird durch das Deployment gestartet.
 
 ## Freigaben vor Kundenbetrieb
