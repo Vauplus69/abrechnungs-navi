@@ -36,7 +36,7 @@ if [ ! -x /srv/an-upload/venv/bin/python ]; then
   fi
 fi
 /srv/an-upload/venv/bin/python -m pip install --disable-pip-version-check -r "$SRC/app/requirements.txt"
-/srv/an-upload/venv/bin/python -m py_compile "$SRC/app/upload_app.py" "$SRC/app/workflow.py"
+/srv/an-upload/venv/bin/python -m py_compile "$SRC/app/upload_app.py" "$SRC/app/workflow.py" "$SRC/app/monitor.py"
 
 # Nur Programm und oeffentliche Seiten sichern, keine Kundendaten oder Geheimnisse.
 mkdir -p "$TMP/previous-app" "$TMP/previous-site"
@@ -65,11 +65,12 @@ install -m 755 "$SRC/deploy/an-passwort" /usr/local/bin/an-passwort
 install -m 755 "$SRC/deploy/an-mailpasswort" /usr/local/bin/an-mailpasswort
 install -m 755 "$SRC/deploy/an-betriebsfreigabe" /usr/local/bin/an-betriebsfreigabe
 install -m 755 "$SRC/deploy/an-backup" /usr/local/bin/an-backup
-cp "$SRC/deploy/an-backup.service" "$SRC/deploy/an-backup.timer" /etc/systemd/system/
+cp "$SRC/deploy/an-backup.service" "$SRC/deploy/an-backup.timer" "$SRC/deploy/an-monitor.service" "$SRC/deploy/an-monitor.timer" /etc/systemd/system/
 mkdir -p /etc/an-upload; chown root:annavi /etc/an-upload; chmod 750 /etc/an-upload
 install -m 755 "$SRC/deploy/setup.sh" /usr/local/bin/an-aktualisieren
 cp "$SRC/deploy/an-aktualisieren.service" "$SRC/deploy/an-aktualisieren.timer" /etc/systemd/system/
 systemctl daemon-reload
+systemctl enable --now an-monitor.timer
 systemctl enable --now an-aktualisieren.timer >/dev/null 2>&1
 if [ -f /etc/an-upload/backup.env ]; then systemctl enable --now an-backup.timer; fi
 systemctl enable --now an-upload >/dev/null 2>&1

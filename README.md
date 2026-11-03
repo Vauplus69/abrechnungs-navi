@@ -38,3 +38,12 @@ Der Server bezieht main alle zehn Minuten. Der Installer prueft Abhaengigkeiten 
 ## Noch separat nachzuweisen
 
 Live-Installation, echte Mailzustellung nach konkreter Testfreigabe, Mollie-Profil/Zahlungsarten ohne echte Testzahlung, vollstaendige Betreiberangaben, lokale Geraetesicherheit, externe Sicherung und echter Wiederherstellungstest. Rechtsdienstleistungsgrenze und passende Berufshaftpflicht sind keine Softwaretests.
+
+
+## Sicherheitsueberwachung
+
+`an-monitor.timer` prueft alle fuenf Minuten AN-Dienst, Loeschkontrolle und externe Sicherung. Loeschfehler und veraltete Kontrollen werden ohne Kundendaten per E-Mail an den Inhaber gemeldet; neue Probleme sofort beim naechsten Prueflauf, unveraenderte Probleme hoechstens einmal pro Tag. Bei fehlgeschlagenem Versand wird beim naechsten Lauf erneut versucht. Die Verwaltung zeigt Loeschfehler zusaetzlich an. Ein Backup-Fehler markiert den Lauf als fehlgeschlagen und stoesst die Kontrolle an. Eine geplante Sicherungspause erzeugt keinen Dienstausfallalarm.
+
+Diese lokale Ueberwachung kann bei Totalausfall des gesamten Servers oder des E-Mail-Anbieters selbst keine E-Mail zustellen. Der Inhaber kontrolliert Zugang und Sicherungsstand regelmaessig. Serveruebergreifende Ueberwachung und ein echter Ersatzserver-Test sind gesonderte Betriebsnachweise.
+
+AN speichert in Anwendung und Webserver-Zugriffsprotokollen keine IP-Adressen. Sicherheitsereignisse enthalten weder Namen noch Zugangscodes oder Upload-Links; Auftragsreferenzen werden gehasht. Ereignisse werden nach 183 Tagen geloescht. Administrative SSH-Systemprotokolle des gemeinsamen Servers sind hiervon getrennt.

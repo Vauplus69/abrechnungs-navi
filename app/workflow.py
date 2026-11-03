@@ -154,7 +154,7 @@ def install(app):
 
     def audit(event, order='', **extra):
         # Keine Namen, Links, IP-Adressen, Beleginhalte oder Zugangsdaten.
-        row = {'time': time.time(), 'event': event, 'order': order, **extra}
+        row = {'time': time.time(), 'event': event, 'order': hashlib.sha256(str(order).encode()).hexdigest()[:20] if order else '', **extra}
         with app.LOCK:
             with audit_path.open('a') as f:
                 f.write(json.dumps(row) + '\n')
@@ -165,7 +165,8 @@ def install(app):
         return c.get('delete_at') or c['expires'] + 30 * DAY
     app.delete_at = delete_at
 
-    def cleanup():
+    def cleanup_records():
+        failed = 0
         with app.LOCK:
             db = app.load()
             for token, c in list(db.items()):
@@ -178,6 +179,7 @@ def install(app):
                     audit('server_deleted', c.get('order','legacy'))
                     del db[token]
                 except OSError:
+                    failed += 1
                     audit('deletion_failed', c.get('order','legacy'))
             app.save(db)
             rows=app.load_anfragen()
@@ -193,6 +195,22 @@ def install(app):
                 temp = audit_path.with_suffix('.tmp')
                 temp.write_text(''.join(json.dumps(r) + '\n' for r in rows))
                 os.replace(temp, audit_path)
+        return failed
+
+    def cleanup():
+        health_path = Path(app.DATA_DIR) / 'cleanup-health.json'
+        health = {'last_attempt': time.time(), 'failed_deletions': 0, 'cleanup_error': False}
+        try:
+            health['failed_deletions'] = cleanup_records()
+            if not health['failed_deletions']:
+                health['last_success'] = time.time()
+        except Exception:
+            health['cleanup_error'] = True
+            raise
+        finally:
+            temp = health_path.with_suffix('.tmp')
+            temp.write_text(json.dumps(health))
+            os.replace(temp, health_path)
     app.cleanup = cleanup
 
     def form(action, fields, label):
@@ -224,6 +242,12 @@ def install(app):
             fields += f'<label><input type="checkbox" name="{key}" value="yes"> {label}</label>'
         fields += '<label>Nachweisreferenz (keine Mieterdaten)<input name="evidence" required maxlength="120"></label>'
         top += form('/verwaltung/neu', fields, 'Auftrag freigeben') + '</div>'
+        try:
+            health = json.loads((Path(app.DATA_DIR)/'cleanup-health.json').read_text())
+            if health.get('cleanup_error') or health.get('failed_deletions'):
+                top += '<div class="card err"><h2>Loeschkontrolle fehlgeschlagen</h2><p>Faellige Loeschung pruefen und nacharbeiten. Die automatische Sicherheitsueberwachung benachrichtigt den Inhaber.</p></div>'
+        except (OSError, ValueError):
+            pass
         for token, c in db.items():
             if c.get('workflow') != VERSION:
                 top += '<div class="card"><h2>Bestandsauftrag</h2><p>' + esc(c['name']) + '</p><p>Keine automatische Umstellung der bisherigen Frist. Migration erst nach dokumentierter Kundenabstimmung.</p></div>'
@@ -490,10 +514,10 @@ def install(app):
                     valid=any(hmac.compare_digest(g('otp'),totp(secret,now+offset)) for offset in (-30,0,30))
                 except (OSError,ValueError):valid=False
                 if not valid:
-                    attempts[key]=recent+[now];return self.send(403,'Code ungueltig')
+                    attempts[key]=recent+[now];audit('admin_login_failed');return self.send(403,'Code ungueltig')
                 # TOTP nicht innerhalb desselben Zeitfensters wiederverwendbar.
                 if attempts.get('used_otp')==g('otp'):return self.send(403,'Code bereits verwendet')
-                attempts['used_otp']=g('otp');attempts[key]=[]
+                attempts['used_otp']=g('otp');attempts[key]=[];audit('admin_login')
                 return self.send(303,'',extra={'Location':'/verwaltung',**self.set_session('admin')})
             match=re.fullmatch(r'/hochladen/([A-Za-z0-9_-]+)/anmelden',path)
             if match:
@@ -501,8 +525,8 @@ def install(app):
                 recent=[t for t in attempts.get(token,[]) if t>now-900]
                 if len(recent)>=5:return self.send(429,'Bitte 15 Minuten warten')
                 if not c or not password_ok(g('code'),c.get('access_hash','')):
-                    attempts[token]=recent+[now];return self.send(403,'Zugang nicht moeglich')
-                attempts[token]=[]
+                    attempts[token]=recent+[now];audit('customer_login_failed');return self.send(403,'Zugang nicht moeglich')
+                attempts[token]=[];audit('customer_login',c['order'])
                 return self.send(303,'',extra={'Location':'/hochladen/'+token,**self.set_session('customer',token)})
             if not path.startswith('/verwaltung/'):
                 return self.send(404,'Nicht gefunden')

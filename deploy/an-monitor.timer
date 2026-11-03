@@ -1,0 +1,8 @@
+[Unit]
+Description=Abrechnungs-Navi alle fuenf Minuten pruefen
+[Timer]
+OnBootSec=3min
+OnUnitActiveSec=5min
+Persistent=true
+[Install]
+WantedBy=timers.target

@@ -11,7 +11,17 @@ command -v restic >/dev/null || { echo 'restic muss installiert sein'; exit 1; }
 RESTIC_OPTIONS=()
 if [ -n "${AN_SFTP_COMMAND:-}" ]; then RESTIC_OPTIONS=(-o "sftp.command=$AN_SFTP_COMMAND"); fi
 # App fuer einen konsistenten Stand kurz anhalten; nach Fehler wieder starten.
-trap 'systemctl start an-upload' EXIT
+finish_backup() {
+  result=$?
+  systemctl start an-upload || true
+  if [ "$result" -ne 0 ]; then
+    date +%s > /etc/an-upload/backup-last-failure
+    chmod 600 /etc/an-upload/backup-last-failure
+    systemctl start --no-block an-monitor.service || true
+  fi
+  exit "$result"
+}
+trap finish_backup EXIT
 systemctl stop an-upload
 # Vollstaendiger AN-Wiederanlauf: Daten, Programmstand und eigene Konfiguration.
 # Der Entschluesselungsschluessel bleibt separat; kein fremder Dienst wird gesichert.
@@ -21,12 +31,12 @@ restic "${RESTIC_OPTIONS[@]}" backup \
   /etc/caddy/abrechnungs-navi.caddy /etc/caddy/an-admin-auth.caddy \
   /etc/systemd/system/an-upload.service \
   /etc/systemd/system/an-backup.service /etc/systemd/system/an-backup.timer \
+  /etc/systemd/system/an-monitor.service /etc/systemd/system/an-monitor.timer \
   /etc/systemd/system/an-aktualisieren.service /etc/systemd/system/an-aktualisieren.timer \
   /usr/local/bin/an-aktualisieren /usr/local/bin/an-betriebsfreigabe \
   /usr/local/bin/an-backup /usr/local/bin/an-passwort /usr/local/bin/an-mailpasswort \
   --exclude /etc/an-upload/restic-password --tag abrechnungs-navi --quiet
 systemctl start an-upload
-trap - EXIT
 restic "${RESTIC_OPTIONS[@]}" forget --tag abrechnungs-navi --keep-within 30d --prune --quiet
 restic "${RESTIC_OPTIONS[@]}" check --quiet
 install -d -m 750 -o root -g annavi /etc/an-upload

@@ -115,7 +115,13 @@ class EndToEnd(unittest.TestCase):
                     # Fristablauf: keine Verlaengerung, Download gesperrt, Dateien wirklich entfernt.
                     db=app.load();db[token]['delete_at']=time.time()-1;app.save(db)
                     self.assertEqual(request('GET',f'/hochladen/{token}/datei/beleg.pdf',cookie=client_cookie)[0],404)
+                    with patch.object(app.shutil,'rmtree',side_effect=OSError('synthetic deletion failure')):
+                        app.cleanup()
+                    self.assertIn(token,app.load())
+                    health=json.loads((data/'cleanup-health.json').read_text())
+                    self.assertEqual(health['failed_deletions'],1)
                     app.cleanup();self.assertFalse(Path(app.customer_dir(token)).exists());self.assertNotIn(token,app.load())
+                    self.assertEqual(json.loads((data/'cleanup-health.json').read_text())['failed_deletions'],0)
                     log=(data/'audit.jsonl').read_text()
                     self.assertNotIn(token,log);self.assertNotIn('TEST SYNTHETIC',log)
                     # Widerruf in zwei Schritten; kein echter Mailversand.
