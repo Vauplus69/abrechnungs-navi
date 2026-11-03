@@ -36,7 +36,7 @@ if [ ! -x /srv/an-upload/venv/bin/python ]; then
   fi
 fi
 /srv/an-upload/venv/bin/python -m pip install --disable-pip-version-check -r "$SRC/app/requirements.txt"
-/srv/an-upload/venv/bin/python -m py_compile "$SRC/app/upload_app.py" "$SRC/app/workflow.py" "$SRC/app/monitor.py"
+/srv/an-upload/venv/bin/python -m py_compile "$SRC/app/upload_app.py" "$SRC/app/workflow.py" "$SRC/app/monitor.py" "$SRC/abrechnung/rechner.py"
 
 # Nur Programm und oeffentliche Seiten sichern, keine Kundendaten oder Geheimnisse.
 mkdir -p "$TMP/previous-app" "$TMP/previous-site"
@@ -57,6 +57,8 @@ echo "== 3/6 Upload-Programm"
 id annavi >/dev/null 2>&1 || useradd --system --no-create-home --shell /usr/sbin/nologin annavi
 mkdir -p "$APP_DIR" "$DATA_DIR/kunden"
 cp "$SRC/app/"*.py "$APP_DIR/"
+mkdir -p "$APP_DIR/abrechnung"
+cp -a "$SRC/abrechnung/." "$APP_DIR/abrechnung/"
 chown -R root:root "$APP_DIR"; chmod 755 "$APP_DIR"; chmod 644 "$APP_DIR/upload_app.py"
 chown -R annavi:annavi "$DATA_DIR"; chmod 700 /srv/an-upload/data "$DATA_DIR/kunden"
 chmod 755 /srv/an-upload

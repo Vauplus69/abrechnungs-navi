@@ -1,32 +1,119 @@
 {
-  "_hinweis": "Erfundenes Beispiel zum Testen. Keine echten Personen.",
-  "vermieter": {"name": "Erika Beispiel", "anschrift": "Musterweg 1, 12345 Musterstadt", "ort": "Musterstadt"},
+  "_hinweis": "Vollständig erfundener, konsistenter Ganzjahres-Testfall. Ersetzt den unvollständigen alten Fall; keine Ergänzung echter Belege.",
+  "vermieter": {
+    "name": "Erika Beispiel",
+    "anschrift": "Musterweg 1, 12345 Musterstadt",
+    "ort": "Musterstadt"
+  },
   "objekt": {
     "anschrift": "Lindenstraße 5, 12345 Musterstadt",
     "wohnflaeche_gesamt": 210.0,
     "einheiten_gesamt": 3,
-    "personen_gesamt": 5
+    "personen_gesamt": 5,
+    "personentage_gesamt": 1825,
+    "personentage_beleg": "TEST Belegung: 3+1+1 Personen jeweils 365 Tage"
   },
-  "zeitraum": {"von": "2025-01-01", "bis": "2025-12-31"},
+  "zeitraum": {
+    "von": "2025-01-01",
+    "bis": "2025-12-31"
+  },
   "kosten": [
-    {"name": "Grundsteuer", "betrag": 612.40, "schluessel": "wohnflaeche"},
-    {"name": "Wasser und Abwasser", "betrag": 1384.20, "schluessel": "verbrauch", "verbrauch_gesamt": 268.0, "einheit": "m³"},
-    {"name": "Müllabfuhr", "betrag": 498.00, "schluessel": "personen"},
-    {"name": "Gebäudeversicherung", "betrag": 845.10, "schluessel": "wohnflaeche"},
-    {"name": "Allgemeinstrom", "betrag": 186.30, "schluessel": "einheiten"},
-    {"name": "Schornsteinfeger", "betrag": 96.00, "schluessel": "einheiten"}
+    {
+      "name": "Grundsteuer",
+      "betrag": 612.4,
+      "schluessel": "wohnflaeche",
+      "umlage_geprueft": true,
+      "beleg": "TEST-Rechnung Grundsteuer"
+    },
+    {
+      "name": "Wasser und Abwasser",
+      "betrag": 1384.2,
+      "schluessel": "verbrauch",
+      "verbrauch_gesamt": 231,
+      "einheit": "m³",
+      "umlage_geprueft": true,
+      "beleg": "TEST-Rechnung Wasser und Abwasser"
+    },
+    {
+      "name": "Müllabfuhr",
+      "betrag": 498.0,
+      "schluessel": "personen",
+      "umlage_geprueft": true,
+      "beleg": "TEST-Rechnung Müllabfuhr"
+    },
+    {
+      "name": "Gebäudeversicherung",
+      "betrag": 845.1,
+      "schluessel": "wohnflaeche",
+      "umlage_geprueft": true,
+      "beleg": "TEST-Rechnung Gebäudeversicherung"
+    },
+    {
+      "name": "Allgemeinstrom",
+      "betrag": 186.3,
+      "schluessel": "einheiten",
+      "umlage_geprueft": true,
+      "beleg": "TEST-Rechnung Allgemeinstrom"
+    },
+    {
+      "name": "Schornsteinfeger",
+      "betrag": 96.0,
+      "schluessel": "einheiten",
+      "umlage_geprueft": true,
+      "beleg": "TEST-Rechnung Schornsteinfeger"
+    }
   ],
-  "co2": {"kg_co2_gesamt": 6930.0},
+  "co2": {
+    "kg_co2_gesamt": 6930.0,
+    "beleg": "TEST-Brennstoffrechnung 2025",
+    "wohngebaeude_regelfall_geprueft": true
+  },
   "mieter": [
-    {"name": "Familie Muster", "wohnung": "EG", "wohnflaeche": 80.0, "personen": 3,
-     "vorauszahlungen": 2640.00, "verbrauch": {"Wasser und Abwasser": 142.0},
-     "heizkosten": 1105.60, "co2_kosten_anteil": 96.20},
-    {"name": "Max Probe", "wohnung": "1. OG", "wohnflaeche": 70.0, "personen": 1,
-     "vorauszahlungen": 1680.00, "verbrauch": {"Wasser und Abwasser": 51.0},
-     "heizkosten": 812.40, "co2_kosten_anteil": 70.70},
-    {"name": "Lena Test", "wohnung": "DG", "wohnflaeche": 60.0, "personen": 1,
-     "von": "2025-04-01", "bis": "2025-12-31",
-     "vorauszahlungen": 1260.00, "verbrauch": {"Wasser und Abwasser": 38.0},
-     "heizkosten": 540.90, "co2_kosten_anteil": 47.00}
-  ]
+    {
+      "name": "Familie Muster",
+      "wohnung": "EG",
+      "wohnflaeche": 80.0,
+      "personen": 3,
+      "vorauszahlungen": 2640.0,
+      "verbrauch": {
+        "Wasser und Abwasser": 142.0
+      },
+      "heizkosten": 1105.6,
+      "co2_kosten_anteil": 96.2,
+      "personentage": 1095,
+      "heizkosten_status": "vor_co2_abzug",
+      "messdienst_beleg": "TEST-Messdienst EG"
+    },
+    {
+      "name": "Max Probe",
+      "wohnung": "1. OG",
+      "wohnflaeche": 70.0,
+      "personen": 1,
+      "vorauszahlungen": 1680.0,
+      "verbrauch": {
+        "Wasser und Abwasser": 51.0
+      },
+      "heizkosten": 812.4,
+      "co2_kosten_anteil": 70.7,
+      "personentage": 365,
+      "heizkosten_status": "vor_co2_abzug",
+      "messdienst_beleg": "TEST-Messdienst 1. OG"
+    },
+    {
+      "name": "Lena Test",
+      "wohnung": "DG",
+      "wohnflaeche": 60.0,
+      "personen": 1,
+      "vorauszahlungen": 1260.0,
+      "verbrauch": {
+        "Wasser und Abwasser": 38.0
+      },
+      "heizkosten": 540.9,
+      "co2_kosten_anteil": 47.0,
+      "personentage": 365,
+      "heizkosten_status": "vor_co2_abzug",
+      "messdienst_beleg": "TEST-Messdienst DG"
+    }
+  ],
+  "testauftrag": true
 }

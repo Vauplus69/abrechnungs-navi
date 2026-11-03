@@ -45,6 +45,10 @@ class Files(unittest.TestCase):
 
 class EndToEnd(unittest.TestCase):
     def test_gates_upload_publish_download_and_deletion(self):
+        self.check_order()
+
+    def check_order(self, payload=None):
+        payload = payload or pdf()
         with tempfile.TemporaryDirectory() as tmp:
             root=Path(tmp);data=root/'data';(data/'kunden').mkdir(parents=True)
             cfg=root/'operator.json';otp=root/'otp';backup=root/'backup'
@@ -94,21 +98,23 @@ class EndToEnd(unittest.TestCase):
                     self.assertEqual(request('PUT',f'/hochladen/api/{token}?name=beleg.pdf',pdf())[0],403)
                     status,headers,_=request('POST',f'/hochladen/{token}/anmelden',{'code':code})
                     self.assertEqual(status,303);client_cookie=headers['Set-Cookie'].split(';')[0]
-                    self.assertEqual(request('PUT',f'/hochladen/api/{token}?name=beleg.pdf',pdf(),client_cookie,False)[0],403)
+                    self.assertEqual(request('PUT',f'/hochladen/api/{token}?name=beleg.pdf',payload,client_cookie,False)[0],403)
                     self.assertEqual(request('PUT',f'/hochladen/api/{token}?name=beleg.pdf',pdf(True),client_cookie)[0],400)
-                    self.assertEqual(request('PUT',f'/hochladen/api/{token}?name=beleg.pdf',pdf(),client_cookie)[0],201)
-                    self.assertEqual(request('PUT',f'/verwaltung/ergebnis/{token}',pdf(),admin_cookie)[0],201)
+                    self.assertEqual(request('PUT',f'/hochladen/api/{token}?name=beleg.pdf',payload,client_cookie)[0],201)
+                    self.assertEqual(request('PUT',f'/verwaltung/ergebnis/{token}',payload,admin_cookie)[0],201)
                     self.assertEqual(request('GET',f'/hochladen/{token}/datei/ergebnis.pdf',cookie=client_cookie)[0],404)
                     self.assertEqual(request('POST','/verwaltung/fertig',{'token':token},admin_cookie)[0],400)
                     self.assertEqual(request('POST','/verwaltung/fertig',{'token':token,'reviewed':'yes','notice':'yes'},admin_cookie)[0],200)
                     deadline=app.load()[token]['delete_at']
                     self.assertEqual(request('POST','/verwaltung/fertig',{'token':token,'reviewed':'yes','notice':'yes'},admin_cookie)[0],409)
                     self.assertEqual(app.load()[token]['delete_at'],deadline)
-                    self.assertEqual(request('GET',f'/hochladen/{token}/datei/ergebnis.pdf',cookie=client_cookie)[0],200)
+                    download=request('GET',f'/hochladen/{token}/datei/ergebnis.pdf',cookie=client_cookie)
+                    self.assertEqual(download[0],200)
+                    self.assertEqual(download[2],payload)
                     self.assertEqual(request('GET',f'/hochladen/{token}/datei/beleg.pdf',cookie=client_cookie)[0],200)
-                    self.assertEqual(request('PUT',f'/hochladen/api/{token}?name=weiter.pdf',pdf(),client_cookie)[0],403)
+                    self.assertEqual(request('PUT',f'/hochladen/api/{token}?name=weiter.pdf',payload,client_cookie)[0],403)
                     self.assertEqual(request('POST','/verwaltung/offen',{'token':token},admin_cookie)[0],400)
-                    self.assertEqual(request('PUT',f'/verwaltung/ergebnis/{token}',pdf(),admin_cookie)[0],201)
+                    self.assertEqual(request('PUT',f'/verwaltung/ergebnis/{token}',payload,admin_cookie)[0],201)
                     self.assertEqual(request('GET',f'/hochladen/{token}/datei/ergebnis-entwurf.pdf',cookie=client_cookie)[0],404)
                     self.assertEqual(request('POST','/verwaltung/fertig',{'token':token,'reviewed':'yes','notice':'yes'},admin_cookie)[0],200)
                     self.assertEqual(app.load()[token]['delete_at'],deadline)
