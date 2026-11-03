@@ -107,9 +107,9 @@ def install(app):
     app.datetime = BerlinDateTime
     app.LOCK = __import__('threading').RLock()
     app.ALLOWED_EXT = {'.pdf', '.jpg', '.jpeg', '.png', '.webp'}
-    sessions, attempts = {}, {}
+    sessions, attempts, pending_enrollment = {}, {}, {}
     cfg_path = os.environ.get('AN_OPERATOR_FILE', '/etc/an-upload/operator.json')
-    otp_path = os.environ.get('AN_TOTP_FILE', '/etc/an-upload/totp.secret')
+    otp_path = os.environ.get('AN_TOTP_FILE') or ('/etc/an-upload/totp.secret' if Path('/etc/an-upload/totp.secret').exists() else str(Path(app.DATA_DIR)/'security/totp.secret'))
     backup_marker = os.environ.get('AN_BACKUP_MARKER', '/etc/an-upload/backup-last-success')
     audit_path = Path(app.DATA_DIR) / 'audit.jsonl'
     withdrawal_path = Path(app.DATA_DIR) / 'widerrufe.json'
@@ -273,7 +273,15 @@ def install(app):
             if not self.session('admin'):
                 body = '<div class="card"><h1>Zweiter Anmeldefaktor</h1>'
                 if not Path(otp_path).exists():
-                    body += '<p>Die Verwaltung ist bis zur persoenlichen Einrichtung des zweiten Faktors gesperrt. Einrichtung auf dem Server: an-betriebsfreigabe.</p>'
+                    import qrcode
+                    if not pending_enrollment or time.time()-pending_enrollment['time']>600:
+                        pending_enrollment.update(secret=base64.b32encode(secrets.token_bytes(20)).decode().rstrip('='),time=time.time())
+                    uri='otpauth://totp/Abrechnungs-Navi:volker?secret='+pending_enrollment['secret']+'&issuer=Abrechnungs-Navi'
+                    picture=io.BytesIO();qrcode.make(uri).save(picture,format='PNG')
+                    encoded=base64.b64encode(picture.getvalue()).decode()
+                    body += '<p>Einmalige Einrichtung: Scannen Sie den QR-Code mit Ihrer Authenticator-App und tragen Sie den aktuellen sechsstelligen Code ein. Den QR-Code vertraulich behandeln.</p>'
+                    body += '<img alt="QR-Code fuer Ihre Authenticator-App" width="260" height="260" src="data:image/png;base64,'+encoded+'">'
+                    body += form('/verwaltung/einrichtung','<label>Aktueller Code aus der Authenticator-App<input name="otp" inputmode="numeric" required autocomplete="one-time-code"></label>','Zweiten Faktor aktivieren')
                 else:
                     body += form('/verwaltung/anmelden','<label>Code aus der Authenticator-App<input name="otp" inputmode="numeric" required autocomplete="one-time-code"></label>','Anmelden')
                 self.send(401, app.page('Anmeldung', body+'</div>'))
@@ -405,6 +413,24 @@ def install(app):
             except (ValueError, UnicodeError):
                 return self.send(400,'Ungueltige Eingabe')
             g=lambda key:data.get(key,[''])[0].strip()
+            if path == '/verwaltung/einrichtung':
+                now=time.time()
+                recent=[t for t in attempts.get('enrollment',[]) if t>now-900]
+                if len(recent)>=5:return self.send(429,'Bitte 15 Minuten warten')
+                if Path(otp_path).exists():return self.send(409,'Zweiter Faktor bereits eingerichtet')
+                if not pending_enrollment or now-pending_enrollment['time']>600:
+                    return self.send(400,'Einrichtung abgelaufen; Verwaltung erneut oeffnen')
+                if not any(hmac.compare_digest(g('otp'),totp(pending_enrollment['secret'],now+offset)) for offset in (-30,0,30)):
+                    attempts['enrollment']=recent+[now];return self.send(403,'Code ungueltig')
+                with app.LOCK:
+                    location=Path(otp_path);location.parent.mkdir(mode=0o700,parents=True,exist_ok=True)
+                    try:
+                        fd=os.open(location,os.O_WRONLY|os.O_CREAT|os.O_EXCL,0o600)
+                    except FileExistsError:return self.send(409,'Bereits eingerichtet')
+                    with os.fdopen(fd,'w') as stream:stream.write(pending_enrollment['secret'])
+                    pending_enrollment.clear()
+                audit('admin_mfa_enrolled')
+                return self.send(303,'',extra={'Location':'/verwaltung',**self.set_session('admin')})
             if path in ('/widerruf','/widerruf/pruefen'):
                 if g('website'):
                     return self.send(200,'Eingang erfasst')

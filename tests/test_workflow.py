@@ -125,6 +125,17 @@ class EndToEnd(unittest.TestCase):
                     # Alter Bestand behaelt alte Frist; keine stille Migration.
                     app.save({'A'*32:{'name':'LEGACY','created':time.time(),'expires':time.time(),'done':time.time()}})
                     self.assertGreater(app.delete_at(app.load()['A'*32]),time.time()+180*86400)
+                    # Persoenliche Ersteinrichtung: QR anzeigen, richtigen Code verlangen,
+                    # vorhandenen Faktor anschliessend nicht ueberschreiben lassen.
+                    otp.unlink()
+                    with patch('secrets.token_bytes',return_value=b'12345678901234567890'):
+                        status,_,body=request('GET','/verwaltung')
+                    self.assertEqual(status,401);self.assertIn(b'data:image/png;base64,',body)
+                    secret=base64.b32encode(b'12345678901234567890').decode().rstrip('=')
+                    self.assertEqual(request('POST','/verwaltung/einrichtung',{'otp':'wrong'})[0],403)
+                    self.assertEqual(request('POST','/verwaltung/einrichtung',{'otp':workflow.totp(secret)})[0],303)
+                    self.assertEqual(otp.read_text(),secret)
+                    self.assertEqual(request('POST','/verwaltung/einrichtung',{'otp':workflow.totp(secret)})[0],409)
                 finally:
                     server.shutdown();server.server_close();thread.join()
 
