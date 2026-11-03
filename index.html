@@ -220,6 +220,25 @@
   button:disabled{opacity:.55;cursor:not-allowed}
   .sample-note{font-size:14px;color:var(--muted);margin:18px 0 24px}
   .muster-grid{align-items:center}
+  .sample-document{margin:0;min-width:0}
+  .sample-image-link{display:block;position:relative;border:1px solid var(--line);border-radius:12px;overflow:hidden;box-shadow:0 12px 30px rgba(20,33,43,.08);background:#fff;cursor:zoom-in}
+  .sample-image-link img{display:block;width:100%;height:auto}
+  .sample-zoom-hint{display:block;background:var(--accent);color:#fff;text-align:center;padding:12px 16px;font-size:15px;font-weight:600}
+  .sample-image-link:hover .sample-zoom-hint{background:var(--accent-dark)}
+  .sample-document figcaption{text-align:center;font-size:13px;color:var(--muted);margin-top:12px;line-height:1.9}
+  .sample-pdf-link{font-size:14px;text-underline-offset:3px}
+  #muster-ansicht{margin:auto;width:min(1100px,calc(100% - 24px));max-width:calc(100% - 24px);max-height:calc(100vh - 24px);max-height:calc(100dvh - 24px);padding:0;border:1px solid var(--line);border-radius:14px;color:var(--ink);background:#fff}
+  #muster-ansicht::backdrop{background:rgba(20,33,43,.75)}
+  body:has(#muster-ansicht[open]){overflow:hidden}
+  .sample-viewer-header{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:16px 20px;position:sticky;top:0;background:#fff;border-bottom:1px solid var(--line);z-index:1}
+  .sample-viewer-header h2{font-size:20px;margin:0}
+  .sample-viewer-header>div{display:flex;gap:8px;flex-shrink:0}
+  .sample-viewer-header .btn{padding:9px 12px;font-size:14px}
+  .sample-viewer-note{padding:12px 20px;font-size:13px;color:var(--muted)}
+  .sample-viewer-image{overflow:auto;max-height:65vh;max-height:65dvh;overscroll-behavior:contain;background:#eee}
+  .sample-viewer-image img{display:block;width:100%;height:auto}
+  .sample-viewer-image.is-zoomed img{width:1697px;max-width:none}
+  @media(max-width:520px){.sample-viewer-header{flex-wrap:wrap;padding:12px}.sample-viewer-header h2{font-size:18px}.sample-viewer-header .btn{font-size:13px}.sample-viewer-note{padding:10px 12px}}
   .sample-preview{background:#fff;border:1px solid var(--line);border-top:5px solid var(--accent);border-radius:12px;padding:28px;box-shadow:0 12px 30px rgba(20,33,43,.06)}
   .sample-label{font-size:12px;color:var(--accent-dark);font-weight:700;letter-spacing:.8px;margin-bottom:14px}
   .sample-preview dl{margin:20px 0}
@@ -354,10 +373,22 @@
 <!-- MUSTER -->
 <section id="muster" class="white">
   <div class="wrap grid2 muster-grid">
-    <div><span class="eyebrow">Vor der Beauftragung ansehen</span><h2>So sieht Ihre Abrechnung aus</h2><p>Das Muster zeigt die Kostenarten, die verwendeten Verteilerschlüssel, den Anteil einer Wohnung, die Vorauszahlungen und das Abrechnungsergebnis. Auch die CO₂-Aufteilung wird erläutert.</p><p class="sample-note">Alle Namen, Adressen, Belege und Zahlen im Muster sind erfunden. Es ist keine echte Kundenabrechnung und keine Vorlage zur ungeprüften Übernahme.</p><a class="btn" href="/muster-nebenkostenabrechnung.pdf" download>Musterabrechnung herunterladen (PDF)</a></div>
-    <div class="sample-preview" aria-label="Inhalt der Musterabrechnung"><div class="sample-label">MUSTER · fiktiver Fall</div><h3>Betriebskostenabrechnung 2025</h3><p>Wohnung EG · 80 m²</p><dl><div><dt>Kosten und Verteilung</dt><dd>übersichtlich aufgeschlüsselt</dd></div><div><dt>Heizung und CO₂</dt><dd>gesondert ausgewiesen</dd></div><div><dt>Vorauszahlungen</dt><dd>mit Kosten verrechnet</dd></div><div><dt>Ergebnis</dt><dd>Guthaben oder Nachzahlung</dd></div></dl><p class="small">Die Vorschau zeigt den Aufbau. Die vollständige Musterabrechnung finden Sie im PDF.</p></div>
+    <div><span class="eyebrow">Vor der Beauftragung ansehen</span><h2>So sieht Ihre Abrechnung aus</h2><p>Sehen Sie sich die Musterabrechnung direkt an: Kostenarten, Verteilerschlüssel, Vorauszahlungen und das Ergebnis für eine Wohnung – einschließlich der CO₂-Aufteilung.</p><p class="sample-note">Alle Namen, Adressen, Belege und Zahlen im Muster sind erfunden. Es ist keine echte Kundenabrechnung und keine Vorlage zur ungeprüften Übernahme.</p><p>Tippen oder klicken Sie auf das Bild, um die Abrechnung in Ruhe zu lesen.</p></div>
+    <figure class="sample-document">
+      <a class="sample-image-link" id="muster-vergroessern" href="/muster-nebenkostenabrechnung.jpg" aria-label="Musterabrechnung als Bild vergrößern">
+        <img src="/muster-nebenkostenabrechnung.jpg" width="1697" height="2400" loading="lazy" decoding="async" alt="Muster einer Betriebskostenabrechnung 2025 für die Wohnung EG: Kostenverteilung, CO₂-Abzug, Vorauszahlungen und 216,53 Euro Nachzahlung. Alle Daten sind erfunden.">
+        <span class="sample-zoom-hint">Bild vergrößern ↗</span>
+      </a>
+      <figcaption><strong>Muster – alle Daten erfunden.</strong><br><a class="sample-pdf-link" href="/muster-nebenkostenabrechnung.pdf" download>Auch als PDF herunterladen</a></figcaption>
+    </figure>
   </div>
 </section>
+
+<dialog id="muster-ansicht" aria-labelledby="muster-ansicht-titel">
+  <div class="sample-viewer-header"><h2 id="muster-ansicht-titel">Musterabrechnung</h2><div><button class="btn ghost" type="button" id="muster-zoom" aria-pressed="false">Vergrößern</button><button class="btn" type="button" id="muster-schliessen" autofocus>Schließen</button></div></div>
+  <p class="sample-viewer-note">Muster – alle Daten erfunden. In der Vergrößerung können Sie das Bild seitlich und nach unten verschieben.</p>
+  <div class="sample-viewer-image" id="muster-bildbereich" tabindex="0" role="region" aria-label="Musterabrechnung, verschiebbarer Bildbereich"><img src="/muster-nebenkostenabrechnung.jpg" width="1697" height="2400" loading="lazy" alt="Vollständige Musterabrechnung mit ausschließlich erfundenen Angaben."></div>
+</dialog>
 
 <!-- Nur echte, dokumentiert freigegebene Kundenstimmen in der JSON-Liste pflegen. Ohne Einträge bleibt der Bereich verborgen. Keine Musterbewertungen oder Bewertungs-Sterne veröffentlichen. -->
 <section id="kundenstimmen" hidden>

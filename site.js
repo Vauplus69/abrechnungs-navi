@@ -11,6 +11,30 @@
   if (typeof module !== 'undefined' && module.exports) module.exports = {berechnePreis};
   if (typeof document === 'undefined') return;
 
+  const musterLink = document.getElementById('muster-vergroessern');
+  const musterDialog = document.getElementById('muster-ansicht');
+  const musterZoom = document.getElementById('muster-zoom');
+  const musterBild = document.getElementById('muster-bildbereich');
+  const musterSchliessen = document.getElementById('muster-schliessen');
+  if (musterLink && musterDialog && musterZoom && musterBild && musterSchliessen && typeof musterDialog.showModal === 'function') {
+    musterLink.addEventListener('click', function (event) {
+      event.preventDefault();
+      musterBild.classList.remove('is-zoomed');
+      musterZoom.setAttribute('aria-pressed', 'false');
+      musterZoom.textContent = 'Vergrößern';
+      musterDialog.showModal();
+      musterBild.scrollTop = 0;
+      musterBild.scrollLeft = 0;
+    });
+    musterSchliessen.addEventListener('click', function () { musterDialog.close(); });
+    musterDialog.addEventListener('close', function () { musterLink.focus({preventScroll: true}); });
+    musterZoom.addEventListener('click', function () {
+      const vergroessert = musterBild.classList.toggle('is-zoomed');
+      musterZoom.setAttribute('aria-pressed', String(vergroessert));
+      musterZoom.textContent = vergroessert ? 'An Fenster anpassen' : 'Vergrößern';
+    });
+  }
+
   const wohnungen = document.getElementById('preis-wohnungen');
   const haeuser = document.getElementById('preis-haeuser');
   const gesamt = document.getElementById('preis-gesamt');
