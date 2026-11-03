@@ -8,14 +8,16 @@ set +a
 : "${RESTIC_PASSWORD_FILE:?Passwortdatei fehlt}"
 case "$RESTIC_REPOSITORY" in /*|file:* ) echo 'Nur externer Sicherungsort erlaubt'; exit 1;; esac
 command -v restic >/dev/null || { echo 'restic muss installiert sein'; exit 1; }
+RESTIC_OPTIONS=()
+if [ -n "${AN_SFTP_COMMAND:-}" ]; then RESTIC_OPTIONS=(-o "sftp.command=$AN_SFTP_COMMAND"); fi
 # App fuer einen konsistenten Stand kurz anhalten; nach Fehler wieder starten.
 trap 'systemctl start an-upload' EXIT
 systemctl stop an-upload
-restic backup /srv/an-upload/data --tag abrechnungs-navi --quiet
+restic "${RESTIC_OPTIONS[@]}" backup /srv/an-upload/data --tag abrechnungs-navi --quiet
 systemctl start an-upload
 trap - EXIT
-restic forget --tag abrechnungs-navi --keep-within 30d --prune --quiet
-restic check --quiet
+restic "${RESTIC_OPTIONS[@]}" forget --tag abrechnungs-navi --keep-within 30d --prune --quiet
+restic "${RESTIC_OPTIONS[@]}" check --quiet
 install -d -m 750 -o root -g annavi /etc/an-upload
 date +%s > /etc/an-upload/backup-last-success
 chown root:annavi /etc/an-upload/backup-last-success
