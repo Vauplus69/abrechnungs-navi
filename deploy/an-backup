@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 # Keine Zugangsdaten im Repository. Konfiguration ausschliesslich root-lesbar.
 set -euo pipefail
+exec 9>/run/lock/an-backup.lock
+flock -n 9 || exit 0
 set -a
 source /etc/an-upload/backup.env
 set +a
@@ -37,7 +39,7 @@ restic "${RESTIC_OPTIONS[@]}" backup \
   /usr/local/bin/an-backup /usr/local/bin/an-passwort /usr/local/bin/an-mailpasswort \
   --exclude /etc/an-upload/restic-password --tag abrechnungs-navi --quiet
 systemctl start an-upload
-restic "${RESTIC_OPTIONS[@]}" forget --tag abrechnungs-navi --keep-within 30d --prune --quiet
+restic "${RESTIC_OPTIONS[@]}" forget --tag abrechnungs-navi --keep-within 28d --prune --quiet
 restic "${RESTIC_OPTIONS[@]}" check --quiet
 install -d -m 750 -o root -g annavi /etc/an-upload
 date +%s > /etc/an-upload/backup-last-success
