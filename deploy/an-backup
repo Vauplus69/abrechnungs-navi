@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+# Keine Zugangsdaten im Repository. Konfiguration ausschliesslich root-lesbar.
+set -euo pipefail
+set -a
+source /etc/an-upload/backup.env
+set +a
+: "${RESTIC_REPOSITORY:?Externer Sicherungsort fehlt}"
+: "${RESTIC_PASSWORD_FILE:?Passwortdatei fehlt}"
+case "$RESTIC_REPOSITORY" in /*|file:* ) echo 'Nur externer Sicherungsort erlaubt'; exit 1;; esac
+command -v restic >/dev/null || { echo 'restic muss installiert sein'; exit 1; }
+# App fuer einen konsistenten Stand kurz anhalten; nach Fehler wieder starten.
+trap 'systemctl start an-upload' EXIT
+systemctl stop an-upload
+restic backup /srv/an-upload/data --tag abrechnungs-navi --quiet
+systemctl start an-upload
+trap - EXIT
+restic forget --tag abrechnungs-navi --keep-within 30d --prune --quiet
+restic check --quiet
+install -d -m 750 -o root -g annavi /etc/an-upload
+date +%s > /etc/an-upload/backup-last-success
+chown root:annavi /etc/an-upload/backup-last-success
+chmod 640 /etc/an-upload/backup-last-success

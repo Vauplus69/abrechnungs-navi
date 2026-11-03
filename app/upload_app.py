@@ -115,6 +115,29 @@ def mail_and_mark(a):
         save_anfragen(lst)
 
 
+def send_withdrawal_confirmation(row):
+    """Quittung nach ausdruecklich abgegebenem Widerruf; keine Werbemail."""
+    try:
+        pw = open(SMTP_FILE, encoding='utf-8').read().strip()
+        msg = EmailMessage()
+        msg['Subject'] = 'Eingang Ihres Widerrufs - Abrechnungs-Navi'
+        msg['From'] = MAIL_ADDR
+        msg['To'] = row['email']
+        msg['Bcc'] = MAIL_ADDR
+        stamp = datetime.fromtimestamp(row['time']).astimezone().isoformat(timespec='seconds')
+        msg.set_content(f"Guten Tag {row['name']},\n\nIhr Widerruf ist am {stamp} eingegangen.\n"
+                        f"Vertragsangabe: {row['vertrag']}\nEingangsnummer: {row['id']}\n\n"
+                        'Diese Nachricht bestaetigt den Eingang Ihrer Widerrufserklaerung.\n\nVolker Cyrener\nAbrechnungs-Navi')
+        with smtplib.SMTP(SMTP_HOST, SMTP_PORT, timeout=20) as smtp:
+            smtp.starttls(context=ssl.create_default_context())
+            smtp.login(MAIL_ADDR,pw)
+            smtp.send_message(msg)
+        return True
+    except Exception:
+        print('Widerruf gespeichert; Mailquittung noch nicht zugestellt',flush=True)
+        return False
+
+
 def cleanup():
     """Loescht alle Kunden, deren Aufbewahrungsfrist abgelaufen ist, und alte Anfragen."""
     now = time.time()
@@ -478,4 +501,6 @@ def main():
 
 
 if __name__ == "__main__":
+    import workflow
+    workflow.install(sys.modules[__name__])
     main()

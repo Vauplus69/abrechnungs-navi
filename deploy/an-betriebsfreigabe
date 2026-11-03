@@ -1,0 +1,35 @@
+#!/usr/bin/env python3
+"""Persoenliche Betreiberfreigabe auf dem Server. Keine automatische Tatsachenbestaetigung."""
+import base64, hashlib, json, os, pathlib, secrets, subprocess, time
+root=pathlib.Path('/etc/an-upload')
+root.mkdir(mode=0o750,exist_ok=True)
+def yes(text):
+    if input(text+' [ja/nein]: ').strip().lower()!='ja':
+        raise SystemExit('Nicht freigegeben. Keine neuen Kundenuploads.')
+yes('Hetzner-Anlage mit Rechenzentrum, Unterauftragnehmern und Restfristen vollstaendig geprueft und im AV-Vertrag eingetragen?')
+yes('FileVault/Festplattenverschluesselung und sichere lokale Arbeitsumgebung persoenlich geprueft?')
+yes('Zwei-Faktor-Anmeldung bei Hosting und E-Mail aktiviert und getestet?')
+backup=root/'backup-last-success'
+if not backup.exists() or time.time()-float(backup.read_text())>26*3600:
+    raise SystemExit('Aktuelle erfolgreiche externe Sicherung fehlt. Erst an-backup einrichten und ausfuehren.')
+yes('Echte Wiederherstellung aus externer Sicherung getestet, Ergebnis dokumentiert und Wiederanlauf binnen 48 Stunden erreicht?')
+avv=pathlib.Path(input('Pfad zur vollstaendig ausgefuellten finalen AV-Vertragsvorlage: ').strip())
+if not avv.is_file():raise SystemExit('Vertragsdatei fehlt')
+if not (root/'totp.secret').exists():
+    secret=base64.b32encode(secrets.token_bytes(20)).decode().rstrip('=')
+    print('Persoenlich in der Authenticator-App eintragen; nicht per Chat oder E-Mail teilen:')
+    print('otpauth://totp/Abrechnungs-Navi:volker?secret='+secret+'&issuer=Abrechnungs-Navi')
+    import sys
+    sys.path.insert(0,'/srv/an-upload/app')
+    from workflow import totp
+    if input('Aktuellen sechsstelligen Code zur Bestaetigung eingeben: ').strip()!=totp(secret):
+        raise SystemExit('Code stimmt nicht; nichts gespeichert')
+    (root/'totp.secret').write_text(secret)
+cfg={'provider_annex_complete':True,'disk_encryption_verified':True,'provider_mfa_verified':True,
+     'restore_tested_at':time.time(),'backup_tested_at':time.time(),'backup_location':'extern laut root-Konfiguration',
+     'backup_retention_days':30,'avv_sha256':hashlib.sha256(avv.read_bytes()).hexdigest()}
+(root/'operator.json').write_text(json.dumps(cfg))
+for f in (root/'operator.json',root/'totp.secret'):
+    subprocess.run(['chown','root:annavi',str(f)],check=True);os.chmod(f,0o640)
+subprocess.run(['systemctl','enable','--now','an-backup.timer'],check=True)
+print('Betreiberfreigabe gespeichert. Verwaltung mit Passwort und Authenticator-Code oeffnen.')

@@ -3,9 +3,10 @@ abrechnungs-navi.de {
 	encode gzip
 	header {
 		X-Content-Type-Options nosniff
-		Referrer-Policy strict-origin-when-cross-origin
+		Referrer-Policy no-referrer
 		X-Frame-Options DENY
 		Strict-Transport-Security "max-age=31536000"
+		Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; object-src 'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'self'"
 		-Server
 	}
 	log {
@@ -19,8 +20,24 @@ abrechnungs-navi.de {
 	request_body /anfrage {
 		max_size 20KB
 	}
+	request_body /widerruf* {
+		max_size 20KB
+	}
+	request_body /verwaltung/ergebnis/* {
+		max_size 26MB
+	}
+	redir /index.html / permanent
+	handle /widerruf* {
+		@form path /widerruf /widerruf/pruefen
+		reverse_proxy @form 127.0.0.1:8790
+		root * /var/www/abrechnungs-navi
+		file_server
+	}
 
 	handle /anfrage {
+		reverse_proxy 127.0.0.1:8790
+	}
+	handle /systemstatus {
 		reverse_proxy 127.0.0.1:8790
 	}
 
@@ -34,6 +51,11 @@ abrechnungs-navi.de {
 	}
 
 	handle {
+		root * /var/www/abrechnungs-navi
+		file_server
+	}
+	handle_errors {
+		rewrite * /404.html
 		root * /var/www/abrechnungs-navi
 		file_server
 	}

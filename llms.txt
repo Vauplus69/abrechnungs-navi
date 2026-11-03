@@ -1,30 +1,7 @@
 # Abrechnungs-Navi
-
-> Abrechnungs-Navi erstellt Nebenkostenabrechnungen (Betriebskostenabrechnungen) als Komplett-Service für private Vermieter in ganz Deutschland. Der Vermieter lädt seine Unterlagen über einen persönlichen, geschützten Upload-Link hoch und erhält für jede Wohnung eine fertige, doppelt geprüfte Abrechnung.
-
-## Leistung
-- Kosten nach Mietvertrag und Betriebskostenverordnung auf die Mieter verteilen
-- CO₂-Kostenaufteilung (Pflicht seit 2023)
-- Zweite Prüfung aus Sicht der Mieter, Abrechnung in klarer Sprache mit allen Belegen
-- Erinnerung an die Frist: 12 Monate nach Ende des Abrechnungsjahres
-- Keine Rechtsberatung
-
-## Preise
-- 89 € für die erste Wohnung pro Jahr
-- 59 € für jede weitere Wohnung im selben Haus pro Jahr
-- Kleinunternehmer gemäß § 19 UStG, keine Umsatzsteuer
-
-## Ablauf
-1. Anfrage per E-Mail an kontakt@abrechnungs-navi.de (Anzahl Wohnungen, Abrechnungsjahr)
-2. Fester Preis und persönlicher Upload-Link; Unterlagen als Foto oder PDF hochladen
-3. Fertige Abrechnung im Normalfall nach 3 Werktagen, spätestens nach 10 Werktagen ab vollständigen Unterlagen
-
-## Datenschutz
-- Verschlüsselte Übertragung, Speicherung auf einem Server in Deutschland
-- Unterlagen werden spätestens 6 Monate nach Auftragsende automatisch gelöscht
-- Belege werden mit KI-Unterstützung (Claude, Anthropic) ausgelesen; jede Abrechnung wird von einem Menschen geprüft und freigegeben
-
-## Links
-- [Startseite](https://abrechnungs-navi.de/)
-- [Impressum](https://abrechnungs-navi.de/impressum.html)
-- [Datenschutz](https://abrechnungs-navi.de/datenschutz.html)
+Nebenkostenabrechnung als einmalige Dienstleistung für private Vermieter. 89 Euro erste Wohnung je Haus und Abrechnungsjahr, 59 Euro jede weitere. Kein Abo. Keine Rechtsberatung. Keine KI-Verarbeitung von Kundenbelegen.
+- https://abrechnungs-navi.de/
+- https://abrechnungs-navi.de/leistungsbedingungen.html
+- https://abrechnungs-navi.de/widerruf.html
+- https://abrechnungs-navi.de/datenschutz.html
+- https://abrechnungs-navi.de/impressum.html

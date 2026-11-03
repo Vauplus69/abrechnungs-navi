@@ -1,19 +1,15 @@
-# Abrechnungs-Navi – Ablauf mit KI-Helfern (Plan)
+# Ablauf Abrechnungs-Navi
+Stand 03.11.2026, Fassung 4. Keine KI für Kundenbelege.
 
-Dieser Ordner wird **nicht** auf die Webseite kopiert. Hier liegt nur das Rechenwerk.
+1. Kostenlose Anfrage prüfen, individuelles Angebot mit vollständiger Widerrufsbelehrung, Musterformular und Leistungsbedingungen senden.
+2. Beauftragung nachweisen; vorzeitigen Beginn nur bei ausdrücklichem Verlangen und Kenntnisbestätigung übernehmen. Andernfalls 14 Tage ab Vertragsschluss warten.
+3. Vollständigen AV-Vertrag einschließlich Betreiberangaben und Kundenanlage beiderseits nachweisbar abschließen. Betreiberfreigabe und Sicherung/Wiederherstellung müssen vorliegen.
+4. Zahlung im Mollie-Konto prüfen. Keine echte Zahlung zu Testzwecken auslösen.
+5. Verwaltung freigeben; Link und Zugangscode getrennt übermitteln. Kein öffentlicher oder per E-Mail versandter Beleg.
+6. Unterlagen ohne externe KI auslesen, Berechnung durchführen und alle Zahlen/Schlüssel fachlich prüfen. Sonderfälle vor Zusage klären.
+7. Geprüftes Ergebnis in Verwaltung hochladen; Kunden über Bereitstellung und konkreten Löschtermin informieren; dann Ergebnis freigeben.
+8. Kunde lädt Ergebnis und Originalunterlagen herunter. Aktive Daten spätestens 30 Tage nach erstmaliger Bereitstellung löschen; kein Zurücksetzen der Frist durch erneute Freigabe.
+9. Lokale Kopien und versehentliche E-Mail-Anhänge manuell mitlöschen und dokumentieren; Sicherungsrestfristen beachten.
+10. Bestandsaufträge werden nicht stillschweigend auf neue Vertragsfristen umgestellt.
 
-## Ablauf je Auftrag
-
-1. **Belege einsammeln:** Der Vermieter lädt über seinen Upload-Link hoch (liegt auf dem Server unter `/srv/an-upload/data/kunden/<link>`).
-2. **Helfer 1 – Belege lesen:** liest jede Rechnung, holt Betrag, Zeitraum und Kostenart heraus und schreibt alles in eine `auftrag.json` (Aufbau wie `beispiel.json`). Unklare Belege werden markiert, nicht geraten.
-3. **Helfer 2 – Rechnen:** `python3 rechner.py auftrag.json ausgabe/` erstellt je Mieter eine PDF-Abrechnung und einen `pruefbericht.txt`.
-4. **Helfer 3 – Zweitprüfung „aus Sicht der Mieter“:** prüft die PDFs gegen die Belege und den Prüfbericht (umlagefähig? Schlüssel wie im Mietvertrag? Summen stimmen?).
-5. **Volker – Freigabe:** schaut Prüfbericht und PDFs durch, gibt frei oder korrigiert.
-6. **Versand:** Erst nach Freigabe gehen die PDFs an den Vermieter. Der Vermieter schickt sie an seine Mieter.
-7. **Abschluss:** In der Verwaltung „Auftrag abgeschlossen“ klicken. Nach 6 Monaten löscht der Server automatisch.
-
-## Vor dem ersten echten Einsatz nötig
-
-- KI-Dienst in die Datenschutzerklärung aufnehmen und dafür einen Vertrag zur Auftragsverarbeitung abschließen.
-- Einmal mit echten (geschwärzten) Unterlagen testen.
-- Anwalt-Check: Erstellen der Abrechnung ohne Rechtsberatung (Rechtsdienstleistungsgesetz).
+Start erst nach dokumentiertem Betreibercheck. RDG-Leistungsgrenze und Berufshaftpflicht sind außerhalb des Softwaretests zu klären.
