@@ -17,7 +17,7 @@ Der neue Ablauf nimmt erst Unterlagen an, wenn die Betreiberfreigabe vollstaendi
 
 Restic benoetigt einen bereits vereinbarten externen Sicherungsort. Es wird kein kostenpflichtiger Speicher automatisch bestellt. Root hinterlegt `RESTIC_REPOSITORY` und `RESTIC_PASSWORD_FILE` in `/etc/an-upload/backup.env` (Datei nur root-lesbar). Das Passwort steht ausschliesslich in der angegebenen lokalen Passwortdatei. Anbieter, Land, Auftragsverarbeitung und Fristen sind vor Verwendung im AV-Vertrag zu erfassen.
 
-`an-backup` sichert einen konsistenten Stand verschluesselt extern und bereinigt Sicherungen nach 30 Tagen. `an-backup.timer` laeuft taeglich. Ein erfolgreicher Sicherungslauf ersetzt keinen Wiederherstellungstest. Externe Gesamtausfaelle sind in der dokumentierten Risikobewertung zu beruecksichtigen. Weitere Anwendungen auf dem Server werden nicht in diese Sicherung aufgenommen.
+`an-backup` sichert einen konsistenten Stand verschluesselt extern und bereinigt Sicherungen nach 30 Tagen. Enthalten sind Auftragsdaten, AN-Programm und Seiten, eigene Dienstdefinitionen sowie die AN-Konfiguration einschliesslich SMTP-Zugang, Verwaltungs-Passworthash und Authenticator. Der Restic-Entschluesselungsschluessel ist ausgeschlossen und muss separat sicher aufbewahrt werden. Der Storage-Box-Zugang muss bei einem Serververlust ebenfalls unabhaengig verfuegbar sein. Es handelt sich nicht um ein vollstaendiges Serverabbild. `an-backup.timer` laeuft taeglich. Ein erfolgreicher Sicherungslauf ersetzt keinen Wiederherstellungstest. Externe Gesamtausfaelle sind in der dokumentierten Risikobewertung zu beruecksichtigen. Weitere Anwendungen auf dem Server werden nicht in diese Sicherung aufgenommen.
 
 ## Ablauf
 
