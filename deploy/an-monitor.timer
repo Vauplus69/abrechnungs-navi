@@ -1,7 +1,7 @@
 [Unit]
 Description=Abrechnungs-Navi alle fuenf Minuten pruefen
 [Timer]
-OnBootSec=3min
+OnActiveSec=3min
 OnUnitActiveSec=5min
 Persistent=true
 [Install]
