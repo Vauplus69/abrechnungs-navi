@@ -37,6 +37,8 @@
     return p;
   }
   if (wohnungen && haeuser && gesamt && aufteilung && fehler && uebernehmen) {
+    document.querySelector('.calculator-inputs').hidden = false;
+    document.querySelector('.calculator-result').hidden = false;
     uebernehmen.hidden = false;
     wohnungen.addEventListener('input', aktualisieren);
     haeuser.addEventListener('input', aktualisieren);

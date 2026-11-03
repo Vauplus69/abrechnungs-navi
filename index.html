@@ -337,12 +337,12 @@
     </div>
     <div class="calculator card" id="preisrechner" aria-labelledby="rechner-titel">
       <div><h3 id="rechner-titel">Ihr Gesamtpreis vor der Anfrage</h3><p>Für ein Abrechnungsjahr. Pro Haus kostet die erste Wohnung 89 €, jede weitere 59 €.</p></div>
-      <div class="grid2 calculator-inputs">
+      <div class="grid2 calculator-inputs" hidden>
         <div><label for="preis-wohnungen">Wohnungen insgesamt</label><input id="preis-wohnungen" type="number" min="1" max="200" step="1" value="1" inputmode="numeric" aria-describedby="rechner-fehler"></div>
         <div><label for="preis-haeuser">Häuser insgesamt</label><input id="preis-haeuser" type="number" min="1" max="200" step="1" value="1" inputmode="numeric" aria-describedby="rechner-fehler"></div>
       </div>
       <p id="rechner-fehler" class="calculator-error" role="status" hidden></p>
-      <div class="calculator-result" aria-live="polite" aria-atomic="true"><span>Gesamtpreis pro Abrechnungsjahr</span><strong id="preis-gesamt">89 €</strong><span id="preis-aufteilung">1 erste Wohnung × 89 €</span></div>
+      <div class="calculator-result" aria-live="polite" aria-atomic="true" hidden><span>Gesamtpreis pro Abrechnungsjahr</span><strong id="preis-gesamt">89 €</strong><span id="preis-aufteilung">1 erste Wohnung × 89 €</span></div>
       <p class="small">Gemäß § 19 UStG wird keine Umsatzsteuer berechnet. Mehrere Abrechnungsjahre sind getrennte Aufträge. Der Rechner ist unverbindlich; das Angebot erhalten Sie vor Ihrer Beauftragung.</p>
       <noscript><p>Für den interaktiven Rechner benötigen Sie JavaScript. Ohne JavaScript können Sie den Preis so berechnen: 89 € je Haus plus 59 € für jede weitere Wohnung im selben Haus. Das Anfrageformular funktioniert auch ohne JavaScript.</p></noscript>
       <button class="btn" id="preis-uebernehmen" type="button" hidden>Mit dieser Anzahl unverbindlich anfragen</button>
