@@ -180,7 +180,7 @@
   .price.featured{border:2px solid var(--accent)}
   .price .tag{font-size:14px;font-weight:600;color:var(--accent);margin-bottom:8px}
   .amount{font-size:40px;font-weight:800;letter-spacing:-1px;margin:10px 0 2px}
-  .amount small{font-size:16px;font-weight:500;color:var(--muted);letter-spacing:0}
+  .amount small{display:block;margin-top:6px;font-size:16px;font-weight:500;color:var(--muted);letter-spacing:0}
   .price .sub{color:var(--muted);font-size:15px;margin-bottom:20px}
   .price .check{margin-bottom:26px;flex:1}
   .note{font-size:14px;color:var(--muted);margin-top:22px;text-align:center}
@@ -324,8 +324,8 @@
       <div class="price featured">
         <div class="tag">Für Vermieter</div>
         <h3>Nebenkostenabrechnung</h3>
-        <div class="amount">89 € <small>einmalig für die erste Wohnung je Abrechnungsjahr</small></div>
-        <div class="sub">jede weitere Wohnung im selben Haus: einmalig 59 € je Abrechnungsjahr<br>Gemäß § 19 UStG wird keine Umsatzsteuer berechnet.</div>
+        <div class="amount">89 € <small>für die erste Wohnung im Haus</small></div>
+        <div class="sub" style="margin-top:14px"><strong style="color:var(--ink)">59 € für jede weitere Wohnung im selben Haus</strong><br><span style="display:block;margin-top:12px">Einmalig für ein Abrechnungsjahr. Kein Abo.</span><span style="display:block;margin-top:8px;font-size:13px">Gemäß § 19 UStG wird keine Umsatzsteuer berechnet.</span></div>
         <ul class="check">
           <li>Komplette Abrechnung pro Wohnung</li>
           <li>Zweite Prüfung aus Sicht der Mieter</li>
