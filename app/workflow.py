@@ -21,6 +21,17 @@ DAY = 86400
 VERSION = '4-2026-11-03'
 
 
+def earliest_regular_start(contract_at):
+    """Calendar minimum only; operator must verify notice receipt and extensions."""
+    from datetime import datetime, timedelta, time as daytime
+    from zoneinfo import ZoneInfo
+    zone = ZoneInfo('Europe/Berlin')
+    last_day = datetime.fromtimestamp(contract_at, zone).date() + timedelta(days=14)
+    while last_day.weekday() >= 5:
+        last_day += timedelta(days=1)
+    return datetime.combine(last_day + timedelta(days=1), daytime(), zone).timestamp()
+
+
 def password_hash(password, salt=None):
     salt = salt or secrets.token_hex(16)
     digest = hashlib.scrypt(password.encode(), salt=salt.encode(), n=16384, r=8, p=1).hex()
@@ -208,6 +219,7 @@ def install(app):
         fields += '<label>Vertrag geschlossen am (deutsche Ortszeit)<input name="contract_at" type="datetime-local" required></label>'
         for key, label in [('avv','Vollstaendiger AV-Vertrag mit Anlagen beiderseits nachweisbar geschlossen'),
                            ('paid','Zahlung im Mollie-Konto bestaetigt (nicht nur Rueckleitungsseite)'),
+                           ('expired','Bei Beginn nach Widerrufsfrist: ordnungsgemaesse Belehrung zugegangen und Frist einschliesslich Feiertagsverlaengerung nachweisbar vollstaendig abgelaufen'),
                            ('early','Ausdrueckliches Verlangen nach vorzeitigem Beginn und Kenntnisbestaetigung liegen vor')]:
             fields += f'<label><input type="checkbox" name="{key}" value="yes"> {label}</label>'
         fields += '<label>Nachweisreferenz (keine Mieterdaten)<input name="evidence" required maxlength="120"></label>'
@@ -510,12 +522,12 @@ def install(app):
                     if contract_at>time.time() or contract_at<time.time()-366*DAY:return self.send(400,'Vertragsdatum pruefen')
                     if not g('name') or not g('order') or not g('evidence') or g('avv')!='yes' or g('paid')!='yes':
                         return self.send(400,'Auftrag, AV-Vertrag, Nachweis und Zahlung muessen bestaetigt sein')
-                    if g('early')!='yes' and time.time()<contract_at+14*DAY:
-                        return self.send(409,'Ohne vorzeitigen Leistungsbeginn erst nach Ablauf der 14 Tage freigeben')
+                    if g('early')!='yes' and (time.time()<earliest_regular_start(contract_at) or g('expired')!='yes'):
+                        return self.send(409,'Ohne vorzeitigen Leistungsbeginn: vollstaendigen Fristablauf nach Zugang der Belehrung einschliesslich Wochenenden und Feiertagen pruefen und bestaetigen')
                     token=secrets.token_urlsafe(24);code=secrets.token_urlsafe(12);now=time.time()
                     db[token]={'workflow':VERSION,'name':g('name')[:100],'order':g('order')[:80],
                         'created':now,'expires':now+30*DAY,'access_hash':password_hash(code),
-                        'contract_at':contract_at,'early':g('early')=='yes','avv':config()['avv_sha256'],
+                        'contract_at':contract_at,'early':g('early')=='yes','expiry_verified':g('expired')=='yes','avv':config()['avv_sha256'],
                         'evidence':g('evidence')[:120],'ai':False}
                     app.save(db);audit('order_released',db[token]['order'])
                     message='Zugangscode (nur jetzt sichtbar; getrennt vom Link uebermitteln): '+code

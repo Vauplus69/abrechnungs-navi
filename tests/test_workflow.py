@@ -79,9 +79,10 @@ class EndToEnd(unittest.TestCase):
                     self.assertEqual(status,303);admin_cookie=headers['Set-Cookie'].split(';')[0]
                     self.assertEqual(request('GET','/verwaltung',cookie=admin_cookie)[0],200)
                     values={'name':'TEST SYNTHETIC','order':'TEST-001','contract_at':time.time()-15*86400,
-                            'avv':'yes','paid':'yes','evidence':'TEST LOCAL ONLY'}
+                            'avv':'yes','paid':'yes','expired':'yes','evidence':'TEST LOCAL ONLY'}
                     self.assertEqual(request('POST','/verwaltung/neu',{**values,'avv':'no'},admin_cookie)[0],400)
                     self.assertEqual(request('POST','/verwaltung/neu',{**values,'contract_at':time.time()},admin_cookie)[0],409)
+                    self.assertEqual(request('POST','/verwaltung/neu',{**values,'expired':'no'},admin_cookie)[0],409)
                     cfg.unlink()
                     self.assertEqual(request('POST','/verwaltung/neu',values,admin_cookie)[0],503)
                     cfg.write_text(json.dumps(config))
@@ -140,3 +141,16 @@ class EndToEnd(unittest.TestCase):
                     server.shutdown();server.server_close();thread.join()
 
 if __name__=='__main__':unittest.main()
+
+
+class CalendarDeadlineTests(unittest.TestCase):
+    def test_full_day_weekend_and_dst(self):
+        from datetime import datetime
+        from zoneinfo import ZoneInfo
+        zone = ZoneInfo('Europe/Berlin')
+        for start, expected in [('2026-10-19T08:00','2026-11-03T00:00'),
+                                ('2026-10-17T08:00','2026-11-03T00:00'),
+                                ('2026-03-16T08:00','2026-03-31T00:00')]:
+            value = datetime.fromisoformat(start).replace(tzinfo=zone).timestamp()
+            result = datetime.fromtimestamp(workflow.earliest_regular_start(value),zone)
+            self.assertEqual(result.isoformat(timespec='minutes')[:16],expected)
