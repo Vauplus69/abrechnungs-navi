@@ -61,3 +61,7 @@ Live-Installation, echte Mailzustellung nach konkreter Testfreigabe, Mollie-Prof
 Diese lokale Ueberwachung kann bei Totalausfall des gesamten Servers oder des E-Mail-Anbieters selbst keine E-Mail zustellen. Der Inhaber kontrolliert Zugang und Sicherungsstand regelmaessig. Serveruebergreifende Ueberwachung und ein echter Ersatzserver-Test sind gesonderte Betriebsnachweise.
 
 AN speichert in Anwendung und Webserver-Zugriffsprotokollen keine IP-Adressen. Sicherheitsereignisse enthalten weder Namen noch Zugangscodes oder Upload-Links; Auftragsreferenzen werden gehasht. Ereignisse werden nach 183 Tagen geloescht. Administrative SSH-Systemprotokolle des gemeinsamen Servers sind hiervon getrennt.
+
+### Markenauftritt (03.11.2026)
+
+Die Startseite verwendet `logo-abrechnungs-navi.png` (1080 × 183, transparent). Alle öffentlichen HTML-Seiten binden `favicon.ico` (16/32/48 px), `favicon-32.png` und `apple-touch-icon.png` ein. `icon-192.png` und `icon-512.png` liegen für weitere Verwendungen bereit. Die Motive stammen aus dem freigegebenen Logo; keine Änderung an Preisen, Vertrag oder Anfrageverarbeitung.

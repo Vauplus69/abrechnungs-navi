@@ -23,6 +23,7 @@
    "@id": "https://abrechnungs-navi.de/#firma",
    "name": "Abrechnungs-Navi",
    "url": "https://abrechnungs-navi.de/",
+   "logo": "https://abrechnungs-navi.de/logo-abrechnungs-navi.png",
    "email": "kontakt@abrechnungs-navi.de",
    "description": "Nebenkostenabrechnung als Komplett-Service für private Vermieter in ganz Deutschland: Unterlagen hochladen, fertige und doppelt geprüfte Abrechnung erhalten.",
    "founder": {
@@ -144,9 +145,9 @@
   .wrap{max-width:1080px;margin:0 auto;padding:0 24px}
   header{background:var(--card);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:10}
   .nav{display:flex;align-items:center;justify-content:space-between;height:68px}
-  .logo{font-weight:800;font-size:21px;letter-spacing:-.3px;color:var(--ink);text-decoration:none;display:flex;align-items:center;gap:10px}
-  .logo .mark{width:34px;height:34px;border-radius:9px;background:var(--accent);display:grid;place-items:center;color:#fff;font-size:18px}
-  .logo span.dash{color:var(--accent)}
+  .logo{display:flex;align-items:center;text-decoration:none;flex-shrink:0}
+  .logo img{display:block;width:290px;height:auto}
+  .logo:focus-visible{outline:3px solid var(--accent);outline-offset:5px;border-radius:4px}
   .nav ul{list-style:none;display:flex;gap:26px}
   .nav ul a{text-decoration:none;color:var(--muted);font-size:15px}
   .nav ul a:hover{color:var(--ink)}
@@ -247,15 +248,18 @@
   .sample-preview dd{font-size:14px;color:var(--muted)}
   .sample-preview .small{margin-top:16px}
   .customer-quote blockquote{margin-bottom:16px}
-  @media(max-width:520px){.wrap{padding:0 18px}.nav{gap:12px}.logo{font-size:17px;gap:7px}.logo .mark{width:28px;height:28px}.nav>.btn{font-size:13px;padding:10px 12px}.hero{padding:46px 0}.hero-grid{gap:28px}h1{font-size:32px}h2{font-size:27px}section{padding:48px 0}.card,.contact,.hero-card,.price,.tenant,.sample-preview{padding:22px}.calculator .btn{width:100%;white-space:normal}}
+  @media(max-width:520px){.wrap{padding:0 18px}.nav{gap:12px}.logo img{width:clamp(156px,48vw,230px)}.nav>.btn{font-size:13px;padding:10px 12px}.hero{padding:46px 0}.hero-grid{gap:28px}h1{font-size:32px}h2{font-size:27px}section{padding:48px 0}.card,.contact,.hero-card,.price,.tenant,.sample-preview{padding:22px}.calculator .btn{width:100%;white-space:normal}}
 </style>
+<link rel="icon" href="/favicon.ico?v=20261103" sizes="any">
+<link rel="icon" type="image/png" href="/favicon-32.png?v=20261103" sizes="32x32">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png?v=20261103">
 </head>
 <body>
 
 
 <header>
   <div class="wrap nav">
-    <a class="logo" href="#"><span class="mark">➜</span><span>Abrechnungs<span class="dash">-</span>Navi</span></a>
+    <a class="logo" href="#" aria-label="Abrechnungs-Navi – Startseite"><img src="/logo-abrechnungs-navi.png" alt="Abrechnungs-Navi" width="1080" height="183" fetchpriority="high"></a>
     <ul>
       <li><a href="#vermieter">Für Vermieter</a></li>
       <li><a href="#preise">Preise</a></li>
