@@ -692,7 +692,17 @@ def install(app):
 
     def admin_page(db, msg='', base=''):
         esc = app.html.escape
-        warning = ', '.join(readiness())
+        labels={'provider_annex_complete':'vollstaendige Betreiber- und Dienstleisterangaben im AV-Vertrag',
+                'provider_mfa_verified':'Bestaetigung des zweiten Faktors bei Hosting und E-Mail',
+                'disk_encryption_verified':'Bestaetigung der Geraeteverschluesselung',
+                'restore_tested_at':'dokumentierte Wiederherstellungsprobe',
+                'backup_location':'vereinbarter Sicherungsort',
+                'backup_retention_days':'vereinbarte Sicherungsfrist',
+                'backup_tested_at':'Sicherungspruefung',
+                'avv_sha256':'endgueltige vollstaendige AV-Vertragsfassung',
+                'admin_second_factor':'persoenliche Authenticator-Einrichtung',
+                'backup_stale':'aktuelle taegliche Sicherung', 'backup_missing':'erfolgreicher Sicherungslauf'}
+        warning = ', '.join(labels.get(key,'Aktualisierung der Sicherheitsnachweise') for key in readiness())
         top = f'<div class="card"><h1>Auftragsfreigaben</h1><p>{esc(msg)}</p>'
         top += ('<p class="err">Neue Auftraege gesperrt. Betreiberpruefung offen: ' + esc(warning) + '</p>'
                 if warning else '<p class="ok">Betreiberfreigabe dokumentiert.</p>')
