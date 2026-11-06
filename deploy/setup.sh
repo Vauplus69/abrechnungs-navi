@@ -17,7 +17,7 @@ trap 'rm -rf "$TMP"' EXIT
 if [ "${1:-}" = "--auto" ]; then
   NEW=$(curl -fsS https://api.github.com/repos/Vauplus69/abrechnungs-navi/commits/main | python3 -c 'import sys,json;print(json.load(sys.stdin)["sha"])' 2>/dev/null || true)
   [ -n "$NEW" ] || exit 0
-  if [ "$NEW" = "$(cat "$VERSION_FILE" 2>/dev/null)" ] && [ -x /srv/an-upload/venv/bin/python ] && [ -f "$APP_DIR/workflow.py" ] && [ -x /usr/local/bin/an-betriebsfreigabe ] && [ -f /etc/systemd/system/an-monitor.timer ] && [ -f "$APP_DIR/monitor.py" ]; then exit 0; fi
+  if [ "$NEW" = "$(cat "$VERSION_FILE" 2>/dev/null)" ] && [ -x /srv/an-upload/venv/bin/python ] && [ -f "$APP_DIR/workflow.py" ] && [ -x /usr/local/bin/an-betriebsfreigabe ] && [ -f /etc/systemd/system/an-monitor.timer ] && [ -f "$APP_DIR/monitor.py" ] && [ -f "$APP_DIR/invoicing.py" ]; then exit 0; fi
   echo "Neue Fassung $NEW gefunden"
 fi
 NEW_SHA=$(curl -fsS https://api.github.com/repos/Vauplus69/abrechnungs-navi/commits/main | python3 -c 'import sys,json;print(json.load(sys.stdin)["sha"])' 2>/dev/null || true)
@@ -36,7 +36,7 @@ if [ ! -x /srv/an-upload/venv/bin/python ]; then
   fi
 fi
 /srv/an-upload/venv/bin/python -m pip install --disable-pip-version-check -r "$SRC/app/requirements.txt"
-/srv/an-upload/venv/bin/python -m py_compile "$SRC/app/upload_app.py" "$SRC/app/workflow.py" "$SRC/app/monitor.py" "$SRC/abrechnung/rechner.py"
+/srv/an-upload/venv/bin/python -m py_compile "$SRC/app/upload_app.py" "$SRC/app/workflow.py" "$SRC/app/monitor.py" "$SRC/app/invoicing.py" "$SRC/abrechnung/rechner.py"
 
 # Nur Programm und oeffentliche Seiten sichern, keine Kundendaten oder Geheimnisse.
 mkdir -p "$TMP/previous-app" "$TMP/previous-site"
@@ -56,6 +56,7 @@ chmod -R a+rX "$SITE_DIR"
 echo "== 3/6 Upload-Programm"
 id annavi >/dev/null 2>&1 || useradd --system --no-create-home --shell /usr/sbin/nologin annavi
 mkdir -p "$APP_DIR" "$DATA_DIR/kunden"
+install -d -m 700 -o annavi -g annavi /srv/an-upload/invoices
 cp "$SRC/app/"*.py "$APP_DIR/"
 mkdir -p "$APP_DIR/abrechnung"
 cp -a "$SRC/abrechnung/." "$APP_DIR/abrechnung/"
@@ -69,6 +70,9 @@ install -m 755 "$SRC/deploy/an-betriebsfreigabe" /usr/local/bin/an-betriebsfreig
 install -m 755 "$SRC/deploy/an-backup" /usr/local/bin/an-backup
 cp "$SRC/deploy/an-backup.service" "$SRC/deploy/an-backup.timer" "$SRC/deploy/an-monitor.service" "$SRC/deploy/an-monitor.timer" /etc/systemd/system/
 mkdir -p /etc/an-upload; chown root:annavi /etc/an-upload; chmod 750 /etc/an-upload
+if [ ! -e /etc/an-upload/invoice-issuer.json ]; then
+  install -m 640 -o root -g annavi "$SRC/deploy/invoice-issuer.example.json" /etc/an-upload/invoice-issuer.json
+fi
 install -m 755 "$SRC/deploy/setup.sh" /usr/local/bin/an-aktualisieren
 cp "$SRC/deploy/an-aktualisieren.service" "$SRC/deploy/an-aktualisieren.timer" /etc/systemd/system/
 systemctl daemon-reload

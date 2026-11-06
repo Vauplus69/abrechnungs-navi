@@ -28,7 +28,7 @@ systemctl stop an-upload
 # Vollstaendiger AN-Wiederanlauf: Daten, Programmstand und eigene Konfiguration.
 # Der Entschluesselungsschluessel bleibt separat; kein fremder Dienst wird gesichert.
 restic "${RESTIC_OPTIONS[@]}" backup \
-  /srv/an-upload/data /srv/an-upload/app /srv/an-upload/.version \
+  /srv/an-upload/data /srv/an-upload/invoices /srv/an-upload/app /srv/an-upload/.version \
   /var/www/abrechnungs-navi /etc/an-upload \
   /etc/caddy/abrechnungs-navi.caddy /etc/caddy/an-admin-auth.caddy \
   /etc/systemd/system/an-upload.service \
