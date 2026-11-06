@@ -38,6 +38,9 @@ abrechnungs-navi.de {
 	handle /anfrage {
 		reverse_proxy 127.0.0.1:8790
 	}
+	handle /tracking/receipt {
+		reverse_proxy 127.0.0.1:8790
+	}
 	handle /systemstatus {
 		reverse_proxy 127.0.0.1:8790
 	}
@@ -52,6 +55,8 @@ abrechnungs-navi.de {
 	}
 
 	handle {
+		@measurement_pages path / /index.html /danke.html
+		header @measurement_pages Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.googleadservices.com https://www.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://www.googletagmanager.com https://www.googleadservices.com https://googleads.g.doubleclick.net https://pagead2.googlesyndication.com https://www.google.com https://www.google.de; connect-src 'self' https://www.googletagmanager.com https://www.googleadservices.com https://googleads.g.doubleclick.net https://pagead2.googlesyndication.com https://www.google.com https://www.google.de https://ad.doubleclick.net; frame-src https://www.googletagmanager.com; object-src 'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'self'"
 		root * /var/www/abrechnungs-navi
 		file_server
 	}
