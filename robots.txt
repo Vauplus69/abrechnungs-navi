@@ -2,5 +2,9 @@ User-agent: *
 Allow: /
 Disallow: /verwaltung
 Disallow: /hochladen/
+Disallow: /tracking/
+Disallow: /systemstatus
+Disallow: /anfrage
+Disallow: /widerruf/pruefen
 
 Sitemap: https://abrechnungs-navi.de/sitemap.xml

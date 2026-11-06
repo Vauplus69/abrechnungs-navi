@@ -1,7 +1,26 @@
 # Abrechnungs-Navi
-Nebenkostenabrechnung als einmalige Dienstleistung für private Vermieter. 89 Euro erste Wohnung je Haus und Abrechnungsjahr, 59 Euro jede weitere. Kein Abo. Keine Rechtsberatung. Keine KI-Verarbeitung von Kundenbelegen.
-- https://abrechnungs-navi.de/
-- https://abrechnungs-navi.de/leistungsbedingungen.html
-- https://abrechnungs-navi.de/widerruf.html
-- https://abrechnungs-navi.de/datenschutz.html
-- https://abrechnungs-navi.de/impressum.html
+
+> Einmalige Erstellung und menschliche Prüfung von Nebenkostenabrechnungen für private Vermieter in Deutschland. Persönlich betrieben von Volker Cyrener in Hamminkeln.
+
+Stand: 6. November 2026. Maßgeblich sind das individuelle Angebot und die Leistungsbedingungen.
+
+## Preise und Leistung
+
+- Für ein Haus und ein Abrechnungsjahr: erste Wohnung 89 Euro, jede weitere Wohnung im selben Haus 59 Euro. Bei mehreren Häusern wird die erste Wohnung je Haus berechnet.
+- Gemäß § 19 UStG wird keine Umsatzsteuer berechnet. Kein Abonnement.
+- Mieterwechsel, Rückfragen und Korrekturen zur beauftragten Abrechnung sind inklusive.
+- Ergebnis: geprüfte Abrechnung je Wohnung mit Kostenaufteilung, Vorauszahlungen und Guthaben oder Nachzahlung. Die Weitergabe an Mieter übernimmt der Vermieter.
+- Heizkosten werden aus der Messdienstabrechnung übernommen; keine eigene Verbrauchserfassung oder Messdienstleistung. Keine Rechts- oder Steuerberatung und keine Vertretung in Streitfällen.
+
+## Anfrage und Unterlagen
+
+Eine Anfrage ist kostenlos und unverbindlich, kein Auftrag. Angebot und ausdrückliche Beauftragung gehen dem Zahlungslink voraus. Der persönliche Upload wird erst nach dokumentierter Beauftragung, abgeschlossenem Vertrag zur Auftragsverarbeitung, Zahlung und zulässigem Leistungsbeginn freigeschaltet. Keine Mieterdaten oder Belege über das öffentliche Anfrageformular senden. Derzeit werden keine Kundenbelege an KI-Dienste übermittelt.
+
+## Öffentliche Quellen
+
+- [Leistung, Preise, Preisrechner und FAQ](https://abrechnungs-navi.de/)
+- [Leistungsbedingungen und Bearbeitungszeiten](https://abrechnungs-navi.de/leistungsbedingungen.html)
+- [Musterabrechnung als PDF – alle Daten erfunden](https://abrechnungs-navi.de/muster-nebenkostenabrechnung.pdf)
+- [Datenschutz und freiwillige Google-Ads-Messung](https://abrechnungs-navi.de/datenschutz.html)
+- [Widerruf für Verbraucher](https://abrechnungs-navi.de/widerruf.html)
+- [Anbieter und Kontakt](https://abrechnungs-navi.de/impressum.html)
