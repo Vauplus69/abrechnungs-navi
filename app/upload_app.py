@@ -608,6 +608,7 @@ def allowed_file(name, data):
 
 def install(app):
     """Erweitert den bestehenden, nur an localhost gebundenen Server."""
+    import invoicing
     old_cleanup, old_delete, old_admin, OldH = app.cleanup, app.delete_at, app.admin_page, app.H
     from datetime import datetime
     from zoneinfo import ZoneInfo
@@ -732,7 +733,7 @@ def install(app):
                 'admin_second_factor':'persoenliche Authenticator-Einrichtung',
                 'backup_stale':'aktuelle taegliche Sicherung', 'backup_missing':'erfolgreicher Sicherungslauf'}
         warning = ', '.join(labels.get(key,'Aktualisierung der Sicherheitsnachweise') for key in readiness())
-        top = f'<div class="card"><h1>Auftragsfreigaben</h1><p>{esc(msg)}</p>'
+        top = f'<p><a href="/verwaltung/rechnungen">Rechnungen erstellen und verwalten</a></p><div class="card"><h1>Auftragsfreigaben</h1><p>{esc(msg)}</p>'
         top += ('<p class="err">Neue Auftraege gesperrt. Betreiberpruefung offen: ' + esc(warning) + '</p>'
                 if warning else '<p class="ok">Betreiberfreigabe dokumentiert.</p>')
         fields = '<label>Kundenname<input name="name" required maxlength="100"></label>'
@@ -858,6 +859,8 @@ def install(app):
             if path == '/verwaltung' or path.startswith('/verwaltung/'):
                 if not self.admin_auth():
                     return
+                if path == invoicing.BASE or path.startswith(invoicing.BASE+'/'):
+                    return invoicing.get(self,app,path)
                 return super().do_GET()
             if path.startswith('/hochladen/'):
                 parts = path.strip('/').split('/')
@@ -951,6 +954,12 @@ def install(app):
             path = urllib.parse.urlsplit(self.path).path
             if not self.origin_ok():
                 return self.send(403,'Ungueltiger Ursprung')
+            if path.startswith(invoicing.BASE):
+                try:
+                    if not 0 < int(self.headers.get('Content-Length','0')) <= 20000:
+                        return self.send(400,'Ungueltige Anfragegroesse')
+                except ValueError:
+                    return self.send(400,'Ungueltige Anfragegroesse')
             if path == '/anfrage':
                 try:
                     n=int(self.headers.get('Content-Length','0'))
@@ -962,6 +971,10 @@ def install(app):
             except (ValueError, UnicodeError):
                 return self.send(400,'Ungueltige Eingabe')
             g=lambda key:data.get(key,[''])[0].strip()
+            if path == invoicing.BASE or path.startswith(invoicing.BASE+'/'):
+                if not self.admin_auth():
+                    return
+                return invoicing.post(self,app,path,g)
             if path == '/verwaltung/einrichtung':
                 now=time.time()
                 recent=[t for t in attempts.get('enrollment',[]) if t>now-900]
@@ -1080,8 +1093,6 @@ def install(app):
     app.H=H
     app.readiness=readiness
     app.workflow_audit=audit
-
-
 # END GENERATED WORKFLOW
 
 if __name__ == "__main__":
