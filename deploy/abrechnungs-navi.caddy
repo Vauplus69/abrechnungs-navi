@@ -1,6 +1,8 @@
 # Abrechnungs-Navi – wird von deploy/setup.sh nach /etc/caddy/ kopiert
 abrechnungs-navi.de {
 	encode gzip
+	@non_search_pages path /verwaltung* /hochladen/* /tracking/* /systemstatus /anfrage /danke.html /404.html
+	header @non_search_pages X-Robots-Tag "noindex, nofollow, noarchive"
 	@measurement_pages path / /index.html /danke.html
 	@other_pages not path / /index.html /danke.html
 	header @measurement_pages Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.googleadservices.com https://www.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://www.googletagmanager.com https://www.googleadservices.com https://googleads.g.doubleclick.net https://pagead2.googlesyndication.com https://www.google.com https://www.google.de; connect-src 'self' https://www.googletagmanager.com https://www.googleadservices.com https://googleads.g.doubleclick.net https://pagead2.googlesyndication.com https://www.google.com https://www.google.de https://ad.doubleclick.net; frame-src https://www.googletagmanager.com; object-src 'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'self'"
@@ -62,6 +64,7 @@ abrechnungs-navi.de {
 		file_server
 	}
 	handle_errors {
+		header X-Robots-Tag "noindex, nofollow, noarchive"
 		rewrite * /404.html
 		root * /var/www/abrechnungs-navi
 		file_server
