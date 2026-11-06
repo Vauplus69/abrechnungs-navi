@@ -106,6 +106,8 @@ def allowed_file(name, data):
 def install(app):
     """Erweitert den bestehenden, nur an localhost gebundenen Server."""
     import invoicing
+    from consent_tracking import Receipts
+    conversion_receipts = Receipts()
     old_cleanup, old_delete, old_admin, OldH = app.cleanup, app.delete_at, app.admin_page, app.H
     from datetime import datetime
     from zoneinfo import ZoneInfo
@@ -447,10 +449,20 @@ def install(app):
                 audit('result_uploaded' if is_result else 'upload',c['order'])
             return self.send(201,'Datei gespeichert','text/plain; charset=utf-8')
 
+        def issue_conversion_receipt(self, consent):
+            return conversion_receipts.issue(consent)
+
         def do_POST(self):
             path = urllib.parse.urlsplit(self.path).path
             if not self.origin_ok():
                 return self.send(403,'Ungueltiger Ursprung')
+            if path == '/tracking/receipt':
+                try: n=int(self.headers.get('Content-Length','0'))
+                except ValueError: return self.send(400,'Ungueltige Anfragegroesse')
+                if not 0<=n<=100: return self.send(400,'Ungueltige Anfragegroesse')
+                self.rfile.read(n)
+                identity=conversion_receipts.consume(self.headers.get('Cookie'))
+                return self.send(200 if identity else 204,json.dumps({'transaction_id':identity}) if identity else '', 'application/json',conversion_receipts.clear())
             if path.startswith(invoicing.BASE):
                 try:
                     if not 0 < int(self.headers.get('Content-Length','0')) <= 20000:
