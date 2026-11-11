@@ -1,0 +1,12 @@
+/* Thema Erbe & Nachlass: nutzt den Aufbau von vorsorge.css mit eigener Farbwelt (Pflaume, Creme, Altgold) */
+.vs.eb{--vs-gruen:#4A2545;--vs-gruen2:#6B3A63;--vs-sand:#FBF6F0;--vs-sand2:#F1E4D3;--vs-terra:#B9822A;--vs-terrahell:#F7EBD3;--vs-text:#4A3F47}
+.eb .vs-marke.hell{color:#E9C77F}
+.eb .vs-check label:has(input:checked){background:#F3E8F0}
+.eb .vs-ergebnis li.ok::before{background:#F3E8F0;color:var(--vs-gruen2)}
+.eb .vs-hero-bild{border-radius:120px 24px 24px 24px}
+.eb .vs-hochkant{height:520px!important;object-position:center 30%}
+.eb .vs-zahl{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin:20px 0 0}
+.eb .vs-zahl div{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18);border-radius:14px;padding:16px}
+.eb .vs-zahl strong{display:block;font-family:'Literata',Georgia,serif;font-size:30px;color:#E9C77F}
+.eb .vs-zahl span{color:#EADDE6;font-size:15px}
+@media (max-width:900px){.eb .vs-hochkant{height:300px!important}.eb .vs-zahl{grid-template-columns:1fr}}
