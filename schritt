@@ -1,9 +1,6 @@
 #!/bin/bash
 clear
 cd /opt/anspruchskompass
-ls -la | head -30
-C=$(docker ps --format '{{.Names}} {{.Ports}}' | grep 8787 | cut -d' ' -f1); echo "Container: $C"
-docker inspect -f '{{range .Mounts}}{{.Source}} -> {{.Destination}} {{"\n"}}{{end}}' "$C"
-docker inspect -f '{{.Config.Cmd}} {{.Config.WorkingDir}}' "$C"
-S=$(ls *.js *.mjs *.py 2>/dev/null | head -5); echo "Programmdateien: $S"
-for f in $S; do echo "== $f $(wc -l <$f)"; grep -nE "premium|impressum|\.html|static|ALLOW|PAGES|routes|sendFile|readFile" "$f" | cut -c1-160 | head -25; done
+wc -l server.mjs; ls lib public | head -5 >/dev/null
+grep -nE "public|\.html|premium|impressum|PAGES|pages|static|contentType|MIME|mime|woff|jpg|png|svg|404" server.mjs | cut -c1-170 | head -45
+cat Dockerfile | head -20
