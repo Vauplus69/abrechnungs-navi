@@ -1,0 +1,8 @@
+User-agent: *
+Disallow: /brief.html
+Disallow: /bedingungen-brief.html
+Disallow: /zustimmung.html
+Disallow: /zustimmung-formular.html
+Disallow: /premium-neu.html
+Disallow: /vorschau
+Sitemap: https://anspruchs-kompass.de/sitemap.xml
