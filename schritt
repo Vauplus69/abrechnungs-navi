@@ -101,10 +101,13 @@ PY
 chown 501:staff $A/lib/retention.mjs 2>/dev/null || true
 cd $A
 ruecknahme(){ echo "FEHLER - nehme Aenderungen zurueck"; cp $B/server.mjs $A/server.mjs; cp $B/mail.mjs $A/lib/mail.mjs; rm -f $A/lib/retention.mjs; docker compose build -q && docker compose up -d; exit 1; }
+TESTS(){ docker run --rm --entrypoint sh -v $A/tests:/app/tests:ro anspruchskompass-app -c 'node --test --test-reporter=tap tests/*.test.mjs' >/tmp/ak-tests.txt 2>&1; grep -E "^# (pass|fail) " /tmp/ak-tests.txt | tr '\n' ' ' || true; }
+echo "== Tests vorher (alter Stand):"; VOR=$(TESTS); echo "$VOR"
 docker compose build -q || ruecknahme
-echo "== Tests:"
-docker run --rm --entrypoint node -v $A/tests:/app/tests:ro anspruchskompass-app --test tests/ 2>&1 | grep -E "^# (tests|pass|fail)" || true
-docker run --rm --entrypoint node -v $A/tests:/app/tests:ro anspruchskompass-app --test tests/ >/tmp/ak-tests.txt 2>&1 || { tail -20 /tmp/ak-tests.txt; ruecknahme; }
+echo "== Tests nachher:"; NACH=$(TESTS); echo "$NACH"
+FV=$(echo "$VOR" | grep -oP '# fail \K[0-9]+' || echo 99); FN=$(echo "$NACH" | grep -oP '# fail \K[0-9]+' || echo 99)
+PN=$(echo "$NACH" | grep -oP '# pass \K[0-9]+' || echo 0)
+[ "$PN" -gt 0 ] && [ "$FN" -le "$FV" ] || { grep -B2 -A8 "not ok" /tmp/ak-tests.txt | head -30; ruecknahme; }
 docker compose up -d && sleep 8
 curl -sf http://127.0.0.1:8787/api/health >/dev/null && echo "App laeuft" || ruecknahme
 docker compose ps --format '{{.Status}}'
