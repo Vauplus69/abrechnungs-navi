@@ -1,6 +1,24 @@
 #!/bin/bash
+# Vorschau einrichten: neue Dateien in die App, zwei kleine Ergaenzungen im Server-Programm, App neu bauen.
+# Die bisherige Startseite (index.html) bleibt unveraendert.
+set -e
 clear
-cd /opt/anspruchskompass
-sed -n '303,309p' server.mjs | fold -w 160
-echo; grep -n "image/\|font/" server.mjs | cut -c1-80 | head
-docker compose ps 2>/dev/null | head -3
+A=/opt/anspruchskompass
+SICH=/root/ak-sicherung-app-$(date +%Y%m%d-%H%M%S).tgz
+tar czf "$SICH" -C /opt anspruchskompass && echo "Sicherung: $SICH"
+rm -rf $A/public/bilder $A/public/fonts $A/public/vorschau.html $A/public/kompass.html $A/public/kompass-start.js $A/public/start.css $A/public/start.js $A/public/termin.html
+T=$(mktemp -d)
+curl -fsSL https://codeload.github.com/Vauplus69/abrechnungs-navi/tar.gz/anspruchskompass | tar xz -C "$T" --strip-components=1
+cp "$T"/neu/* $A/public/ && chown 501:staff $A/public/* 2>/dev/null || true
+echo "Dateien kopiert: $(ls "$T"/neu | wc -l)"
+cp $A/server.mjs $A/server.mjs.vor-vorschau
+grep -q "'.woff2'" $A/server.mjs || sed -i "s#'.svg':'image/svg+xml'#'.svg':'image/svg+xml','.jpg':'image/jpeg','.woff2':'font/woff2'#" $A/server.mjs
+grep -q "'/vorschau'" $A/server.mjs || sed -i "s#path==='/briefe'?'briefe.html':#path==='/briefe'?'briefe.html':path==='/vorschau'?'vorschau.html':path==='/kompass'?'kompass.html':path==='/termin'?'termin.html':#" $A/server.mjs
+echo "Ergaenzungen im Programm: $(grep -o "'/vorschau'\|'.woff2'" $A/server.mjs | wc -l) von 2"
+grep -o "Content-Security-Policy[^,]*" $A/server.mjs | cut -c1-200 | head -2
+cd $A && docker compose build -q && docker compose up -d && sleep 6
+docker compose ps --format '{{.Status}}'
+for p in / /vorschau /kompass /termin /start.css /ak-fonts.css /bild-volker.jpg /ak-Literata-normal-700-latin.woff2 /premium /impressum; do
+  printf '%-40s %s\n' "$p" "$(curl -s -o /dev/null -w '%{http_code} %{content_type}' http://127.0.0.1:8787$p)"
+done
+echo FERTIG
