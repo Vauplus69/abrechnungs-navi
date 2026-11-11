@@ -1,0 +1,16 @@
+/* Thema Familie & Zuschuesse: Aufbau von vorsorge.css, eigene Farbwelt (Petrol, Koralle, Mint) */
+.vs.fa{--vs-gruen:#0F5C63;--vs-gruen2:#167580;--vs-sand:#F3F8F7;--vs-sand2:#DDEDEA;--vs-terra:#E1603F;--vs-terrahell:#FCE6DF;--vs-text:#33494B}
+.fa .vs-marke.hell{color:#FFB59F}
+.fa .vs-check label:has(input:checked){background:#E3F1EF}
+.fa .vs-hero-bild{border-radius:24px 120px 24px 24px}
+.fa .vs-leistungen{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}
+.fa .vs-leistung{background:#fff;border-radius:18px;padding:24px;border-top:6px solid var(--vs-terra);display:flex;flex-direction:column;gap:8px}
+.fa .vs-leistung h3{font-family:'Literata',Georgia,serif;font-size:22px;margin:0}
+.fa .vs-leistung .betrag{font-family:'Literata',Georgia,serif;font-weight:700;font-size:26px;color:var(--vs-gruen);margin:0}
+.fa .vs-leistung p{margin:0;color:var(--vs-text);font-size:16px}
+.fa .vs-leistung .wo{margin-top:auto;padding-top:8px;font-size:14px;color:#5E7173}
+.fa .vs-ergebnis li.ok::before{background:#E3F1EF;color:var(--vs-gruen2)}
+.fa .vs-ergebnis li.pruef::before{content:"→";background:var(--vs-terrahell);color:var(--vs-terra)}
+.fa .vs-ergebnis .wo{display:block;font-size:14px;color:#5E7173}
+.fa select{font:inherit;padding:10px 12px;border:2px solid var(--vs-sand2);border-radius:12px;background:var(--vs-sand);color:var(--vs-gruen);max-width:100%}
+@media (max-width:900px){.fa .vs-leistungen{grid-template-columns:1fr}}
