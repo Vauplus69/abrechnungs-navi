@@ -14,3 +14,7 @@
 .fa .vs-ergebnis .wo{display:block;font-size:14px;color:#5E7173}
 .fa select{font:inherit;padding:10px 12px;border:2px solid var(--vs-sand2);border-radius:12px;background:var(--vs-sand);color:var(--vs-gruen);max-width:100%}
 @media (max-width:900px){.fa .vs-leistungen{grid-template-columns:1fr}}
+.fa .legende-fa{font-size:14px;color:#5E7173;margin:0 0 14px!important}
+.fa .legende-fa span{display:inline-flex;width:20px;height:20px;border-radius:50%;align-items:center;justify-content:center;font-weight:700;font-size:12px;margin-right:4px}
+.fa .legende-fa .pf{background:var(--vs-terrahell);color:var(--vs-terra)}
+.fa .legende-fa .hk{background:#E3F1EF;color:var(--vs-gruen2)}

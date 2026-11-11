@@ -49,8 +49,8 @@
     }
 
     var offen = p.filter(function (x) { return x[0] === 'pruef'; }).length;
-    var titel = offen === 0 ? 'Nach deinen Angaben passt gerade nichts Zusätzliches.' : offen === 1 ? 'Eine Leistung solltest du prüfen lassen.' : offen + ' Leistungen solltest du prüfen lassen.';
-    var html = '<p class="vs-marke">DEIN ERGEBNIS</p><h3>' + esc(titel) + '</h3><ul>';
+    var titel = offen === 0 ? 'Nach deinen Angaben passt gerade nichts Zusätzliches.' : offen === 1 ? 'Eine Leistung könnte für euch infrage kommen.' : offen + ' Leistungen könnten für euch infrage kommen.';
+    var html = '<p class="vs-marke">DEIN ERGEBNIS</p><h3>' + esc(titel) + '</h3><p class="legende-fa"><span class="pf">→</span> könnte infrage kommen, prüfen lassen &nbsp; <span class="hk">✓</span> hast du vermutlich schon</p><ul>';
     p.forEach(function (x) { html += '<li class="' + x[0] + '">' + esc(x[1]) + '<span class="wo">Antrag bei: ' + esc(x[2]) + '</span></li>'; });
     html += '</ul><p class="grau" style="font-size:14px">Grobe Orientierung, keine Berechnung. Ob und wie viel du bekommst, entscheidet die jeweilige Stelle.</p>';
     html += '<a class="knopf vs-knopf" href="/termin" target="_blank" rel="noopener">Gespräch mit Volker vereinbaren</a>';
