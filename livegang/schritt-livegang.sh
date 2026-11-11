@@ -21,10 +21,12 @@ for f in premium agb widerruf kuendigen; do
 done
 # 2b. Widerrufsknopf: neue Seite, nutzt die vorhandene Widerrufs-Technik
 if [ -f "$P/vertrag-widerrufen.html" ]; then cp "$L/vertrag-widerrufen.html" "$P/vertrag-widerrufen.html"; echo "ersetzt: vertrag-widerrufen.html"; else echo "ACHTUNG: vertrag-widerrufen.html nicht in public"; fi
+# 2c. Neuer Buchungslink (Kalender betriva360)
+cp "$L/termin.html" "$P/termin.html"; echo "ersetzt: termin.html"
 # 3. Neu bauen
 cd "$A" && docker compose build -q && docker compose up -d
 sleep 5
-for u in / /kompass /impressum /datenschutz /cookies /vertrag-widerrufen /premium /rente.html /robots.txt; do
+for u in / /kompass /impressum /datenschutz /cookies /vertrag-widerrufen /termin /premium /rente.html /robots.txt; do
   printf "%-16s %s\n" "$u" "$(curl -s -o /dev/null -w '%{http_code}' -H 'Host: anspruchs-kompass.de' http://127.0.0.1:8787$u)"
 done
 echo "ZURUECK: rm -rf $A/public && cp -a $B/public $A/ && cd $A && docker compose build -q && docker compose up -d"
