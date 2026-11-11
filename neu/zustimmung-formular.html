@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Einwilligung für Angehörige · Entwurf · AnspruchsKompass</title>
+<link rel="stylesheet" href="/ak-fonts.css">
+<style>
+body{font:16px/1.5 'Atkinson Hyperlegible',system-ui,sans-serif;color:#12324A;background:#EEF3F6;margin:0}
+.blatt{max-width:760px;margin:24px auto;background:#fff;padding:48px 56px;border-radius:8px}
+h1{font-family:'Literata',Georgia,serif;font-size:28px;margin:0 0 6px}
+h2{font-size:17px;margin:24px 0 6px}
+p,li{margin:0 0 8px}
+.entwurf{background:#FFF4DA;border-left:4px solid #F5B83D;padding:10px 14px;font-size:14px;margin:0 0 24px}
+.feld{border-bottom:1px solid #12324A;height:34px;margin:4px 0 14px}
+.zwei{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+.kasten{display:flex;gap:10px;align-items:flex-start;margin:0 0 8px}
+.kasten span{flex:0 0 auto;width:16px;height:16px;border:1.5px solid #12324A;margin-top:3px}
+.klein{font-size:13px;color:#4A5A66}
+.knopf{display:inline-block;background:#12324A;color:#fff;border:0;border-radius:10px;padding:12px 20px;font:inherit;font-weight:700;cursor:pointer;margin:0 0 16px}
+@media print{body{background:#fff}.blatt{margin:0;padding:0;max-width:none}.nicht-drucken{display:none}}
+</style>
+</head>
+<body>
+<div class="blatt">
+<p class="entwurf nicht-drucken"><strong>Entwurf zur Prüfung durch den Anwalt.</strong> Noch nicht verwenden.</p>
+<button class="knopf nicht-drucken" type="button" id="drucken">Drucken</button>
+<h1>Einwilligung in die Speicherung meiner Pflegeangaben</h1>
+<p class="klein">AnspruchsKompass · Volker Cyrener · Horster Weg 9 · 46499 Hamminkeln · kontakt@anspruchs-kompass.de</p>
+
+<h2>Wer stimmt zu (die Person, um deren Pflege es geht)</h2>
+<div class="zwei"><div>Vor- und Nachname<div class="feld"></div></div><div>Geburtsdatum<div class="feld"></div></div></div>
+
+<h2>Wer mir hilft (Kontoinhaber bei AnspruchsKompass)</h2>
+<div class="zwei"><div>Vor- und Nachname<div class="feld"></div></div><div>Benutzername oder E-Mail<div class="feld"></div></div></div>
+
+<h2>Wozu ich zustimme</h2>
+<div class="kasten"><span></span><div>Mein Angehöriger darf in seinem Konto bei AnspruchsKompass meine Pflegeangaben speichern: Pflegegrad, Zeiträume, beantragte und bewilligte Leistungen sowie verbrauchte Beträge. Das dient dazu, mein Pflegebudget zu führen.</div></div>
+<div class="kasten"><span></span><div>Mein Angehöriger darf mit meinem Namen, meiner Anschrift, meiner Pflegekasse und auf Wunsch meiner Versichertennummer Briefe an meine Pflegekasse vorbereiten. Verschickt werden sie nur von mir oder meinem Angehörigen selbst, nicht automatisch.</div></div>
+<p class="klein">Bitte nur ankreuzen, was gewünscht ist. Die Einwilligung ist freiwillig.</p>
+
+<h2>Was ich wissen sollte</h2>
+<ul>
+<li>Verantwortlich ist Volker Cyrener (Anschrift oben). Die Daten liegen verschlüsselt auf einem Server in Deutschland.</li>
+<li>Pflegeangaben sind Gesundheitsdaten. Sie werden nicht an Pflegekassen, Versicherer oder andere weitergegeben.</li>
+<li>Die Angaben bleiben gespeichert, bis sie gelöscht werden oder ich widerrufe. Ungenutzte Konten werden nach 12 Monaten gelöscht.</li>
+<li>Ich kann jederzeit widerrufen, auch ohne Grund, zum Beispiel per E-Mail an kontakt@anspruchs-kompass.de oder per Post. Was bis dahin gespeichert wurde, bleibt rechtmäßig.</li>
+<li>Ich habe ein Recht auf Auskunft, Berichtigung und Löschung und kann mich bei der Datenschutzaufsicht beschweren. Alle Einzelheiten stehen unter anspruchs-kompass.de/datenschutz.</li>
+</ul>
+
+<div class="zwei" style="margin-top:28px"><div>Ort, Datum<div class="feld"></div></div><div>Unterschrift der Person, um deren Pflege es geht<div class="feld"></div></div></div>
+<p class="klein">Fassung 2026-11 · Bitte als Foto im Konto hochladen oder eine Kopie per Post schicken. Das Original bleibt bei dir.</p>
+</div>
+<script src="/zustimmung-formular.js" defer></script>
+</body>
+</html>

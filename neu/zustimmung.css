@@ -1,0 +1,27 @@
+.zs{max-width:860px;padding-top:32px;padding-bottom:72px}
+.zs-vorschau{background:var(--gelbhell);border-left:4px solid var(--gelb);border-radius:10px;padding:14px 18px;font-size:16px;margin:0 0 32px}
+.zs-nr{font-size:14px;font-weight:700;letter-spacing:.08em;color:var(--moos);margin:0 0 8px}
+.zs h1{font-size:42px;line-height:1.15;margin:0 0 16px}.zs h2{font-size:32px;margin:0 0 12px}.zs h3{font-size:21px;margin:0 0 8px}
+.zs-wahl{display:grid;gap:14px}
+.zs-wahl button{text-align:left;font:inherit;background:#fff;border:2px solid var(--linie);border-radius:16px;padding:18px 20px;cursor:pointer;color:var(--nacht)}
+.zs-wahl button:hover,.zs-wahl button:focus-visible{border-color:var(--nacht)}
+.zs-wahl strong{display:block;font-size:20px}.zs-wahl span{color:var(--text);font-size:16px}
+.zs-karte{background:#fff;border-radius:16px;padding:22px;margin:0 0 18px;border:0}
+.zs-karte p{margin:0 0 12px;color:var(--text)}
+.zs-warn{background:var(--gelbhell)}
+.zs-zwei{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.zs-check{display:flex;gap:12px;align-items:flex-start;margin:0 0 16px;color:var(--text);cursor:pointer}
+.zs-check input,.zs-radio input{margin-top:5px;accent-color:var(--nacht);width:18px;height:18px;flex:0 0 auto}
+.zs-radio{display:flex;gap:10px;align-items:flex-start;margin:0 0 10px;cursor:pointer}
+.zs legend{font-weight:700;margin-bottom:10px;padding:0}
+.zs-feld{display:block;font-weight:700;margin:0 0 18px}
+.zs-feld input{display:block;width:100%;max-width:360px;margin-top:8px;font:inherit;padding:12px 14px;border:2px solid var(--linie);border-radius:10px}
+.zs-link{font-family:ui-monospace,Menlo,monospace;background:var(--nebel);border-radius:8px;padding:10px 12px;font-size:15px}
+.zs-hinweis{background:#E6F0EC;border-radius:12px;padding:14px 18px;color:var(--nacht)}
+.zs .knopf{border:0;cursor:pointer;font:inherit;font-weight:700}
+.zs .knopf.hell{background:#fff;color:var(--nacht);border:2px solid var(--nacht)}
+.zs .knopf:disabled{opacity:.45;cursor:not-allowed}
+.zs-tabelle{width:100%;border-collapse:collapse;background:#fff;border-radius:16px;overflow:hidden;margin:0 0 16px}
+.zs-tabelle th,.zs-tabelle td{text-align:left;padding:12px 16px;border-bottom:1px solid var(--linie);font-size:16px;vertical-align:top}
+.zs-tabelle th{width:38%;color:var(--grau);font-weight:700}
+@media (max-width:700px){.zs-zwei{grid-template-columns:1fr}.zs h1{font-size:32px}}

@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#12324A">
+<title>Für wen nutzt du den Kompass? · Vorschau · AnspruchsKompass</title>
+<link rel="stylesheet" href="/ak-fonts.css">
+<link rel="stylesheet" href="/start.css">
+<link rel="stylesheet" href="/zustimmung.css">
+</head>
+<body>
+<a class="skip" href="#inhalt">Zum Inhalt</a>
+<header class="kopf">
+<div class="breite kopf-innen">
+<a class="marke" href="/vorschau">
+<svg width="36" height="36" viewBox="0 0 36 36" aria-hidden="true"><circle cx="18" cy="18" r="16" fill="none" stroke="#12324A" stroke-width="2.5"/><path d="M18 6 L22 18 L18 30 L14 18 Z" fill="#F5B83D" stroke="#12324A" stroke-width="1.5" stroke-linejoin="round"/></svg>
+<span>AnspruchsKompass</span>
+</a>
+</div>
+</header>
+
+<main id="inhalt" class="breite zs">
+<p class="zs-vorschau"><strong>Vorschau zur Prüfung.</strong> Dieser Ablauf ist noch nicht aktiv. Es wird nichts gespeichert oder verschickt.</p>
+
+<section class="zs-schritt" id="schritt-1">
+<p class="zs-nr">SCHRITT 1 VON 3</p>
+<h1>Für wen nutzt du den Kompass?</h1>
+<p class="gross">Pflegeangaben sind Gesundheitsdaten. Deshalb fragen wir, wessen Angaben du eintragen möchtest.</p>
+<div class="zs-wahl" role="radiogroup" aria-label="Für wen">
+<button type="button" data-weg="selbst"><strong>Für mich selbst</strong><span>Ich trage meine eigenen Angaben ein.</span></button>
+<button type="button" data-weg="hilfe"><strong>Ich helfe einem Angehörigen</strong><span>Die Person kann selbst entscheiden, ich unterstütze sie.</span></button>
+<button type="button" data-weg="vertretung"><strong>Ich vertrete jemanden rechtlich</strong><span>Mit Vorsorgevollmacht, als Betreuer oder als Ehepartner im Notfall.</span></button>
+<button type="button" data-weg="unklar"><strong>Ich bin nicht sicher</strong><span>Ich möchte mich erst einmal umsehen.</span></button>
+</div>
+</section>
+
+<section class="zs-schritt" id="weg-selbst" hidden>
+<p class="zs-nr">SCHRITT 2 VON 3</p>
+<h2>Deine Zustimmung</h2>
+<div class="zs-karte">
+<label class="zs-check"><input type="checkbox" id="ok-selbst"> Ich willige ausdrücklich ein, dass AnspruchsKompass meine Pflegeangaben (zum Beispiel Pflegegrad und genutzte Leistungen) speichert, um mein Pflegebudget zu führen und Briefe vorzubereiten. Ich kann das jederzeit in meinem Konto widerrufen.</label>
+<p class="klein grau">Mehr dazu in der <a href="/datenschutz">Datenschutzerklärung</a>.</p>
+<button class="knopf dunkel" type="button" data-weiter="selbst">Weiter</button>
+</div>
+</section>
+
+<section class="zs-schritt" id="weg-hilfe" hidden>
+<p class="zs-nr">SCHRITT 2 VON 3</p>
+<h2>Die Person stimmt selbst zu</h2>
+<p class="unter">Weil es um ihre Gesundheitsdaten geht, muss die Person, der du hilfst, selbst zustimmen. Das geht in einer Minute und ohne eigenes Konto.</p>
+<label class="zs-feld">Vorname der Person (damit du sie in deinem Konto wiedererkennst)<input type="text" id="vorname" autocomplete="off" maxlength="40" placeholder="zum Beispiel Mama oder Gerda"></label>
+<div class="zs-zwei">
+<div class="zs-karte">
+<h3>Per Link</h3>
+<p>Du schickst der Person einen Link, zum Beispiel per WhatsApp oder E-Mail. Sie liest kurz, was gespeichert wird, und tippt auf „Ich stimme zu“.</p>
+<p class="zs-link" id="beispiel-link">anspruchs-kompass.de/z/7KQ4-M2XP</p>
+<p class="klein grau">Der Link gilt 14 Tage und nur für diese eine Zustimmung.</p>
+</div>
+<div class="zs-karte">
+<h3>Auf Papier</h3>
+<p>Du druckst ein Blatt aus. Die Person unterschreibt, du lädst ein Foto davon hoch oder schickst es per Post.</p>
+<a class="knopf hell" href="/zustimmung-formular.html" target="_blank" rel="noopener">Formular ansehen</a>
+</div>
+</div>
+<p class="zs-hinweis">Bis die Zustimmung da ist, bleiben deine Eingaben nur auf diesem Gerät. Du kannst den Pflege-Check trotzdem schon nutzen.</p>
+<button class="knopf dunkel" type="button" data-weiter="hilfe">Weiter</button>
+</section>
+
+<section class="zs-schritt" id="weg-vertretung" hidden>
+<p class="zs-nr">SCHRITT 2 VON 3</p>
+<h2>Worauf beruht deine Vertretung?</h2>
+<p class="unter">Wir brauchen keine Kopie deiner Vollmacht. Wir halten nur fest, was du hier bestätigst.</p>
+<fieldset class="zs-karte"><legend>Grundlage</legend>
+<label class="zs-radio"><input type="radio" name="grundlage" value="vollmacht"> Vorsorgevollmacht</label>
+<label class="zs-radio"><input type="radio" name="grundlage" value="betreuung"> Rechtliche Betreuung (Bestellung durch das Betreuungsgericht)</label>
+<label class="zs-radio"><input type="radio" name="grundlage" value="ehegatte"> Notvertretung als Ehepartner</label>
+</fieldset>
+<div class="zs-karte" id="umfang-vollmacht" hidden>
+<p><strong>Die Vollmacht muss genau das abdecken.</strong> Bitte bestätige:</p>
+<label class="zs-check"><input type="checkbox" class="umfang"> Meine Vollmacht umfasst Gesundheitsangelegenheiten und den Umgang mit Behörden und Versicherungen, also auch der Pflegekasse.</label>
+</div>
+<div class="zs-karte" id="umfang-betreuung" hidden>
+<p><strong>Als Betreuer handelst du nur in deinem Aufgabenkreis.</strong> Bitte bestätige:</p>
+<label class="zs-check"><input type="checkbox" class="umfang"> Mein Aufgabenkreis laut Betreuerausweis umfasst Gesundheitssorge oder Vermögenssorge bzw. Behörden- und Versicherungsangelegenheiten.</label>
+<p class="klein grau">Auch mit Betreuung soll die Person, so weit sie kann, selbst mitentscheiden. Bezieh sie bitte ein.</p>
+</div>
+<div class="zs-karte zs-warn" id="umfang-ehegatte" hidden>
+<p><strong>Die Notvertretung unter Ehepartnern ist eng begrenzt.</strong> Sie gilt nur in Gesundheitsfragen, höchstens sechs Monate und nur mit Bescheinigung eines Arztes. Für das dauerhafte Führen eines Pflegebudgets reicht sie in der Regel nicht.</p>
+<p>Wir empfehlen: Wenn dein Partner selbst zustimmen kann, wähle „Ich helfe einem Angehörigen“. Sonst bleiben die Angaben vorerst nur auf diesem Gerät.</p>
+</div>
+<label class="zs-check" id="wahrheit" hidden><input type="checkbox" id="ok-wahr"> Ich bestätige, dass meine Angaben stimmen. Mir ist bekannt, dass ich die Person über die Speicherung informieren muss.</label>
+<button class="knopf dunkel" type="button" data-weiter="vertretung">Weiter</button>
+</section>
+
+<section class="zs-schritt" id="weg-unklar" hidden>
+<p class="zs-nr">SCHRITT 2 VON 3</p>
+<h2>Kein Problem. Schau dich erst einmal um.</h2>
+<div class="zs-karte">
+<p>Du kannst den Pflege-Check und alle Leistungen nutzen. Deine Eingaben bleiben dabei nur auf diesem Gerät und gehen nicht an unseren Server.</p>
+<p>Wenn du magst, rechne mit Beispielwerten statt echten Angaben.</p>
+<a class="knopf dunkel" href="/kompass#check">Zum Pflege-Check</a>
+</div>
+</section>
+
+<section class="zs-schritt" id="schritt-3" hidden>
+<p class="zs-nr">SCHRITT 3 VON 3</p>
+<h2 id="ergebnis-titel">Das halten wir fest</h2>
+<p class="unter" id="ergebnis-text"></p>
+<table class="zs-tabelle">
+<tbody id="protokoll"></tbody>
+</table>
+<p class="klein grau">Diese Angaben dienen als Nachweis. Widerrufen kannst du jederzeit in deinem Konto; die betroffene Person kann sich auch direkt an uns wenden.</p>
+<button class="knopf hell" type="button" data-neu>Von vorn beginnen</button>
+</section>
+
+</main>
+<script src="/zustimmung.js" defer></script>
+</body>
+</html>
