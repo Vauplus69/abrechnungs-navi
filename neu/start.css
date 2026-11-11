@@ -102,3 +102,13 @@ input[type=range]{width:100%;height:32px;margin:0 0 22px;accent-color:var(--nach
 }
 @media (max-width:520px){.vier{grid-template-columns:1fr}.summe strong{font-size:36px}}
 @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}.teil{transition:none}}
+.themen-raster{list-style:none;padding:0;margin:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}
+.thema{background:#fff;border-radius:16px;padding:24px;display:flex;flex-direction:column;gap:10px;border:2px solid transparent}
+.thema h3{font-family:'Literata',Georgia,serif}.thema p{margin:0;font-size:16px;color:var(--text)}
+.thema.aktiv{border-color:var(--nacht)}.thema a{font-weight:700;margin-top:auto}
+.thema:not(.aktiv){background:#F6F9FB}.thema:not(.aktiv) h3{color:var(--grau)}
+.marke-klein{align-self:flex-start;font-size:13px;font-weight:700;letter-spacing:.03em;padding:4px 10px;border-radius:999px;background:var(--linie);color:var(--nacht)}
+.thema.aktiv .marke-klein{background:var(--gelb)}
+.themen-hinweis{margin:20px 0 0;max-width:52em}
+@media (max-width:860px){.themen-raster{grid-template-columns:1fr 1fr}}
+@media (max-width:520px){.themen-raster{grid-template-columns:1fr}}
