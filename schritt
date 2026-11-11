@@ -1,0 +1,9 @@
+#!/bin/bash
+clear
+head -4 /root/ak-ergebnis.txt
+PID=$(ss -ltnp 'sport = :8787' | grep -oP 'pid=\K[0-9]+' | head -1)
+CMD=$(ps -o args= -p "$PID"); CWD=$(readlink -f /proc/$PID/cwd)
+echo "Unit: $(ps -o unit= -p $PID 2>/dev/null)"
+MAIN=$(for w in $CMD; do [ -f "$CWD/$w" ] && echo "$CWD/$w"; [ -f "$w" ] && echo "$w"; done | grep -E '\.(py|js|mjs)$' | head -1)
+echo "Hauptdatei: $MAIN ($(wc -l < "$MAIN") Zeilen)"
+grep -nE "premium|impressum|\.html|STATIC|static|ALLOW|send_file|sendFile|serve" "$MAIN" | cut -c1-150 | head -40

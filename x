@@ -1,6 +1,9 @@
 #!/bin/bash
-# Holt die neuen AnspruchsKompass-Dateien und legt sie als Vorschau ab.
-set -e
-T=$(mktemp -d)
-curl -fsSL https://codeload.github.com/Vauplus69/abrechnungs-navi/tar.gz/anspruchskompass | tar xz -C "$T" --strip-components=1
-bash "$T/ak.sh" 2>&1 | tee /root/ak-ergebnis.txt
+# Hilfsbefehl "ak": holt jeweils den neuesten Schritt von GitHub und fuehrt ihn aus.
+cat > /usr/local/bin/ak <<'E'
+#!/bin/bash
+curl -fsSL "https://raw.githubusercontent.com/Vauplus69/abrechnungs-navi/anspruchskompass/schritt?$(date +%s)" | bash
+E
+chmod +x /usr/local/bin/ak
+echo "Befehl ak eingerichtet."
+ak
