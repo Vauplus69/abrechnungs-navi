@@ -1,32 +1,111 @@
 #!/bin/bash
+# Automatische Loeschung ungenutzter Konten (12 Monate, Hinweis 30 Tage vorher) einbauen.
+# Mit Sicherung, Pruefung der Ausgangsdateien, Testlauf und automatischer Ruecknahme bei Fehlern.
 set -e
 clear
-# 1) Server-Meldungen (journald) auf 14 Tage begrenzen
-mkdir -p /etc/systemd/journald.conf.d
-printf '[Journal]\nMaxRetentionSec=14day\n' > /etc/systemd/journald.conf.d/14-tage.conf
-systemctl restart systemd-journald
-journalctl --vacuum-time=14d 2>&1 | tail -1
-echo "== rsyslog/logrotate:"; dpkg -l rsyslog 2>/dev/null | grep -c ^ii || true; ls /var/log/*.log 2>/dev/null | head -8; grep -E "weekly|daily|rotate|maxage" /etc/logrotate.d/rsyslog 2>/dev/null | head -5
-echo "== compose logging:"; grep -n -A4 logging /opt/anspruchskompass/compose.yaml || true
-# 2) Programmcode verschluesselt zum Lesen bereitstellen (nur mit Claudes Schluessel lesbar)
-cat > /tmp/ak-pub.pem <<'K'
------BEGIN PUBLIC KEY-----
-MIIBojANBgkqhkiG9w0BAQEFAAOCAY8AMIIBigKCAYEAp3xbU/FGRYOH6xgOjHvQ
-orWMwEdsqkWNOO+rbiKFlInvBndLGRn/PEfPYyZGdGWQyHWABZXSRnBCqYKVjy7s
-5lKuMgXoRAdVqklJ7292umITw0Zle+agDov3eWM1YeRG8JbDcq6XpKa7lxefFzy3
-PLCFPPJtZLKczixkJrpsq2+30NIl0CsPDezro9nMow2wPeInUpMRPmRoNWXvpvqQ
-fARYy5LmlHymFt6PJNLGBxkPd4m8nxhwWRDOS7u7l1MHjTAGDmUowgJfG02sDA3v
-r4fmP6x5ajKouZLONRbcvkMU2lE6evss1oYYjhT5hr1nDZg79LmTQdFXV1Lg51hr
-Nk+UaUEjEdd8OHC4QWs4gYVwSbtOBEpOsuKObhHr+E2qvGwxFHURTibtDv2fTCla
-aBqUffNxVw13yZvzHE4EpCfinkPmFrCx0Gz2pKWHKvEHUxbENgqxTHAd5rqCGQmB
-yJkCKoLG2XiTe6hzS2RVIn8IoN2xU1oMLsdk+MwJ8htxAgMBAAE=
------END PUBLIC KEY-----
-K
-cd /opt/anspruchskompass && tar czf /tmp/ak-src.tgz server.mjs lib package.json compose.yaml Dockerfile backup.mjs README.md
-openssl rand -hex 32 > /tmp/ak-key
-openssl enc -aes-256-cbc -pbkdf2 -salt -in /tmp/ak-src.tgz -out /tmp/ak-src.enc -pass file:/tmp/ak-key
-openssl pkeyutl -encrypt -pubin -inkey /tmp/ak-pub.pem -in /tmp/ak-key -out /tmp/ak-key.enc
-tar cf /var/www/abrechnungs-navi/8a4fe292b1beb67ee8325c411d9bc98a.bin -C /tmp ak-src.enc ak-key.enc && chmod a+r /var/www/abrechnungs-navi/8a4fe292b1beb67ee8325c411d9bc98a.bin
-rm -f /tmp/ak-key /tmp/ak-src.tgz
-echo "Bereitgestellt: $(du -h /var/www/abrechnungs-navi/8a4fe292b1beb67ee8325c411d9bc98a.bin | cut -f1)"
+A=/opt/anspruchskompass
+rm -f /var/www/abrechnungs-navi/8a4fe292b1beb67ee8325c411d9bc98a.bin /tmp/ak-src.enc /tmp/ak-key.enc /tmp/ak-pub.pem
+echo "$(sha256sum $A/server.mjs | cut -c1-64)" | grep -q 0b77991e77dfdd12190734817ac0661ebe195ce9f52975510f9e51a3241f9317 || { echo "ABBRUCH: server.mjs hat sich geaendert"; exit 1; }
+echo "$(sha256sum $A/lib/mail.mjs | cut -c1-64)" | grep -q 8ab359dc4d6fc58f3383ed6106ecacd0e48a7747762100d899c26649546e8a49 || { echo "ABBRUCH: mail.mjs hat sich geaendert"; exit 1; }
+B=/root/ak-vor-loeschfrist-$(date +%Y%m%d-%H%M%S); mkdir -p $B; cp $A/server.mjs $A/lib/mail.mjs $B/; echo "Sicherung: $B"
+cat > $A/lib/retention.mjs <<'RET'
+// Loeschung ungenutzter Konten nach 12 Monaten ohne Anmeldung.
+// Vorher (mindestens 30 Tage) Hinweis an die bestaetigte E-Mail-Adresse, falls vorhanden.
+// Konten mit laufendem bezahltem Vertrag werden nicht geloescht.
+export const INACTIVE_MS = 365 * 86400000;
+export const NOTICE_MS = 30 * 86400000;
+
+export function retention(db, {recordDeletion, sendInactiveNotice, keepAccount = () => false, now = Date.now} = {}) {
+ const columns = db.prepare('PRAGMA table_info(users)').all().map(c => c.name);
+ if (!columns.includes('last_active')) db.exec('ALTER TABLE users ADD COLUMN last_active INTEGER');
+ if (!columns.includes('inactive_notice_at')) db.exec('ALTER TABLE users ADD COLUMN inactive_notice_at INTEGER');
+ // Bestehende Konten ohne Zeitstempel gelten ab heute als aktiv.
+ db.prepare('UPDATE users SET last_active=? WHERE last_active IS NULL').run(now());
+ let running = null;
+
+ function touch(userId) {
+  db.prepare('UPDATE users SET last_active=?,inactive_notice_at=NULL WHERE id=?').run(now(), userId);
+ }
+
+ function verifiedEmail(userId) {
+  try { return db.prepare('SELECT email FROM account_emails WHERE user_id=?').get(userId)?.email || null; }
+  catch { return null; }
+ }
+
+ async function run() {
+  const t = now();
+  // 1) Hinweise verschicken
+  const noticeDue = db.prepare('SELECT id FROM users WHERE last_active<? AND inactive_notice_at IS NULL').all(t - INACTIVE_MS + NOTICE_MS);
+  for (const {id} of noticeDue) {
+   if (keepAccount(id)) continue;
+   if (db.isTransaction) return;
+   const marked = now();
+   db.prepare('UPDATE users SET inactive_notice_at=? WHERE id=? AND inactive_notice_at IS NULL').run(marked, id);
+   const email = verifiedEmail(id);
+   if (email && sendInactiveNotice) {
+    const row = db.prepare('SELECT last_active FROM users WHERE id=?').get(id);
+    const deleteOn = new Date(Math.max(row.last_active + INACTIVE_MS, marked + NOTICE_MS));
+    try { await sendInactiveNotice({email, deleteOn}); }
+    catch {
+     if (!db.isTransaction) db.prepare('UPDATE users SET inactive_notice_at=NULL WHERE id=? AND inactive_notice_at=?').run(id, marked);
+     console.error('Inactive account notice failed.');
+    }
+   }
+  }
+  // 2) Loeschen: 12 Monate ohne Anmeldung und Hinweis vor mindestens 30 Tagen markiert
+  const t2 = now();
+  const due = db.prepare('SELECT id FROM users WHERE last_active<? AND inactive_notice_at IS NOT NULL AND inactive_notice_at<?').all(t2 - INACTIVE_MS, t2 - NOTICE_MS);
+  for (const {id} of due) {
+   if (keepAccount(id)) continue;
+   if (db.isTransaction) return;
+   db.exec('BEGIN IMMEDIATE');
+   try {
+    const still = db.prepare('SELECT 1 FROM users WHERE id=? AND last_active<? AND inactive_notice_at<?').get(id, t2 - INACTIVE_MS, t2 - NOTICE_MS);
+    if (still) { recordDeletion(id); db.prepare('DELETE FROM users WHERE id=?').run(id); }
+    db.exec('COMMIT');
+   } catch (e) { if (db.isTransaction) db.exec('ROLLBACK'); throw e; }
+  }
+ }
+
+ return {
+  touch,
+  tick() { if (!running) running = run().finally(() => { running = null; }); return running; },
+  settled() { return running || Promise.resolve(); }
+ };
+}
+RET
+python3 - <<'PY'
+A='/opt/anspruchskompass'
+s=open(A+'/server.mjs').read()
+def rep(old,new):
+    global s
+    assert s.count(old)==1,old[:50]; s=s.replace(old,new)
+rep("import {reminders} from './lib/reminders.mjs';","import {reminders} from './lib/reminders.mjs';\nimport {retention} from './lib/retention.mjs';")
+rep("sendReminder,sendContractReceipt,","sendReminder,sendInactiveNotice,sendContractReceipt,")
+rep("const deletedUsers=new Set();","const deletedUsers=new Set();let retentionService;")
+rep("function newSession(userId){","function newSession(userId){retentionService?.touch(userId);")
+rep("INSERT INTO users VALUES (?,?,?,?)","INSERT INTO users(id,username,salt,password_hash) VALUES (?,?,?,?)")
+rep(" const reminderTimer=runReminders?"," retentionService=retention(db,{recordDeletion,sendInactiveNotice,keepAccount:userId=>{try{const s=payments.access(userId);return !!(s.linked&&s.active);}catch{return true;}}});\n const retentionTimer=(runReminders&&!restoring)?setInterval(()=>{void retentionService.tick().catch(()=>console.error('Retention processing failed.'));},3600000):null;retentionTimer?.unref();\n const reminderTimer=runReminders?")
+rep("if(reminderTimer)clearInterval(reminderTimer);","if(reminderTimer)clearInterval(reminderTimer);if(retentionTimer)clearInterval(retentionTimer);await retentionService.settled();")
+rep("return {server,db,invite,declarationWorker,reminders:remindersService,","return {server,db,invite,declarationWorker,reminders:remindersService,retention:retentionService,")
+rep("sendReminder:process.env.SMTP_ENABLED==='true'?((message)=>createMailService().sendReminder(message)):undefined,","sendReminder:process.env.SMTP_ENABLED==='true'?((message)=>createMailService().sendReminder(message)):undefined,sendInactiveNotice:process.env.SMTP_ENABLED==='true'?((message)=>createMailService().sendInactiveNotice(message)):undefined,")
+open(A+'/server.mjs','w').write(s)
+m=open(A+'/lib/mail.mjs').read()
+old="  verify:()=>safe("
+assert m.count(old)==1
+new="""  sendInactiveNotice:({email,deleteOn})=>safe(async()=>{email=normalizeEmail(email);if(!(deleteOn instanceof Date)||!Number.isFinite(deleteOn.getTime()))throw Error('Ungültiges Datum.');const datum=deleteOn.toLocaleDateString('de-DE',{day:'numeric',month:'long',year:'numeric',timeZone:'Europe/Berlin'});const result=await transport.sendMail({from:{name:'AnspruchsKompass',address:ADDRESS},to:email,envelope:{from:ADDRESS,to:[email]},subject:'AnspruchsKompass – dein Konto wird bald gelöscht',text:'Hallo,\\n\\ndu hast dich seit fast zwölf Monaten nicht mehr bei AnspruchsKompass angemeldet. Damit wir keine Daten länger als nötig speichern, löschen wir ungenutzte Konten nach zwölf Monaten.\\n\\nWenn du dich nicht bis zum '+datum+' anmeldest, löschen wir dein Konto mit allen gespeicherten Angaben.\\n\\nMöchtest du das Konto behalten, melde dich einfach an:\\nhttps://anspruchs-kompass.de/kompass\\n\\nWenn du nichts tust, wird das Konto automatisch gelöscht.\\n\\nViele Grüße\\nAnspruchsKompass\\nVolker Cyrener, Horster Weg 9, 46499 Hamminkeln'});return {sent:Array.isArray(result?.accepted)&&result.accepted.includes(email)};}),
+"""+old
+open(A+'/lib/mail.mjs','w').write(m.replace(old,new))
+print('Programm ergaenzt')
+PY
+chown 501:staff $A/lib/retention.mjs 2>/dev/null || true
+cd $A
+ruecknahme(){ echo "FEHLER - nehme Aenderungen zurueck"; cp $B/server.mjs $A/server.mjs; cp $B/mail.mjs $A/lib/mail.mjs; rm -f $A/lib/retention.mjs; docker compose build -q && docker compose up -d; exit 1; }
+docker compose build -q || ruecknahme
+echo "== Tests:"
+docker run --rm --entrypoint node -v $A/tests:/app/tests:ro anspruchskompass-app --test tests/ 2>&1 | grep -E "^# (tests|pass|fail)" || true
+docker run --rm --entrypoint node -v $A/tests:/app/tests:ro anspruchskompass-app --test tests/ >/tmp/ak-tests.txt 2>&1 || { tail -20 /tmp/ak-tests.txt; ruecknahme; }
+docker compose up -d && sleep 8
+curl -sf http://127.0.0.1:8787/api/health >/dev/null && echo "App laeuft" || ruecknahme
+docker compose ps --format '{{.Status}}'
 echo FERTIG
