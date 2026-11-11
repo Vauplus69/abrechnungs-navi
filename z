@@ -1,0 +1,9 @@
+#!/bin/bash
+# Hilfsbefehl "ak": holt jeweils den neuesten Schritt von GitHub und fuehrt ihn aus.
+cat > /usr/local/bin/ak <<'E'
+#!/bin/bash
+curl -fsSL -H "Accept: application/vnd.github.raw" "https://api.github.com/repos/Vauplus69/abrechnungs-navi/contents/schritt?ref=anspruchskompass" | bash
+E
+chmod +x /usr/local/bin/ak
+echo "Befehl ak eingerichtet."
+ak
