@@ -1,0 +1,25 @@
+/* Thema Wohnen im Alter: Aufbau von vorsorge.css, eigene Farbwelt (Ziegel, Leinen, Ocker) */
+.vs.wn{--vs-gruen:#7A3428;--vs-gruen2:#9A4636;--vs-sand:#FAF5EE;--vs-sand2:#EEE2D2;--vs-terra:#C98A1E;--vs-terrahell:#FBEFD6;--vs-text:#4A3A34}
+.wn .vs-marke.hell{color:#F2C46D}
+.wn .vs-check label:has(input:checked){background:#F6E8DC}
+.wn .vs-hero-bild{border-radius:120px 24px 24px 24px}
+.wn .vs-leistungen{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}
+.wn .vs-leistung{background:#fff;border-radius:18px;padding:24px;border-top:6px solid var(--vs-terra);display:flex;flex-direction:column;gap:8px}
+.wn .vs-leistung h3{font-family:'Literata',Georgia,serif;font-size:22px;margin:0}
+.wn .vs-leistung .betrag{font-family:'Literata',Georgia,serif;font-weight:700;font-size:26px;color:var(--vs-gruen);margin:0}
+.wn .vs-leistung p{margin:0;color:var(--vs-text);font-size:16px}
+.wn .vs-leistung .wo-stand{background:var(--vs-terrahell);border-radius:8px;padding:6px 10px;font-size:14px}
+.wn .vs-leistung .wo{margin-top:auto;padding-top:8px;font-size:14px;color:#6E5D55}
+.wn .vs-ergebnis li.ok::before{background:#F6E8DC;color:var(--vs-gruen2)}
+.wn .vs-ergebnis li.pruef::before{content:"→";background:var(--vs-terrahell);color:var(--vs-terra)}
+.wn .vs-ergebnis .wo{display:block;font-size:14px;color:#6E5D55}
+.wn select{font:inherit;padding:10px 12px;border:2px solid var(--vs-sand2);border-radius:12px;background:var(--vs-sand);color:var(--vs-gruen);max-width:100%}
+.wn .legende-wo{font-size:14px;color:#6E5D55;margin:0 0 14px!important}
+.wn .legende-wo span{display:inline-flex;width:20px;height:20px;border-radius:50%;align-items:center;justify-content:center;font-weight:700;font-size:12px;margin-right:4px;background:var(--vs-terrahell);color:var(--vs-terra)}
+.wn .wo-wege{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:18px;margin-top:8px}
+.wn .wo-weg{background:#fff;border-radius:18px;padding:22px}
+.wn .wo-weg h3{font-family:'Literata',Georgia,serif;font-size:20px;margin:0 0 8px}
+.wn .wo-weg p{margin:0;color:var(--vs-text);font-size:16px}
+@media (max-width:1000px){.wn .wo-wege{grid-template-columns:1fr 1fr}}
+@media (max-width:900px){.wn .vs-leistungen{grid-template-columns:1fr}}
+@media (max-width:600px){.wn .wo-wege{grid-template-columns:1fr}}
