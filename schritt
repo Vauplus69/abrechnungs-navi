@@ -1,12 +1,7 @@
 #!/bin/bash
-# Neue Vorschau-Dateien einspielen und App neu bauen. index.html bleibt unveraendert.
-set -e
 clear
-A=/opt/anspruchskompass
-T=$(mktemp -d)
-curl -fsSL https://codeload.github.com/Vauplus69/abrechnungs-navi/tar.gz/anspruchskompass | tar xz -C "$T" --strip-components=1
-cp "$T"/neu/* $A/public/
-cd $A && docker compose build -q && docker compose up -d && sleep 6
-for p in /vorschau /start.css /; do printf '%-12s %s\n' "$p" "$(curl -s -o /dev/null -w '%{http_code}' http://127.0.0.1:8787$p)"; done
-echo "Fragen auf Vorschau: $(curl -s http://127.0.0.1:8787/vorschau | grep -c '<details>')"
-echo FERTIG
+echo "== Caddy log-Eintraege:"; grep -n -A3 "log" /etc/caddy/Caddyfile /opt/anspruchskompass/Caddyfile 2>/dev/null | head -12
+echo "== Docker Log-Einstellung:"; cat /etc/docker/daemon.json 2>/dev/null; docker inspect -f '{{.HostConfig.LogConfig}}' anspruchskompass-app-1
+echo "== journald:"; grep -E "^(MaxRetentionSec|SystemMaxUse)" /etc/systemd/journald.conf; journalctl --disk-usage
+echo "== Sicherungen:"; systemctl list-timers --all | grep -i backup | cut -c1-120
+grep -nE "maxAge|RETAIN|days|7" /opt/anspruchskompass/backup.mjs | head -5
