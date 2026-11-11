@@ -1,8 +1,8 @@
 // Briefe an die Pflegekasse: alles passiert im Browser, nichts wird verschickt oder gespeichert.
 (function () {
   'use strict';
-  var PREISE = { budget: 9.9, antrag: 9.9, hoeher: 9.9, paket: 24.9 };
-  var TITEL = { budget: 'Budgetstand anfragen', antrag: 'Erstantrag auf Pflegeleistungen', hoeher: 'Pflegegrad überprüfen lassen', paket: 'Alle drei Briefe' };
+  var PREISE = { budget: 9.9, antrag: 9.9, hoeher: 9.9, paket: 17.9 };
+  var TITEL = { budget: 'Budgetstand anfragen', antrag: 'Erstantrag auf Pflegeleistungen', hoeher: 'Pflegegrad überprüfen lassen', paket: 'Paket: Budgetstand + Pflegegrad überprüfen' };
   var BEZAHLUNG_AKTIV = false; // wird erst nach Freigabe und Rechtsprüfung eingeschaltet
 
   var form = document.getElementById('angaben');
@@ -104,7 +104,7 @@
 
   function setzen(muster) {
     var w = wahl(), a = d();
-    var liste = w === 'paket' ? ['budget', 'antrag', 'hoeher'] : [w];
+    var liste = w === 'paket' ? ['budget', 'hoeher'] : [w];
     druck.innerHTML = liste.map(function (b) {
       return '<section class="bf">' + (muster ? '<div class="bf-muster">MUSTER</div>' : '') + BRIEFE[b](a) + '</section>';
     }).join('');
