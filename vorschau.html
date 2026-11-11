@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#12324A">
+<title>AnspruchsKompass: Was zahlt die Pflegekasse und was bleibt an euch hängen?</title>
+<meta name="description" content="Pflegeleistungen verstehen, die eigene Lücke sehen und rechtzeitig planen. Kostenloser Pflege-Check und Heimkosten-Rechner für NRW.">
+<link rel="stylesheet" href="/fonts/fonts.css">
+<link rel="stylesheet" href="/start.css">
+</head>
+<body>
+<a class="skip" href="#inhalt">Zum Inhalt</a>
+
+<header class="kopf">
+<div class="breite kopf-innen">
+<a class="marke" href="/">
+<svg width="36" height="36" viewBox="0 0 36 36" aria-hidden="true"><circle cx="18" cy="18" r="16" fill="none" stroke="#12324A" stroke-width="2.5"/><path d="M18 6 L22 18 L18 30 L14 18 Z" fill="#F5B83D" stroke="#12324A" stroke-width="1.5" stroke-linejoin="round"/></svg>
+<span>AnspruchsKompass</span>
+</a>
+<nav aria-label="Hauptmenü" class="menue">
+<a href="/kompass#check">Pflege-Check</a>
+<a href="/kompass#catalog">Leistungen</a>
+<a class="stark" href="/termin" target="_blank" rel="noopener">Gespräch vereinbaren</a>
+</nav>
+</div>
+</header>
+
+<main id="inhalt">
+
+<section class="breite hero">
+<div class="hero-text">
+<h1>Was zahlt die Pflegekasse, und was bleibt an euch hängen?</h1>
+<p class="gross">Der Kompass zeigt dir in wenigen Minuten, welche Pflegeleistungen euch zustehen und wo trotzdem Geld fehlt. Kostenlos, ohne Namen und ohne Anmeldung.</p>
+<div class="zitat">
+<img src="/bilder/volker.jpg" alt="Volker Cyrener" width="64" height="64">
+<p>Nach 21 Jahren als unabhängiger Versicherungsmakler weiß ich: Wer früh rechnet, hat später die Wahl. <strong>Volker Cyrener</strong></p>
+</div>
+<a class="knopf dunkel" href="/termin" target="_blank" rel="noopener">Gespräch mit Volker vereinbaren</a>
+<p class="beruhigung">Kostenlos und unverbindlich. Ich melde mich innerhalb von 24 Stunden.</p>
+<p class="klein">Leistungsstand 2026, Quellen vom Bundesgesundheitsministerium. Die Pflegekasse entscheidet über deinen Antrag.</p>
+<img class="hero-bild" src="/bilder/tochter-vater.jpg" alt="Eine Tochter und ihr Vater sitzen lachend auf dem Sofa und sehen gemeinsam Unterlagen durch">
+</div>
+
+<div class="rechner">
+<h2>Rechne kurz nach: ein Heimplatz in NRW</h2>
+<p class="grau">Durchschnitt im ersten Jahr, nachdem die Pflegekasse ihren Teil gezahlt hat.</p>
+<p id="grad-label" class="feld">Welcher Pflegegrad?</p>
+<div class="grade" role="group" aria-labelledby="grad-label">
+<button type="button" data-grad="1" aria-pressed="false">1</button>
+<button type="button" data-grad="2" aria-pressed="false">2</button>
+<button type="button" data-grad="3" aria-pressed="true">3</button>
+<button type="button" data-grad="4" aria-pressed="false">4</button>
+<button type="button" data-grad="5" aria-pressed="false">5</button>
+</div>
+<label for="rente" class="feld zeile"><span>Monatliche Rente der gepflegten Person</span><span id="rente-text">1.500 €</span></label>
+<input id="rente" type="range" min="600" max="3500" step="50" value="1500">
+
+<div id="pg1" class="hinweis" hidden>Mit Pflegegrad 1 zahlt die Pflegekasse im Heim nur einen kleinen Zuschuss von 131 € im Monat. Fast alle Kosten tragt ihr selbst. Lass das am besten in einem Gespräch durchrechnen.</div>
+<div id="ergebnis">
+<div class="zeile grau klein"><span>Selbst zu zahlen im Monat</span><strong class="dunkeltext">3.671 €</strong></div>
+<div class="balken" role="img" id="balken" aria-label="">
+<div class="teil gruen" id="b-rente"></div><div class="teil gelb" id="b-luecke"></div>
+</div>
+<div class="legende"><span><i class="gruen"></i>gedeckt durch die Rente</span><span><i class="gelb"></i>fehlt jeden Monat</span></div>
+<div class="summe"><span>Deine Lücke im ersten Jahr</span><strong id="jahr">25.452 €</strong></div>
+<p class="grau klein" id="satz"></p>
+<div class="auto" id="auto">
+<svg width="56" height="32" viewBox="0 0 56 32" aria-hidden="true"><path d="M4 22 L4 17 C4 15 5 14 7 13.5 L14 12 L20 6 C21 5 22 4.5 24 4.5 L36 4.5 C38 4.5 39.5 5.2 40.5 6.5 L45 12 L50 13 C52 13.4 53 14.6 53 16.5 L53 22 Z" fill="none" stroke="#12324A" stroke-width="2.2" stroke-linejoin="round"/><path d="M21 12 L24 7.5 L29 7.5 L29 12 Z M32 12 L32 7.5 L36.5 7.5 L40 12 Z" fill="#12324A"/><circle cx="14" cy="23" r="5" fill="#FFF4DA" stroke="#12324A" stroke-width="2.2"/><circle cx="43" cy="23" r="5" fill="#FFF4DA" stroke="#12324A" stroke-width="2.2"/></svg>
+<p><strong id="auto-text"></strong> Und das jedes Jahr, solange die Pflege dauert.</p>
+</div>
+</div>
+<a class="knopf gelb voll" href="/termin" target="_blank" rel="noopener">Lücke mit Volker durchsprechen</a>
+<p class="beruhigung mitte">Kostenlos und unverbindlich. Antwort innerhalb von 24 Stunden.</p>
+<p class="mini">Durchschnittswert NRW zum 1. Juli 2026 laut Verband der Ersatzkassen (vdek). Für Pflegegrad 2 bis 5 ist der Betrag gleich hoch. Das einzelne Heim kann deutlich abweichen.</p>
+</div>
+</section>
+
+<section class="geschichte" aria-labelledby="geschichte-titel">
+<img src="/bilder/haende.jpg" alt="Eine junge Hand hält fest die Hand eines älteren Menschen">
+<div class="schmal">
+<p class="gelbtext">Ein Beispiel, wie es vielen Familien geht</p>
+<h2 id="geschichte-titel">Als Mama stürzte, hatten wir eine Woche Zeit.</h2>
+<p>Eine Woche, um einen Heimplatz zu finden. Niemand in der Familie wusste, was die Pflegekasse zahlt und was nicht. Die erste Rechnung vom Heim kam schneller als jede Antwort.</p>
+<p>Am Ende musste das Elternhaus verkauft werden, schneller und günstiger, als allen lieb war. Mit einem Plan ein paar Jahre vorher hätte die Familie selbst entscheiden können.</p>
+<a class="knopf gelb" href="/termin" target="_blank" rel="noopener">Rechtzeitig einen Plan machen</a>
+<p class="mini hell">Erfundenes Beispiel zur Veranschaulichung, typisch für viele Fälle.</p>
+</div>
+</section>
+
+<section class="weiss">
+<div class="breite abschnitt">
+<h2>So kommst du zu einem klaren Plan</h2>
+<p class="unter">Drei Schritte, die aufeinander aufbauen. Du entscheidest, wie weit du gehst.</p>
+<ol class="drei">
+<li><span class="nr" aria-hidden="true">1</span><h3>Ansprüche prüfen</h3><p>Der kostenlose Pflege-Check fragt fünf Dinge ab und zeigt, welche Budgets noch offen sein können.</p><a href="/kompass#check">Pflege-Check starten</a></li>
+<li><span class="nr" aria-hidden="true">2</span><h3>Lücke sehen</h3><p>Was die Kasse nicht zahlt, zahlt die Familie. Du siehst, wie groß dieser Betrag bei euch werden kann.</p><a href="#inhalt">Zum Rechner</a></li>
+<li><span class="nr gelb" aria-hidden="true">3</span><h3>Mit Volker planen</h3><p>Im Gespräch klären wir, wie ihr die Lücke schließt: mit Vermögen, Immobilie oder rechtzeitiger Vorsorge.</p><a href="/termin" target="_blank" rel="noopener">Gespräch vereinbaren</a></li>
+</ol>
+<div class="bilder">
+<img class="breit" src="/bilder/betreuung.jpg" alt="Eine Betreuerin hält die Hände einer lachenden älteren Frau mit Rollator" loading="lazy">
+<img src="/bilder/garten.jpg" alt="Zwei ältere Frauen betrachten blühende Pfingstrosen im Garten" loading="lazy">
+</div>
+</div>
+</section>
+
+<section class="breite abschnitt">
+<h2>Was euch zustehen kann</h2>
+<p class="unter">Ein Auszug aus über 30 Leistungen der Pflegeversicherung, jeweils einfach erklärt mit dem nächsten Schritt.</p>
+<div class="vier">
+<div class="karte"><p class="grau">Pflegegeld</p><p class="betrag">347 bis 990 €</p><p>im Monat ab Pflegegrad 2, wenn Angehörige zu Hause pflegen.</p></div>
+<div class="karte"><p class="grau">Entlastungsbetrag</p><p class="betrag">131 €</p><p>im Monat für Alltagshilfe. Ungenutztes aus 2026 verfällt erst Ende Juni 2027.</p></div>
+<div class="karte"><p class="grau">Auszeit für Pflegende</p><p class="betrag">3.539 €</p><p>im Jahr für Verhinderungs- und Kurzzeitpflege zusammen.</p></div>
+<div class="karte"><p class="grau">Rente für Pflegende</p><p class="betrag">Beiträge</p><p>zahlt die Pflegekasse unter Umständen für dich, wenn du Angehörige pflegst.</p></div>
+</div>
+<p class="weiter"><a href="/kompass#catalog">Alle Leistungen ansehen</a></p>
+</section>
+
+<section class="breite person" id="gespraech">
+<img src="/bilder/volker.jpg" alt="Volker Cyrener" loading="lazy">
+<div>
+<h2>Hinter dem Kompass steht ein Mensch, kein Callcenter.</h2>
+<p>Ich bin Volker Cyrener, seit 21 Jahren unabhängiger Versicherungsmakler aus Hamminkeln. Ich habe den AnspruchsKompass gebaut, weil Familien zu oft erst dann rechnen, wenn das Geld schon fehlt.</p>
+<p>Im ersten Gespräch schauen wir gemeinsam auf eure Zahlen. Es kostet nichts und verpflichtet zu nichts.</p>
+<div class="knoepfe">
+<a class="knopf dunkel" href="/termin" target="_blank" rel="noopener">Gespräch vereinbaren</a>
+<a class="tel" href="tel:+4915566619027">0155 66619027</a>
+</div>
+<p class="beruhigung">Kostenlos und unverbindlich. Ich melde mich innerhalb von 24 Stunden.</p>
+<p class="mini">Die Beratung übernimmt die KV Finanzservice UG (haftungsbeschränkt), Versicherungsmakler mit Erlaubnis nach § 34d Abs. 1 GewO, Registrierungsnummer D-WYSF-6KCUC-38. <a href="https://kv-finanzservice.de/erstinformation" target="_blank" rel="noopener">Erstinformation lesen</a></p>
+</div>
+</section>
+
+</main>
+
+<footer class="fuss">
+<div class="breite fuss-innen">
+<span>AnspruchsKompass von Volker Cyrener, Hamminkeln. Orientierung, keine Entscheidung der Pflegekasse.</span>
+<nav aria-label="Rechtliches">
+<a href="/impressum">Impressum</a><a href="/datenschutz">Datenschutz</a><a href="/cookies">Cookies &amp; Speicherung</a><a href="/agb">Nutzungsbedingungen</a><a href="/widerruf">Widerruf</a><a href="/kuendigen">Verträge hier kündigen</a><a href="/vertrag-widerrufen">Vertrag widerrufen</a>
+</nav>
+</div>
+</footer>
+
+<script src="/start.js" defer></script>
+</body>
+</html>
