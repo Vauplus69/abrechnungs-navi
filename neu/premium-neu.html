@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#12324A">
+<title>Briefe-Abo · AnspruchsKompass</title>
+<link rel="stylesheet" href="/ak-fonts.css">
+<link rel="stylesheet" href="/start.css">
+<style>
+.pr-kopf{padding-top:56px;padding-bottom:8px}
+.pr-kopf h1{font-size:46px;line-height:1.12;margin:0 0 16px}
+.pr-hinweis{background:var(--gelbhell);border-left:4px solid var(--gelb);border-radius:10px;padding:16px 18px;margin:0 0 32px;font-size:16px}
+.pr-raster{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:24px;align-items:start;padding-bottom:24px}
+.pr-karte{background:#fff;border-radius:16px;padding:28px}
+.pr-karte h2{font-size:28px;margin:0 0 14px}
+.pr-karte p{color:var(--text)}
+.pr-liste{list-style:none;margin:0 0 8px;padding:0}
+.pr-liste li{position:relative;padding:0 0 14px 34px;color:var(--text)}
+.pr-liste li::before{content:"✓";position:absolute;left:0;top:0;width:24px;height:24px;border-radius:50%;background:#E3EFEB;color:var(--moos);font-weight:700;font-size:15px;display:flex;align-items:center;justify-content:center}
+.pr-liste strong{color:var(--nacht)}
+.pr-frei{background:var(--nacht);color:#fff}
+.pr-frei h2{color:#fff}.pr-frei p,.pr-frei li{color:#DCE6EC}
+.pr-frei .pr-liste li::before{background:#24506F;color:var(--gelb)}
+.pr-tarife{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:8px 0 18px}
+.pr-tarif{display:block;border:2px solid var(--linie);border-radius:14px;padding:20px;cursor:pointer;background:#fff}
+.pr-tarif:has(input:checked){border-color:var(--nacht);box-shadow:0 0 0 2px var(--gelb)}
+.pr-tarif input{margin-right:8px;accent-color:var(--nacht)}
+.pr-preis{display:block;font-family:'Literata',Georgia,serif;font-weight:700;font-size:34px;line-height:1.1;margin:10px 0 6px;color:var(--nacht)}
+.pr-tarif small{display:block;font-size:15px;color:var(--grau)}
+fieldset{border:0;padding:0;margin:0}legend{font-weight:700;margin-bottom:6px}
+button.knopf{border:0;font:inherit;font-weight:700;cursor:pointer}
+.pr-kleingedruckt{font-size:15px;color:var(--grau)}
+#quote-section h3{font-size:22px;margin:0 0 8px}
+#billing-message{font-size:15px;color:var(--moos);font-weight:700}
+.pr-links{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:15px}
+.pr-bruecke{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:20px;background:#fff;border-radius:16px;padding:28px;margin:8px 0 64px}
+.pr-bruecke h2{font-size:26px;margin:0 0 6px}.pr-bruecke p{margin:0;color:var(--text)}
+@media (max-width:860px){.pr-raster,.pr-tarife{grid-template-columns:1fr}.pr-kopf h1{font-size:34px}}
+</style>
+<script src="/premium.js" type="module"></script>
+</head>
+<body>
+<a class="skip" href="#inhalt">Zum Inhalt</a>
+
+<header class="kopf">
+<div class="breite kopf-innen">
+<a class="marke" href="/">
+<svg width="36" height="36" viewBox="0 0 36 36" aria-hidden="true"><circle cx="18" cy="18" r="16" fill="none" stroke="#12324A" stroke-width="2.5"/><path d="M18 6 L22 18 L18 30 L14 18 Z" fill="#F5B83D" stroke="#12324A" stroke-width="1.5" stroke-linejoin="round"/></svg>
+<span>AnspruchsKompass</span>
+</a>
+<nav aria-label="Hauptmenü" class="menue">
+<a href="/kompass#check">Pflege-Check</a>
+<a href="/kompass#catalog">Leistungen</a>
+<a class="stark" href="/termin" target="_blank" rel="noopener">Gespräch vereinbaren</a>
+</nav>
+</div>
+</header>
+
+<main id="inhalt" class="breite">
+
+<section class="pr-kopf">
+<p class="grau klein">BRIEFE-ABO · UNVERBINDLICHE VORSCHAU</p>
+<h1>Weniger Papierkram mit der Pflegekasse.</h1>
+<p class="gross">Wir bereiten deine Briefe vor, du prüfst sie nur noch, druckst sie aus und schickst sie ab.</p>
+<p class="pr-hinweis"><strong>Noch nicht buchbar.</strong> Wir bereiten die Bezahlung mit Mollie vor. Hier kannst du die Tarife vergleichen. Es wird nichts bestellt oder abgebucht.</p>
+</section>
+
+<div class="pr-raster">
+<section class="pr-karte">
+<h2>Das bekommst du für 49 € im Jahr</h2>
+<ul class="pr-liste">
+<li><strong>Briefe, schon ausgefüllt.</strong> Budgetstand anfragen, Pflegeleistungen erstmals beantragen, Pflegegrad überprüfen lassen und ein eigenes Antragsblatt für den Erstantrag. Mit deinen Daten, als PDF zum Ausdrucken.</li>
+<li><strong>Dein Profil, sicher gespeichert.</strong> Name, Anschrift, Versichertennummer, Pflegekasse und auf Wunsch eine Vertretung tippst du nur einmal ein. Die Angaben werden verschlüsselt abgelegt.</li>
+<li><strong>„Mein Pflegebudget“.</strong> Beantragte und bewilligte Leistungen an einem Ort, auch wenn sich der Pflegegrad ändert.</li>
+<li><strong>Erinnerung per E-Mail.</strong> Bevor eine Frist abläuft, an einem Tag, den du selbst wählst. Freiwillig und jederzeit abschaltbar.</li>
+</ul>
+<p class="pr-kleingedruckt">Jeden Brief kannst du vor dem Herunterladen prüfen und ändern. Wir verschicken nichts in deinem Namen.</p>
+</section>
+
+<section class="pr-karte pr-frei">
+<h2>Das bleibt kostenlos</h2>
+<ul class="pr-liste">
+<li>Pflege-Check mit deiner persönlichen Übersicht</li>
+<li>Alle 32 Pflegeleistungen, einfach erklärt</li>
+<li>Allgemeine Fristen zum Vormerken im Kalender</li>
+<li>Verweise auf die offiziellen Formulare</li>
+</ul>
+<a class="knopf gelb" href="/kompass#check">Zum kostenlosen Pflege-Check</a>
+</section>
+</div>
+
+<section class="pr-karte" style="margin-bottom:24px">
+<h2>Wähle einen Tarif zur Ansicht</h2>
+<form id="plan-form">
+<fieldset>
+<legend>Dein Tarif</legend>
+<div class="pr-tarife">
+<label class="pr-tarif"><input type="radio" name="plan" value="annual" checked>Jahresabo<span class="pr-preis">49,00 €</span><small>pro Jahr. Zunächst zwölf Monate. Danach unbefristet, mit einem Monat Frist kündbar. Im Voraus gezahlte Beiträge für die Zeit nach wirksamer Kündigung werden anteilig erstattet.</small></label>
+<label class="pr-tarif"><input type="radio" name="plan" value="monthly">Monatsabo<span class="pr-preis">5,99 €</span><small>pro Monat. Unbefristet, mit einem Monat Frist kündbar. Bei zwölf Monaten Nutzung insgesamt 71,88 €.</small></label>
+</div>
+</fieldset>
+<p class="pr-kleingedruckt">Endpreise. Für die Leistungen gilt die Steuerbefreiung für Kleinunternehmer gemäß § 19 UStG; Umsatzsteuer wird nicht gesondert ausgewiesen. Kosten des eigenen Internetzugangs sind nicht enthalten.</p>
+<button class="knopf dunkel" type="submit">Tarifübersicht ansehen</button>
+</form>
+<p id="billing-message" role="status"></p>
+</section>
+
+<section class="pr-karte" id="quote-section" hidden style="margin-bottom:24px">
+<h2>Deine Auswahl – noch keine Bestellung</h2>
+<h3 id="quote-name"></h3>
+<p id="quote-price"></p>
+<p id="quote-description"></p>
+<p id="quote-withdrawal"></p>
+<p>Vor einer späteren Buchung zeigen wir dir außerdem Beginn, Zahlungsart, Rechnungsangaben und sämtliche Vertragsinformationen. Zahlungsdaten gibst du erst im eingerichteten Zahlungsablauf an. Hier fragen wir keine Bank- oder Kartendaten ab.</p>
+<p class="pr-links"><a href="/agb">Nutzungsbedingungen</a><a href="/widerruf">Widerrufsbelehrung und Musterformular</a><a href="/datenschutz">Datenschutz</a></p>
+<a id="test-checkout-link" href="/bestellen?plan=annual" hidden>Bestellablauf</a>
+</section>
+
+<section class="pr-bruecke">
+<div>
+<h2>Lieber persönlich sprechen?</h2>
+<p>Kostenlos und unverbindlich. Ich melde mich innerhalb von 24 Stunden.</p>
+</div>
+<a class="knopf dunkel" href="/termin" target="_blank" rel="noopener">Gespräch mit Volker vereinbaren</a>
+</section>
+
+</main>
+
+<footer class="fuss">
+<div class="breite fuss-innen">
+<span>AnspruchsKompass von Volker Cyrener, Hamminkeln. Orientierung, keine Entscheidung der Pflegekasse.</span>
+<nav aria-label="Rechtliches">
+<a href="/impressum">Impressum</a><a href="/datenschutz">Datenschutz</a><a href="/cookies">Cookies &amp; Speicherung</a><a href="/agb">Nutzungsbedingungen</a><a href="/widerruf">Widerruf</a><a href="/kuendigen">Verträge hier kündigen</a><a href="/vertrag-widerrufen">Vertrag widerrufen</a>
+</nav>
+</div>
+</footer>
+</body>
+</html>

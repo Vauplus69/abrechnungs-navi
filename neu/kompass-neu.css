@@ -36,6 +36,10 @@ nav button small{font-size:11px}
 .ak-angebot h2{font-size:24px;margin:0 0 10px}
 .ak-angebot p{margin:0 0 14px;color:#34495A}
 .ak-preis{font-family:'Literata',Georgia,serif;font-weight:700;font-size:34px;line-height:1.1;margin:0 0 4px!important;color:var(--ink)!important}
+.ak-liste-titel{font-weight:700;color:var(--ink)!important;margin-bottom:8px!important}
+.ak-liste{margin:0 0 18px;padding:0;list-style:none;color:#34495A}
+.ak-liste li{position:relative;padding-left:28px;margin:0 0 8px}
+.ak-liste li::before{content:"✓";position:absolute;left:0;top:0;font-weight:700;color:#2E6B5C}
 .ak-bruecke{background:var(--ink);color:#fff;border-color:var(--ink)}
 .ak-bruecke h2{color:#fff}.ak-bruecke p{color:#DCE6EC}
 .ak-knopf{display:inline-block;text-decoration:none;font-weight:700;padding:14px 22px;border-radius:10px;background:var(--gelb);color:var(--ink)}
