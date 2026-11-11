@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Vertrag widerrufen · AnspruchsKompass</title>
+<link rel="stylesheet" href="/ak-fonts.css">
+<link rel="stylesheet" href="/start.css">
+<link rel="stylesheet" href="/brief.css">
+<style>
+.wr{max-width:720px}
+.wr h1{margin-bottom:12px}
+.wr .br-kasse{margin:0 0 20px}
+.wr pre{white-space:pre-wrap;font:inherit;background:var(--gelbhell);border-radius:10px;padding:14px 16px;margin:0 0 16px}
+.wr .knopf{margin:6px 10px 6px 0}
+.wr #declaration-message:empty{display:none}
+.wr #declaration-message{background:#fff;border-left:4px solid var(--nacht);border-radius:10px;padding:12px 16px}
+@media print{.fuss,.wr form,.wr .knopf,.wr .nicht-drucken{display:none!important}}
+</style>
+<script defer src="/contract-declaration.js"></script>
+</head>
+<body>
+<main class="breite br wr">
+<h1>Vertrag widerrufen</h1>
+<p>Du hast einen Brief gekauft und möchtest den Kauf widerrufen? Das geht hier ohne Anmeldung. Einen Grund musst du nicht nennen.</p>
+<p class="klein grau">Wichtig: Hast du beim Kauf zugestimmt, den Brief sofort zu bekommen, endet dein Widerrufsrecht, sobald der Brief bereitsteht. Du kannst den Widerruf trotzdem hier erklären, wir prüfen ihn dann.</p>
+
+<p id="declaration-message" role="status" aria-live="polite"></p>
+
+<form id="declaration-form" class="br-form br-kasse" data-kind="withdraw">
+<label>Dein vollständiger Name
+<input name="name" autocomplete="name" maxlength="160" required></label>
+<label>E-Mail-Adresse <small>(dorthin schicken wir die Eingangsbestätigung)</small>
+<input name="email" type="email" autocomplete="email" maxlength="254" required></label>
+<label>Bestellnummer oder Name des Briefs <small>(steht in deiner Zahlungsbestätigung)</small>
+<input name="contract" maxlength="200" required></label>
+<p class="klein grau">Bitte keine Gesundheitsangaben, Ausweisdaten oder Bankverbindungen eintragen. Wir speichern nur, was wir für deinen Widerruf brauchen. Mehr dazu im <a href="/datenschutz">Datenschutz</a>.</p>
+<button type="submit" class="knopf dunkel">Angaben prüfen</button>
+</form>
+
+<section class="br-kasse" id="declaration-review" hidden>
+<h2 id="review-title" tabindex="-1">Bitte prüfe deine Angaben</h2>
+<pre id="declaration-summary"></pre>
+<p>Mit dem Knopf unten schickst du den Widerruf ab. Du bekommst sofort einen Beleg zum Speichern und eine Bestätigung per E-Mail.</p>
+<button type="button" class="knopf dunkel" id="declaration-send">Widerruf jetzt bestätigen</button>
+<button type="button" class="knopf hell" id="declaration-back">Angaben ändern</button>
+</section>
+
+<section class="br-kasse" id="declaration-result" hidden>
+<h2 id="result-title" tabindex="-1">Dein Widerruf ist eingegangen</h2>
+<p id="mail-status"></p>
+<pre id="receipt-text"></pre>
+<button type="button" class="knopf dunkel" id="receipt-download">Beleg speichern</button>
+<button type="button" class="knopf hell" id="receipt-print">Drucken</button>
+</section>
+
+<p>Du kannst den Widerruf auch per E-Mail an <a href="mailto:kontakt@anspruchs-kompass.de">kontakt@anspruchs-kompass.de</a> oder per Post an Volker Cyrener, Horster Weg 9, 46499 Hamminkeln schicken.</p>
+</main>
+
+<footer class="fuss">
+<div class="breite fuss-innen">
+<span>AnspruchsKompass von Volker Cyrener, Hamminkeln.</span>
+<nav aria-label="Rechtliches">
+<a href="/impressum">Impressum</a><a href="/datenschutz">Datenschutz</a><a href="/bedingungen-brief.html">Bedingungen Briefkauf</a><a href="/widerruf">Widerrufsbelehrung</a><a href="/vertrag-widerrufen">Vertrag widerrufen</a>
+</nav>
+</div>
+</footer>
+</body>
+</html>
