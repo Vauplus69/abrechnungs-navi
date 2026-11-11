@@ -78,6 +78,13 @@ input[type=range]{width:100%;height:32px;margin:0 0 22px;accent-color:var(--nach
 .person p{font-size:19px;color:var(--text);max-width:34em;margin:0 0 16px}
 .knoepfe{display:flex;flex-wrap:wrap;gap:14px;margin-top:12px}.tel{font-weight:700;padding:16px 4px}
 .person .beruhigung{font-size:16px}.person .mini{font-size:14px;max-width:40em;margin-top:20px}
+.fragen{padding-bottom:24px}.fragen h2{margin-bottom:28px}
+.fragen details{background:#fff;border-radius:14px;margin-bottom:12px;max-width:860px}
+.fragen summary{cursor:pointer;padding:20px 56px 20px 24px;font-weight:700;font-size:19px;list-style:none;position:relative;min-height:44px}
+.fragen summary::-webkit-details-marker{display:none}
+.fragen summary::after{content:"+";position:absolute;right:24px;top:50%;transform:translateY(-50%);font-size:26px;font-weight:400;color:var(--moos)}
+.fragen details[open] summary::after{content:"−"}
+.fragen details p{margin:0;padding:0 24px 22px;color:var(--text);max-width:42em}
 .fuss{background:#fff;border-top:1px solid var(--linie)}
 .fuss-innen{padding-top:32px;padding-bottom:32px;display:flex;flex-wrap:wrap;justify-content:space-between;gap:16px;font-size:15px;color:var(--grau)}
 .fuss nav{display:flex;flex-wrap:wrap;gap:8px 18px}
