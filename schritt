@@ -1,6 +1,6 @@
 #!/bin/bash
 clear
 cd /opt/anspruchskompass
-wc -l server.mjs; ls lib public | head -5 >/dev/null
-grep -nE "public|\.html|premium|impressum|PAGES|pages|static|contentType|MIME|mime|woff|jpg|png|svg|404" server.mjs | cut -c1-170 | head -45
-cat Dockerfile | head -20
+sed -n '303,309p' server.mjs | fold -w 160
+echo; grep -n "image/\|font/" server.mjs | cut -c1-80 | head
+docker compose ps 2>/dev/null | head -3
