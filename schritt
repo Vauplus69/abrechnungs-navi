@@ -1,12 +1,63 @@
 #!/bin/bash
-# Neue Vorschau-Dateien einspielen und App neu bauen. index.html bleibt unveraendert.
+# Einmalig: automatische Aktualisierung der Vorschau einrichten (alle 2 Minuten).
+# Uebernimmt nur Dateien aus dem Ordner neu/ (nie index.html) und baut die App neu.
 set -e
 clear
+cat > /usr/local/bin/ak-auto <<'SKRIPT'
+#!/bin/bash
+# Holt neue Vorschau-Dateien von GitHub, wenn sich etwas geaendert hat.
+set -euo pipefail
 A=/opt/anspruchskompass
-T=$(mktemp -d)
-curl -fsSL https://codeload.github.com/Vauplus69/abrechnungs-navi/tar.gz/anspruchskompass | tar xz -C "$T" --strip-components=1
-cp "$T"/neu/* $A/public/
-cd $A && docker compose build -q && docker compose up -d && sleep 8
-for p in /vorschau /kompass /kompass-neu.css /app-neu.js /; do printf '%-18s %s\n' "$p" "$(curl -s -o /dev/null -w '%{http_code}' http://127.0.0.1:8787$p)"; done
-docker compose ps --format '{{.Status}}'
+S=/var/lib/ak-auto
+mkdir -p "$S"
+exec 9>"$S/sperre"; flock -n 9 || exit 0
+SHA=$(curl -fsS -m 20 -H 'Accept: application/vnd.github.sha' \
+  https://api.github.com/repos/Vauplus69/abrechnungs-navi/commits/anspruchskompass)
+[[ "$SHA" =~ ^[0-9a-f]{40}$ ]] || { logger -t ak-auto "ungueltige Antwort"; exit 1; }
+[ "$SHA" = "$(cat "$S/stand" 2>/dev/null || true)" ] && exit 0
+T=$(mktemp -d); trap 'rm -rf "$T"' EXIT
+curl -fsSL -m 60 "https://codeload.github.com/Vauplus69/abrechnungs-navi/tar.gz/$SHA" | tar xz -C "$T" --strip-components=1
+GEAENDERT=0
+for f in "$T"/neu/*; do
+  b=$(basename "$f")
+  [ -f "$f" ] || continue
+  [ "$b" = "index.html" ] && continue
+  [[ "$b" =~ ^[A-Za-z0-9._-]+$ ]] || continue
+  if ! cmp -s "$f" "$A/public/$b"; then cp "$f" "$A/public/$b"; GEAENDERT=1; logger -t ak-auto "neu: $b"; fi
+done
+if [ "$GEAENDERT" = 1 ]; then
+  cd "$A" && docker compose build -q && docker compose up -d
+  logger -t ak-auto "eingespielt $SHA"
+fi
+echo "$SHA" > "$S/stand"
+SKRIPT
+chmod 755 /usr/local/bin/ak-auto
+
+cat > /etc/systemd/system/ak-auto.service <<'EOF'
+[Unit]
+Description=AnspruchsKompass Vorschau automatisch aktualisieren
+After=network-online.target docker.service
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/ak-auto
+EOF
+
+cat > /etc/systemd/system/ak-auto.timer <<'EOF'
+[Unit]
+Description=AnspruchsKompass Vorschau alle 2 Minuten pruefen
+[Timer]
+OnBootSec=2min
+OnUnitActiveSec=2min
+Persistent=true
+[Install]
+WantedBy=timers.target
+EOF
+
+systemctl daemon-reload
+systemctl enable --now ak-auto.timer
+systemctl start ak-auto.service || true
+sleep 3
+for p in /vorschau /kompass /catalog-neu.js /premium-neu.html /; do printf '%-18s %s\n' "$p" "$(curl -s -o /dev/null -w '%{http_code}' http://127.0.0.1:8787$p)"; done
+systemctl is-active ak-auto.timer
+journalctl -t ak-auto --no-pager -n 5
 echo FERTIG
