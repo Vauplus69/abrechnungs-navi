@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex">
 <meta name="theme-color" content="#12324A">
-<title>Briefe an die Pflegekasse · Vorschau · AnspruchsKompass</title>
+<title>Fertige Briefe · Vorschau · AnspruchsKompass</title>
 <link rel="stylesheet" href="/ak-fonts.css">
 <link rel="stylesheet" href="/start.css">
 <link rel="stylesheet" href="/brief.css">
@@ -25,17 +25,32 @@
 <main id="inhalt" class="breite br nicht-drucken">
 <p class="br-vorschau"><strong>Vorschau.</strong> Die Bezahlung ist noch nicht eingeschaltet. Zum Ausprobieren kannst du jeden Brief als Muster ausdrucken.</p>
 
-<h1>Dein Brief an die Pflegekasse. Fertig in fünf Minuten.</h1>
+<h1>Dein Brief an Kasse, Amt oder Vermieter. Fertig in fünf Minuten.</h1>
 <p class="gross">Du füllst ein paar Felder aus, wir setzen den Brief. Du prüfst ihn, druckst ihn und schickst ihn selbst ab.</p>
 
 <section aria-labelledby="t-wahl">
 <p class="br-nr">SCHRITT 1 VON 3</p>
 <h2 id="t-wahl">Welchen Brief brauchst du?</h2>
+<h3 class="br-gruppe">Pflege</h3>
 <div class="br-wahl" role="radiogroup" aria-label="Brief wählen">
 <label class="br-karte"><input type="radio" name="brief" value="budget" checked><span><strong>Budgetstand anfragen</strong>Die Pflegekasse soll schriftlich sagen, was noch übrig ist, zum Beispiel beim Entlastungsbetrag.</span><em>9,90 €</em></label>
 <label class="br-karte"><input type="radio" name="brief" value="antrag"><span><strong>Erstantrag auf Pflegeleistungen</strong>Für alle, die noch keinen Pflegegrad haben. Der Antrag zählt ab dem Tag, an dem er ankommt.</span><em>9,90 €</em></label>
 <label class="br-karte"><input type="radio" name="brief" value="hoeher"><span><strong>Pflegegrad überprüfen lassen</strong>Wenn es schlechter geworden ist und mehr Hilfe nötig ist.</span><em>9,90 €</em></label>
 <label class="br-karte br-paket"><input type="radio" name="brief" value="paket"><span><strong>Paket: Budgetstand + Pflegegrad überprüfen</strong>Für alle mit Pflegegrad. Einmal ausfüllen, beide Briefe bekommen.</span><em>17,90 € <small>statt 19,80 €</small></em></label>
+</div>
+<h3 class="br-gruppe">Wohnen</h3>
+<div class="br-wahl">
+<label class="br-karte"><input type="radio" name="brief" value="umbau"><span><strong>Zuschuss für den Umbau beantragen</strong>Bis 4.180 € von der Pflegekasse, zum Beispiel für Dusche oder Treppenlift. Vor Beginn der Arbeiten stellen.</span><em>9,90 €</em></label>
+<label class="br-karte"><input type="radio" name="brief" value="vermieter"><span><strong>Vermieter um Zustimmung zum Umbau bitten</strong>Für Mieter, die ihre Wohnung barrierearm umbauen wollen.</span><em>9,90 €</em></label>
+</div>
+<h3 class="br-gruppe">Rente</h3>
+<div class="br-wahl">
+<label class="br-karte"><input type="radio" name="brief" value="konto"><span><strong>Rentenkonto klären lassen</strong>Die Rentenversicherung soll Lücken prüfen und dir deinen Versicherungsverlauf schicken.</span><em>9,90 €</em></label>
+<label class="br-karte"><input type="radio" name="brief" value="witwe"><span><strong>Anrechnung bei der Witwenrente prüfen lassen</strong>Wenn sich dein Einkommen geändert hat oder die Kürzung zu hoch scheint.</span><em>9,90 €</em></label>
+</div>
+<h3 class="br-gruppe">Familie</h3>
+<div class="br-wahl">
+<label class="br-karte"><input type="radio" name="brief" value="kita"><span><strong>Kita-Gebühren senken lassen</strong>Antrag auf Ermäßigung oder Erlass, zum Beispiel bei Kinderzuschlag oder Wohngeld.</span><em>9,90 €</em></label>
 </div>
 <p class="klein grau">Endpreise. Keine Umsatzsteuer nach § 19 UStG (Kleinunternehmer). Kein Abo, keine Folgekosten.</p>
 </section>
@@ -45,27 +60,27 @@
 <h2 id="t-daten">Deine Angaben</h2>
 <p class="unter">Deine Angaben bleiben auf deinem Gerät. Sie werden nicht an uns geschickt und nicht gespeichert.</p>
 <form id="angaben" class="br-form" autocomplete="on">
-<fieldset><legend>Um wen geht es? (die versicherte Person)</legend>
+<fieldset><legend id="l-person">Um wen geht es? (die versicherte Person)</legend>
 <div class="br-zwei">
 <label>Vor- und Nachname<input name="name" required autocomplete="name"></label>
-<label>Geburtsdatum<input name="geb" placeholder="TT.MM.JJJJ"></label>
+<label data-nicht="vermieter kita">Geburtsdatum<input name="geb" placeholder="TT.MM.JJJJ"></label>
 <label>Straße und Hausnummer<input name="strasse" required autocomplete="street-address"></label>
 <label>PLZ und Ort<input name="ort" required></label>
 <label>Telefon <small>(freiwillig)</small><input name="tel" autocomplete="tel"></label>
-<label>Versichertennummer <small>(freiwillig)</small><input name="vnr" placeholder="steht auf der Gesundheitskarte"></label>
-<label data-nur="budget hoeher paket">Jetziger Pflegegrad<select name="pg"><option value="">bitte wählen</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></label>
+<label data-nicht="vermieter kita"><span id="l-vnr">Versichertennummer</span> <small>(freiwillig)</small><input name="vnr"></label>
+<label data-nur="budget hoeher paket umbau">Jetziger Pflegegrad<select name="pg"><option value="">bitte wählen</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></label>
 </div>
 </fieldset>
-<fieldset><legend>An welche Pflegekasse?</legend>
-<p class="klein grau">Die Pflegekasse gehört zur Krankenkasse. Die Anschrift steht auf Briefen der Kasse oder auf ihrer Internetseite.</p>
+<fieldset><legend id="l-empf">An welche Pflegekasse?</legend>
+<p class="klein grau" id="h-empf">Die Pflegekasse gehört zur Krankenkasse. Die Anschrift steht auf Briefen der Kasse oder auf ihrer Internetseite.</p>
 <div class="br-zwei">
-<label>Name der Pflegekasse<input name="kasse" required placeholder="zum Beispiel AOK Rheinland/Hamburg – Pflegekasse"></label>
-<label>Straße oder Postfach<input name="kstrasse" required></label>
-<label>PLZ und Ort<input name="kort" required></label>
+<label><span id="l-empfname">Name der Pflegekasse</span><input name="empf" required></label>
+<label>Straße oder Postfach<input name="estrasse" required></label>
+<label>PLZ und Ort<input name="eort" required></label>
 </div>
 </fieldset>
-<fieldset><legend>Wer schreibt den Brief?</legend>
-<label class="br-radio"><input type="radio" name="wer" value="selbst" checked> Die versicherte Person selbst</label>
+<fieldset data-nicht="vermieter kita"><legend>Wer schreibt den Brief?</legend>
+<label class="br-radio"><input type="radio" name="wer" value="selbst" checked> Die Person selbst</label>
 <label class="br-radio"><input type="radio" name="wer" value="vertretung"> Ich schreibe für sie (mit Vollmacht oder als Betreuer)</label>
 <div class="br-zwei" id="vertreter" hidden>
 <label>Dein Vor- und Nachname<input name="vname"></label>
@@ -79,6 +94,28 @@
 </fieldset>
 <fieldset data-nur="hoeher paket"><legend>Für die Überprüfung des Pflegegrads</legend>
 <label>Was hat sich verändert? <small>(in eigenen Worten, ein paar Sätze reichen)</small><textarea name="grund" rows="4" placeholder="zum Beispiel: Seit dem Sturz im August kann meine Mutter nicht mehr allein aufstehen und braucht nachts Hilfe."></textarea></label>
+</fieldset>
+<fieldset data-nur="umbau vermieter"><legend>Der Umbau</legend>
+<label>Was soll umgebaut werden? <small>(in eigenen Worten)</small><textarea name="massnahme" rows="3" placeholder="zum Beispiel: Badewanne durch eine bodengleiche Dusche ersetzen, Haltegriffe anbringen"></textarea></label>
+<label>Warum ist das nötig? <small>(ein paar Sätze reichen)</small><textarea name="warum" rows="3" placeholder="zum Beispiel: Ich kann nicht mehr sicher in die Badewanne steigen und bin zweimal gestürzt."></textarea></label>
+<label data-nur="umbau">Kosten laut Kostenvoranschlag <small>(freiwillig)</small><input name="kosten" placeholder="zum Beispiel 6.500 €"></label>
+</fieldset>
+<fieldset data-nur="konto"><legend>Für die Kontenklärung</legend>
+<label>Welche Zeiten fehlen vielleicht? <small>(freiwillig)</small><textarea name="luecken" rows="3" placeholder="zum Beispiel: Ausbildung 1985 bis 1988, Kindererziehung ab 1992, Pflege meiner Mutter 2015 bis 2019"></textarea></label>
+</fieldset>
+<fieldset data-nur="witwe"><legend>Für die Witwenrente</legend>
+<div class="br-zwei">
+<label>Name der verstorbenen Person<input name="verst"></label>
+<label>Rentenzeichen der Witwenrente <small>(steht auf dem Bescheid)</small><input name="rz"></label>
+</div>
+<label>Was hat sich geändert? <small>(freiwillig)</small><textarea name="aenderung" rows="3" placeholder="zum Beispiel: Mein Minijob ist seit März beendet. Mein Einkommen ist dadurch gesunken."></textarea></label>
+</fieldset>
+<fieldset data-nur="kita"><legend>Für die Kita</legend>
+<div class="br-zwei">
+<label>Name des Kindes<input name="kind"></label>
+<label>Name der Kita<input name="kitaname"></label>
+<label>Warum soll der Beitrag sinken?<select name="kgrund"><option value="kiz">Wir bekommen Kinderzuschlag</option><option value="wg">Wir bekommen Wohngeld</option><option value="ek">Unser Einkommen ist gering oder gesunken</option></select></label>
+</div>
 </fieldset>
 <label class="br-check" data-nur="antrag hoeher paket"><input type="checkbox" name="telefon"> Bitte ruft mich vor dem Begutachtungstermin an (Telefonnummer oben eintragen).</label>
 </form>
@@ -95,7 +132,7 @@
 <p class="klein grau" id="kauf-hinweis">Bezahlung per PayPal, Karte oder Überweisung über Mollie. In der Vorschau noch nicht aktiv.</p>
 <hr>
 <button class="knopf hell" type="button" id="muster">Muster ansehen und drucken</button>
-<p class="klein grau">Das Muster trägt den Aufdruck „MUSTER“. Unsere Briefe ersetzen keine Rechtsberatung. Bei Streit mit der Pflegekasse hilft ein Pflegestützpunkt oder ein Sozialverband.</p>
+<p class="klein grau">Das Muster trägt den Aufdruck „MUSTER“. Unsere Briefe ersetzen keine Rechtsberatung. Bei Streit mit einer Behörde helfen ein Pflegestützpunkt, ein Sozialverband oder ein Anwalt.</p>
 </div>
 </section>
 

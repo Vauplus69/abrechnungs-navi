@@ -7,6 +7,7 @@
 .br .unter{margin:0 0 20px;color:var(--text)}
 .br-vorschau{background:var(--gelbhell);border-left:4px solid var(--gelb);border-radius:10px;padding:14px 18px;font-size:16px;margin:0 0 32px}
 .br-nr{font-size:14px;font-weight:700;letter-spacing:.08em;color:var(--moos);margin:0 0 8px}
+.br-gruppe{font-family:'Literata',Georgia,serif;font-size:20px;margin:22px 0 10px;color:var(--nacht)}
 .br-wahl{display:grid;grid-template-columns:1fr 1fr;gap:14px}
 .br-karte{display:flex;gap:12px;align-items:flex-start;background:#fff;border:2px solid var(--linie);border-radius:16px;padding:18px 20px;cursor:pointer}
 .br-karte:has(input:checked){border-color:var(--nacht);box-shadow:0 0 0 1px var(--nacht)}
