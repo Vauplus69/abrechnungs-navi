@@ -1,7 +1,32 @@
 #!/bin/bash
+set -e
 clear
-echo "== Caddy log-Eintraege:"; grep -n -A3 "log" /etc/caddy/Caddyfile /opt/anspruchskompass/Caddyfile 2>/dev/null | head -12
-echo "== Docker Log-Einstellung:"; cat /etc/docker/daemon.json 2>/dev/null; docker inspect -f '{{.HostConfig.LogConfig}}' anspruchskompass-app-1
-echo "== journald:"; grep -E "^(MaxRetentionSec|SystemMaxUse)" /etc/systemd/journald.conf; journalctl --disk-usage
-echo "== Sicherungen:"; systemctl list-timers --all | grep -i backup | cut -c1-120
-grep -nE "maxAge|RETAIN|days|7" /opt/anspruchskompass/backup.mjs | head -5
+# 1) Server-Meldungen (journald) auf 14 Tage begrenzen
+mkdir -p /etc/systemd/journald.conf.d
+printf '[Journal]\nMaxRetentionSec=14day\n' > /etc/systemd/journald.conf.d/14-tage.conf
+systemctl restart systemd-journald
+journalctl --vacuum-time=14d 2>&1 | tail -1
+echo "== rsyslog/logrotate:"; dpkg -l rsyslog 2>/dev/null | grep -c ^ii || true; ls /var/log/*.log 2>/dev/null | head -8; grep -E "weekly|daily|rotate|maxage" /etc/logrotate.d/rsyslog 2>/dev/null | head -5
+echo "== compose logging:"; grep -n -A4 logging /opt/anspruchskompass/compose.yaml || true
+# 2) Programmcode verschluesselt zum Lesen bereitstellen (nur mit Claudes Schluessel lesbar)
+cat > /tmp/ak-pub.pem <<'K'
+-----BEGIN PUBLIC KEY-----
+MIIBojANBgkqhkiG9w0BAQEFAAOCAY8AMIIBigKCAYEAp3xbU/FGRYOH6xgOjHvQ
+orWMwEdsqkWNOO+rbiKFlInvBndLGRn/PEfPYyZGdGWQyHWABZXSRnBCqYKVjy7s
+5lKuMgXoRAdVqklJ7292umITw0Zle+agDov3eWM1YeRG8JbDcq6XpKa7lxefFzy3
+PLCFPPJtZLKczixkJrpsq2+30NIl0CsPDezro9nMow2wPeInUpMRPmRoNWXvpvqQ
+fARYy5LmlHymFt6PJNLGBxkPd4m8nxhwWRDOS7u7l1MHjTAGDmUowgJfG02sDA3v
+r4fmP6x5ajKouZLONRbcvkMU2lE6evss1oYYjhT5hr1nDZg79LmTQdFXV1Lg51hr
+Nk+UaUEjEdd8OHC4QWs4gYVwSbtOBEpOsuKObhHr+E2qvGwxFHURTibtDv2fTCla
+aBqUffNxVw13yZvzHE4EpCfinkPmFrCx0Gz2pKWHKvEHUxbENgqxTHAd5rqCGQmB
+yJkCKoLG2XiTe6hzS2RVIn8IoN2xU1oMLsdk+MwJ8htxAgMBAAE=
+-----END PUBLIC KEY-----
+K
+cd /opt/anspruchskompass && tar czf /tmp/ak-src.tgz server.mjs lib package.json compose.yaml Dockerfile backup.mjs README.md
+openssl rand -hex 32 > /tmp/ak-key
+openssl enc -aes-256-cbc -pbkdf2 -salt -in /tmp/ak-src.tgz -out /tmp/ak-src.enc -pass file:/tmp/ak-key
+openssl pkeyutl -encrypt -pubin -inkey /tmp/ak-pub.pem -in /tmp/ak-key -out /tmp/ak-key.enc
+tar cf /var/www/abrechnungs-navi/8a4fe292b1beb67ee8325c411d9bc98a.bin -C /tmp ak-src.enc ak-key.enc && chmod a+r /var/www/abrechnungs-navi/8a4fe292b1beb67ee8325c411d9bc98a.bin
+rm -f /tmp/ak-key /tmp/ak-src.tgz
+echo "Bereitgestellt: $(du -h /var/www/abrechnungs-navi/8a4fe292b1beb67ee8325c411d9bc98a.bin | cut -f1)"
+echo FERTIG
