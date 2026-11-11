@@ -1,0 +1,69 @@
+/* Thema Vorsorge-Papiere: eigene Farbwelt (Waldgruen, Sand, Terrakotta) */
+.vs{--vs-gruen:#1F4D43;--vs-gruen2:#2B6457;--vs-sand:#F7F1E8;--vs-sand2:#EFE4D3;--vs-terra:#D9774A;--vs-terrahell:#FBE8DD;--vs-text:#3B4A45;background:var(--vs-sand);color:var(--vs-gruen)}
+.vs a{color:var(--vs-gruen)}.vs a:hover{color:var(--vs-terra)}
+.vs .kopf{background:#FFFDF9;border-bottom-color:var(--vs-sand2)}
+.vs .gross,.vs .unter,.vs .beruhigung{color:var(--vs-text)}
+.vs .grau{color:#6A746F}
+.vs-marke{font-size:14px;font-weight:700;letter-spacing:.08em;color:var(--vs-terra);margin:0 0 12px}
+.vs-marke.hell{color:#F4B892}
+.vs .knopf{border:0;cursor:pointer;font:inherit;font-weight:700}
+.vs-knopf{background:var(--vs-gruen);color:#fff!important}.vs-knopf:hover{background:var(--vs-gruen2)}
+.vs-knopf-hell{background:transparent;color:var(--vs-gruen)!important;border:2px solid var(--vs-gruen)!important}
+.vs-knopf-gelb{background:var(--vs-terra);color:#fff!important}.vs-knopf-gelb:hover{background:#C4643A}
+.knoepfe{display:flex;flex-wrap:wrap;gap:12px}
+
+.vs-hero{background:linear-gradient(180deg,#FFFDF9 0%,var(--vs-sand) 100%)}
+.vs-hero-innen{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:48px;align-items:center;padding-top:64px;padding-bottom:64px}
+.vs-hero h1{font-size:50px;line-height:1.1;margin:0 0 22px;color:var(--vs-gruen)}
+.vs-hero-bild{width:100%;height:440px;object-fit:cover;border-radius:24px 24px 24px 120px;box-shadow:0 18px 40px rgba(31,77,67,.15)}
+
+.vs-drei{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px}
+.vs-karte{background:#fff;border-radius:18px;padding:28px;border-top:6px solid var(--vs-terra)}
+.vs-karte h3{font-family:'Literata',Georgia,serif;font-size:24px;margin:14px 0 4px}
+.vs-karte p{margin:0;color:var(--vs-text);font-size:17px}
+.vs-frage{font-weight:700;color:var(--vs-terra)!important;margin:0 0 12px!important}
+.vs-symbol{display:inline-flex;width:52px;height:52px;border-radius:50%;background:var(--vs-terrahell);color:var(--vs-terra);align-items:center;justify-content:center;font-size:24px}
+
+.vs-irrtum{background:var(--vs-gruen);color:#fff}
+.vs-irrtum-innen{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:48px;align-items:center;padding-top:64px;padding-bottom:64px}
+.vs-irrtum img{width:100%;height:380px;object-fit:cover;border-radius:20px}
+.vs-irrtum h2{font-size:34px;color:#fff;margin:0 0 16px}
+.vs-irrtum p{color:#E4EEEA}
+
+.vs-check{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:32px;background:#fff;border-radius:24px;padding:36px}
+.vs-check h2{font-size:34px;margin:0 0 8px}
+.vs-check fieldset{border:0;padding:0;margin:0 0 22px}
+.vs-check legend{font-weight:700;margin-bottom:8px}
+.vs-check label{display:inline-flex;align-items:center;gap:8px;margin:0 18px 8px 0;padding:10px 14px;border:2px solid var(--vs-sand2);border-radius:12px;cursor:pointer;background:var(--vs-sand)}
+.vs-check label:has(input:checked){border-color:var(--vs-gruen);background:#E6F0EC}
+.vs-check input{accent-color:var(--vs-gruen)}
+.vs-ergebnis{background:var(--vs-sand);border-radius:18px;padding:26px;align-self:start}
+.vs-ergebnis h3{font-family:'Literata',Georgia,serif;font-size:24px;margin:0 0 12px}
+.vs-ergebnis ul{list-style:none;padding:0;margin:0 0 16px}
+.vs-ergebnis li{position:relative;padding:0 0 12px 32px;color:var(--vs-text)}
+.vs-ergebnis li::before{position:absolute;left:0;top:0;width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700}
+.vs-ergebnis li.ok::before{content:"✓";background:#E3EFEB;color:var(--vs-gruen2)}
+.vs-ergebnis li.fehlt::before{content:"!";background:var(--vs-terrahell);color:var(--vs-terra)}
+
+.vs-ablauf{background:#FFFDF9}
+.vs-ablauf-raster{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:40px;align-items:center}
+.vs-ablauf img{width:100%;height:400px;object-fit:cover;border-radius:120px 24px 24px 24px}
+.vs-schritte{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:24px}
+.vs-schritte li{display:flex;gap:18px}
+.vs-schritte h3{font-size:21px;margin:0 0 4px}.vs-schritte p{margin:0;color:var(--vs-text)}
+.vs .nr{flex:0 0 auto;width:44px;height:44px;border-radius:50%;background:var(--vs-gruen);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700}
+.vs-hinweis{margin:32px 0 0;max-width:56em}
+
+.vs .fragen details{background:#fff;border-radius:14px}
+.vs-schluss{background:var(--vs-sand2)}
+.vs-schluss-innen{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);gap:40px;align-items:center;padding-top:64px;padding-bottom:64px}
+.vs-schluss h2{font-size:36px;margin:0 0 12px}.vs-schluss p{color:var(--vs-text);margin:0 0 24px}
+.vs-schluss img{width:100%;height:320px;object-fit:cover;border-radius:24px}
+
+@media (max-width:900px){
+.vs-hero-innen,.vs-irrtum-innen,.vs-check,.vs-ablauf-raster,.vs-schluss-innen{grid-template-columns:1fr}
+.vs-drei{grid-template-columns:1fr}
+.vs-hero h1{font-size:36px}.vs-hero-bild{height:280px}
+.vs-irrtum img,.vs-ablauf img,.vs-schluss img{height:260px}
+.vs-check{padding:24px}
+}
