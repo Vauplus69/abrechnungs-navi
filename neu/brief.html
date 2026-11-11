@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#12324A">
+<title>Briefe an die Pflegekasse · Vorschau · AnspruchsKompass</title>
+<link rel="stylesheet" href="/ak-fonts.css">
+<link rel="stylesheet" href="/start.css">
+<link rel="stylesheet" href="/brief.css">
+</head>
+<body>
+<a class="skip" href="#inhalt">Zum Inhalt</a>
+<header class="kopf nicht-drucken">
+<div class="breite kopf-innen">
+<a class="marke" href="/vorschau">
+<svg width="36" height="36" viewBox="0 0 36 36" aria-hidden="true"><circle cx="18" cy="18" r="16" fill="none" stroke="#12324A" stroke-width="2.5"/><path d="M18 6 L22 18 L18 30 L14 18 Z" fill="#F5B83D" stroke="#12324A" stroke-width="1.5" stroke-linejoin="round"/></svg>
+<span>AnspruchsKompass</span>
+</a>
+<nav class="menue"><a href="/kompass">Pflege-Check</a><a href="/termin" target="_blank" rel="noopener">Gespräch mit Volker</a></nav>
+</div>
+</header>
+
+<main id="inhalt" class="breite br nicht-drucken">
+<p class="br-vorschau"><strong>Vorschau.</strong> Die Bezahlung ist noch nicht eingeschaltet. Zum Ausprobieren kannst du jeden Brief als Muster ausdrucken.</p>
+
+<h1>Dein Brief an die Pflegekasse. Fertig in fünf Minuten.</h1>
+<p class="gross">Du füllst ein paar Felder aus, wir setzen den Brief. Du prüfst ihn, druckst ihn und schickst ihn selbst ab.</p>
+
+<section aria-labelledby="t-wahl">
+<p class="br-nr">SCHRITT 1 VON 3</p>
+<h2 id="t-wahl">Welchen Brief brauchst du?</h2>
+<div class="br-wahl" role="radiogroup" aria-label="Brief wählen">
+<label class="br-karte"><input type="radio" name="brief" value="budget" checked><span><strong>Budgetstand anfragen</strong>Die Pflegekasse soll schriftlich sagen, was noch übrig ist, zum Beispiel beim Entlastungsbetrag.</span><em>9,90 €</em></label>
+<label class="br-karte"><input type="radio" name="brief" value="antrag"><span><strong>Erstantrag auf Pflegeleistungen</strong>Für alle, die noch keinen Pflegegrad haben. Der Antrag zählt ab dem Tag, an dem er ankommt.</span><em>9,90 €</em></label>
+<label class="br-karte"><input type="radio" name="brief" value="hoeher"><span><strong>Pflegegrad überprüfen lassen</strong>Wenn es schlechter geworden ist und mehr Hilfe nötig ist.</span><em>9,90 €</em></label>
+<label class="br-karte br-paket"><input type="radio" name="brief" value="paket"><span><strong>Alle drei Briefe</strong>Einmal ausfüllen, alle drei Briefe bekommen.</span><em>24,90 € <small>statt 29,70 €</small></em></label>
+</div>
+<p class="klein grau">Endpreise. Keine Umsatzsteuer nach § 19 UStG (Kleinunternehmer). Kein Abo, keine Folgekosten.</p>
+</section>
+
+<section aria-labelledby="t-daten">
+<p class="br-nr">SCHRITT 2 VON 3</p>
+<h2 id="t-daten">Deine Angaben</h2>
+<p class="unter">Deine Angaben bleiben auf deinem Gerät. Sie werden nicht an uns geschickt und nicht gespeichert.</p>
+<form id="angaben" class="br-form" autocomplete="on">
+<fieldset><legend>Um wen geht es? (die versicherte Person)</legend>
+<div class="br-zwei">
+<label>Vor- und Nachname<input name="name" required autocomplete="name"></label>
+<label>Geburtsdatum<input name="geb" placeholder="TT.MM.JJJJ"></label>
+<label>Straße und Hausnummer<input name="strasse" required autocomplete="street-address"></label>
+<label>PLZ und Ort<input name="ort" required></label>
+<label>Telefon <small>(freiwillig)</small><input name="tel" autocomplete="tel"></label>
+<label>Versichertennummer <small>(freiwillig)</small><input name="vnr" placeholder="steht auf der Gesundheitskarte"></label>
+<label data-nur="budget hoeher paket">Jetziger Pflegegrad<select name="pg"><option value="">bitte wählen</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></label>
+</div>
+</fieldset>
+<fieldset><legend>An welche Pflegekasse?</legend>
+<p class="klein grau">Die Pflegekasse gehört zur Krankenkasse. Die Anschrift steht auf Briefen der Kasse oder auf ihrer Internetseite.</p>
+<div class="br-zwei">
+<label>Name der Pflegekasse<input name="kasse" required placeholder="zum Beispiel AOK Rheinland/Hamburg – Pflegekasse"></label>
+<label>Straße oder Postfach<input name="kstrasse" required></label>
+<label>PLZ und Ort<input name="kort" required></label>
+</div>
+</fieldset>
+<fieldset><legend>Wer schreibt den Brief?</legend>
+<label class="br-radio"><input type="radio" name="wer" value="selbst" checked> Die versicherte Person selbst</label>
+<label class="br-radio"><input type="radio" name="wer" value="vertretung"> Ich schreibe für sie (mit Vollmacht oder als Betreuer)</label>
+<div class="br-zwei" id="vertreter" hidden>
+<label>Dein Vor- und Nachname<input name="vname"></label>
+<label>Deine Anschrift (Straße, PLZ, Ort)<input name="vanschrift"></label>
+<label>Deine Telefonnummer <small>(freiwillig)</small><input name="vtel"></label>
+<label>Wie vertrittst du sie?<select name="vart"><option value="vollmacht">mit Vorsorgevollmacht</option><option value="betreuung">als gesetzlicher Betreuer</option></select></label>
+</div>
+</fieldset>
+<fieldset data-nur="antrag paket"><legend>Für den Erstantrag</legend>
+<label>Welche Hilfe wird vor allem gewünscht?<select name="art"><option value="geld">Pflegegeld (Angehörige pflegen)</option><option value="sach">Pflegedienst kommt ins Haus</option><option value="kombi">beides gemischt</option><option value="offen">weiß ich noch nicht</option></select></label>
+</fieldset>
+<fieldset data-nur="hoeher paket"><legend>Für die Überprüfung des Pflegegrads</legend>
+<label>Was hat sich verändert? <small>(in eigenen Worten, ein paar Sätze reichen)</small><textarea name="grund" rows="4" placeholder="zum Beispiel: Seit dem Sturz im August kann meine Mutter nicht mehr allein aufstehen und braucht nachts Hilfe."></textarea></label>
+</fieldset>
+<label class="br-check" data-nur="antrag hoeher paket"><input type="checkbox" name="telefon"> Bitte ruft mich vor dem Begutachtungstermin an (Telefonnummer oben eintragen).</label>
+</form>
+</section>
+
+<section aria-labelledby="t-kauf">
+<p class="br-nr">SCHRITT 3 VON 3</p>
+<h2 id="t-kauf">Prüfen und kaufen</h2>
+<div class="br-kasse">
+<p class="br-summe"><span id="auswahl">Budgetstand anfragen</span><strong id="preis">9,90 €</strong></p>
+<label class="br-check"><input type="checkbox" id="ok-agb"> Ich habe die <a href="/bedingungen-brief.html" target="_blank" rel="noopener">Bedingungen für den Briefkauf</a> gelesen.</label>
+<label class="br-check"><input type="checkbox" id="ok-widerruf"> Ich möchte den Brief sofort bekommen. Mir ist bekannt, dass mein Widerrufsrecht endet, sobald der Brief bereitsteht.</label>
+<button class="knopf dunkel" type="button" id="kaufen" disabled>Jetzt bezahlen und Brief erhalten</button>
+<p class="klein grau" id="kauf-hinweis">Bezahlung per PayPal, Karte oder Überweisung über Mollie. In der Vorschau noch nicht aktiv.</p>
+<hr>
+<button class="knopf hell" type="button" id="muster">Muster ansehen und drucken</button>
+<p class="klein grau">Das Muster trägt den Aufdruck „MUSTER“. Unsere Briefe ersetzen keine Rechtsberatung. Bei Streit mit der Pflegekasse hilft ein Pflegestützpunkt oder ein Sozialverband.</p>
+</div>
+</section>
+
+<aside class="br-bruecke">
+<h2>Und wenn zu Hause irgendwann nicht mehr reicht?</h2>
+<p>Ein Heimplatz kostet schnell mehr, als Rente und Pflegekasse zusammen zahlen. Lass uns in Ruhe rechnen, solange ihr noch entscheiden könnt.</p>
+<a class="knopf gelb" href="/termin" target="_blank" rel="noopener">Gespräch mit Volker vereinbaren</a>
+<p class="klein">Kostenlos und unverbindlich. Ich melde mich innerhalb von 24 Stunden.</p>
+</aside>
+</main>
+
+<footer class="fuss nicht-drucken">
+<div class="breite fuss-innen">
+<span>AnspruchsKompass von Volker Cyrener, Hamminkeln. Orientierung, keine Entscheidung der Pflegekasse.</span>
+<nav aria-label="Rechtliches">
+<a href="/impressum">Impressum</a><a href="/datenschutz">Datenschutz</a><a href="/bedingungen-brief.html">Bedingungen Briefkauf</a><a href="/widerruf">Widerruf</a><a href="/vertrag-widerrufen">Vertrag widerrufen</a>
+</nav>
+</div>
+</footer>
+
+<div id="druck" class="druck" aria-live="polite"></div>
+<script src="/brief.js" defer></script>
+</body>
+</html>

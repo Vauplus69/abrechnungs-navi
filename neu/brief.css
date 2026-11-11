@@ -1,0 +1,56 @@
+.br{max-width:900px;padding-top:32px;padding-bottom:72px}
+.br h1{font-size:44px;line-height:1.15;margin:0 0 16px}
+.br h2{font-size:30px;margin:0 0 12px}
+.br section{margin:0 0 48px}
+.br .klein{font-size:15px;margin:10px 0 0}
+.br .grau{color:var(--grau)}
+.br .unter{margin:0 0 20px;color:var(--text)}
+.br-vorschau{background:var(--gelbhell);border-left:4px solid var(--gelb);border-radius:10px;padding:14px 18px;font-size:16px;margin:0 0 32px}
+.br-nr{font-size:14px;font-weight:700;letter-spacing:.08em;color:var(--moos);margin:0 0 8px}
+.br-wahl{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.br-karte{display:flex;gap:12px;align-items:flex-start;background:#fff;border:2px solid var(--linie);border-radius:16px;padding:18px 20px;cursor:pointer}
+.br-karte:has(input:checked){border-color:var(--nacht);box-shadow:0 0 0 1px var(--nacht)}
+.br-karte input{margin-top:6px;width:18px;height:18px;accent-color:var(--nacht);flex:0 0 auto}
+.br-karte span{flex:1;color:var(--text);font-size:16px}
+.br-karte strong{display:block;font-size:19px;color:var(--nacht);margin-bottom:4px}
+.br-karte em{font-style:normal;font-weight:700;white-space:nowrap;color:var(--nacht)}
+.br-karte small{display:block;font-weight:400;color:var(--grau);font-size:13px;text-decoration:line-through}
+.br-paket{background:var(--gelbhell)}
+.br-form fieldset{border:0;background:#fff;border-radius:16px;padding:20px 22px;margin:0 0 16px}
+.br-form legend{font-weight:700;font-size:19px;padding:0;float:left;width:100%;margin-bottom:12px}
+.br-form legend+*{clear:both}
+.br-zwei{display:grid;grid-template-columns:1fr 1fr;gap:4px 18px}
+.br-form label{display:block;font-weight:700;font-size:16px;margin:0 0 14px}
+.br-form small{font-weight:400;color:var(--grau)}
+.br-form input:not([type=radio]):not([type=checkbox]),.br-form select,.br-form textarea{display:block;width:100%;margin-top:6px;font:inherit;font-weight:400;padding:11px 13px;border:2px solid var(--linie);border-radius:10px;background:#fff;color:var(--nacht)}
+.br-form input:focus,.br-form select:focus,.br-form textarea:focus{border-color:var(--nacht);outline:none}
+.br-form .br-radio,.br-check{display:flex;gap:10px;align-items:flex-start;font-weight:400!important;cursor:pointer;margin:0 0 10px;color:var(--text)}
+.br-radio input,.br-check input{width:18px;height:18px;margin-top:4px;accent-color:var(--nacht);flex:0 0 auto}
+.br-fehlt input,.br-fehlt select{border-color:#C0392B!important}
+.br-kasse{background:#fff;border-radius:16px;padding:22px}
+.br-summe{display:flex;justify-content:space-between;gap:16px;font-size:20px;border-bottom:1px solid var(--linie);padding-bottom:14px;margin:0 0 18px}
+.br .knopf{border:0;cursor:pointer;font:inherit;font-weight:700}
+.br .knopf.hell{background:#fff;color:var(--nacht);border:2px solid var(--nacht);font-size:17px;margin:0}
+.br .knopf:disabled{opacity:.45;cursor:not-allowed}
+.br hr{border:0;border-top:1px solid var(--linie);margin:24px 0}
+.br-bruecke{background:var(--nacht);color:#fff;border-radius:20px;padding:28px}
+.br-bruecke h2{color:#fff;font-size:26px}
+.br-bruecke .klein{color:#C9D6DE}
+.druck{display:none}
+@media (max-width:700px){.br-wahl,.br-zwei{grid-template-columns:1fr}.br h1{font-size:32px}}
+@media print{
+  @page{size:A4;margin:20mm 20mm 18mm 25mm}
+  body{background:#fff}
+  .nicht-drucken,.skip{display:none!important}
+  .druck{display:block;font:11pt/1.45 'Atkinson Hyperlegible',Arial,sans-serif;color:#000}
+  .bf{page-break-after:always;position:relative}
+  .bf:last-child{page-break-after:auto}
+  .bf-abs{font-size:8.5pt;border-bottom:.5pt solid #000;display:inline-block;margin:0 0 4mm}
+  .bf-an{min-height:40mm;margin:0 0 10mm}
+  .bf-datum{text-align:right;margin:0 0 8mm}
+  .bf h2{font:700 11pt/1.4 'Atkinson Hyperlegible',Arial,sans-serif;margin:0 0 6mm}
+  .bf p{margin:0 0 3.5mm}
+  .bf ul{margin:0 0 3.5mm;padding-left:6mm}
+  .bf-unterschrift{margin-top:18mm;border-top:.5pt solid #000;width:70mm;padding-top:1mm;font-size:9pt}
+  .bf-muster{position:fixed;top:45%;left:0;right:0;text-align:center;font:700 80pt Arial,sans-serif;color:rgba(0,0,0,.08);transform:rotate(-30deg)}
+}
