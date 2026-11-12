@@ -3,7 +3,6 @@
 # Startet im TESTBETRIEB: Kunden sehen davon nichts. Echt verkauft wird erst nach "ak-zahlung live".
 # Macht vorher Sicherungen und nimmt bei Fehlern alles zurueck.
 set -euo pipefail
-clear
 Z=/opt/ak-zahlung
 B=/root/sicherung-zahlung-$(date +%F-%H%M)
 mkdir -p "$B"
@@ -19,33 +18,24 @@ rm -rf "$Z/test"; cp -a "$T/zahlung/test" "$Z/test"
 cp "$T/zahlung/einrichten.sh" "$Z/einrichten.sh"
 chown 1000:1000 "$Z/daten"; chmod 700 "$Z/daten"
 
-# 2) Schluessel und Mail-Passwort (nur beim ersten Mal). Volker tippt sie selbst ein, sie werden nicht angezeigt.
+# 2) Einstellungen-Datei. Schluessel und Mail-Passwort traegt Volker spaeter im Browser ein (Konsole kann nicht einfuegen).
+neuer_code(){ CODE=$(shuf -i 100000-999999 -n 1); BIS=$(( $(date +%s) + 7200 )); }
 if [ ! -f "$Z/.env" ]; then
-  echo
-  echo "Jetzt brauche ich zwei Dinge von dir. Beim Eintippen oder Einfuegen siehst du nichts, das ist richtig so."
-  K=""
-  until [[ "$K" =~ ^test_[A-Za-z0-9]{20,}$ ]]; do
-    read -r -s -p "1) Test-Schluessel von Mollie (beginnt mit test_): " K </dev/tty; echo
-    [[ "$K" =~ ^test_[A-Za-z0-9]{20,}$ ]] || echo "   Das sieht nicht wie ein Test-Schluessel aus. Bitte noch einmal."
-  done
-  P=""
-  until [ -n "$P" ]; do read -r -s -p "2) Passwort des Postfachs kontakt@anspruchs-kompass.de: " P </dev/tty; echo; done
+  neuer_code
   umask 077
   cat > "$Z/.env" <<ENV
-MODUS=test
-MOLLIE_KEY=$K
+MODUS=aus
 BASIS_URL=https://anspruchs-kompass.de
 SMTP_HOST=smtp.hostinger.com
 SMTP_PORT=465
 SMTP_USER=kontakt@anspruchs-kompass.de
-SMTP_PASS=$P
 MAIL_VON=AnspruchsKompass <kontakt@anspruchs-kompass.de>
 MAIL_KOPIE=kontakt@anspruchs-kompass.de
-MAIL_PRUEFEN=1
+EINRICHT_CODE=$CODE
+EINRICHT_BIS=$BIS
 ENV
-  unset K P
-  chmod 600 "$Z/.env"
 fi
+chown 1000:1000 "$Z/.env"; chmod 600 "$Z/.env"
 
 # 3) Bauen, pruefen, starten
 cd "$Z"
@@ -90,28 +80,35 @@ cat > /usr/local/bin/ak-zahlung <<'E'
 # ak-zahlung aus | test | live | stand | schluessel
 set -e
 Z=/opt/ak-zahlung; cd "$Z"
-setze(){ sed -i "s|^$1=.*|$1=$2|" .env; }
+setze(){ grep -q "^$1=" .env && sed -i "s|^$1=.*|$1=$2|" .env || echo "$1=$2" >> .env; chown 1000:1000 .env; chmod 600 .env; }
+neu(){ docker compose up -d --force-recreate >/dev/null; sleep 3; }
 case "${1:-stand}" in
-  aus|test) setze MODUS "$1"; docker compose up -d --force-recreate >/dev/null; echo "Bezahlung jetzt: $1";;
+  aus|test) setze MODUS "$1"; neu; echo "Bezahlung jetzt: $1";;
   live)
-    grep -q '^MOLLIE_KEY=live_' .env || { echo "Erst den Live-Schluessel eintragen: ak-zahlung schluessel"; exit 1; }
-    setze MODUS live; docker compose up -d --force-recreate >/dev/null; echo "Bezahlung jetzt: LIVE (echte Zahlungen)";;
+    grep -q '^MOLLIE_KEY=live_' .env || { echo "Erst den echten Schluessel eintragen: ak-zahlung schluessel"; exit 1; }
+    setze MODUS live; neu; echo "Bezahlung jetzt: LIVE (echte Zahlungen)";;
   schluessel)
-    read -r -s -p "Neuer Schluessel von Mollie (test_... oder live_...): " K </dev/tty; echo
-    [[ "$K" =~ ^(test|live)_[A-Za-z0-9]{20,}$ ]] || { echo "Das sieht nicht wie ein Mollie-Schluessel aus."; exit 1; }
-    setze MOLLIE_KEY "$K"; [[ "$K" == test_* ]] && setze MODUS test
-    docker compose up -d --force-recreate >/dev/null; echo "Schluessel gespeichert (${K:0:5}...).";;
+    CODE=$(shuf -i 100000-999999 -n 1); setze EINRICHT_CODE "$CODE"; setze EINRICHT_BIS $(( $(date +%s) + 7200 )); neu
+    echo; echo "Oeffne in deinem Browser:  https://anspruchs-kompass.de/api/zahlung/einrichten"
+    echo "Deine Zahl:                $CODE      (gilt 2 Stunden)"; echo; exit 0;;
   stand) ;;
   *) echo "ak-zahlung aus | test | live | stand | schluessel"; exit 1;;
 esac
-sleep 3
 echo "Modus: $(grep '^MODUS=' .env | cut -d= -f2), Schluessel: $(grep '^MOLLIE_KEY=' .env | cut -d= -f2 | cut -c1-5)..."
 echo "Bestellungen bisher: $(grep -o '"status": "bezahlt"' daten/bestellungen.json 2>/dev/null | wc -l) bezahlt"
-docker compose logs --tail 5 --no-log-prefix 2>/dev/null | grep -E "Mail|Modus|Fehler" || true
 E
 chmod 755 /usr/local/bin/ak-zahlung
 echo
 docker compose logs --no-log-prefix 2>/dev/null | grep -E "Mail-Anmeldung|Modus" | tail -2 || true
 echo
-echo "FERTIG. Testbetrieb laeuft. Zum Ausprobieren: https://anspruchs-kompass.de/brief.html?test=1"
+if grep -q '^EINRICHT_CODE=' "$Z/.env"; then
+  echo "======================================================="
+  echo " FERTIG. Jetzt noch Schluessel und Passwort eintragen:"
+  echo " Oeffne in deinem Browser:"
+  echo "   https://anspruchs-kompass.de/api/zahlung/einrichten"
+  echo " Deine Zahl:  $(grep '^EINRICHT_CODE=' "$Z/.env" | cut -d= -f2)    (gilt 2 Stunden)"
+  echo "======================================================="
+else
+  echo "FERTIG. Modus: $(grep '^MODUS=' "$Z/.env" | cut -d= -f2)"
+fi
 echo "ZURUECK: cd $Z && docker compose down; Caddy-Datei aus $B zurueckkopieren und 'systemctl reload caddy'"

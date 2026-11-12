@@ -54,7 +54,7 @@ export function mollieClient({ key, basis = 'https://api.mollie.com/v2', fetchFn
   async function rufe(methode, pfad, body) {
     const r = await fetchFn(basis + pfad, {
       method: methode,
-      headers: { Authorization: 'Bearer ' + key, 'Content-Type': 'application/json' },
+      headers: { Authorization: 'Bearer ' + (typeof key === 'function' ? key() : key), 'Content-Type': 'application/json' },
       body: body ? JSON.stringify(body) : undefined,
       signal: AbortSignal.timeout(15000)
     });
@@ -65,7 +65,8 @@ export function mollieClient({ key, basis = 'https://api.mollie.com/v2', fetchFn
   }
   return {
     neueZahlung: (daten) => rufe('POST', '/payments', daten),
-    zahlung: (id) => rufe('GET', '/payments/' + encodeURIComponent(id))
+    zahlung: (id) => rufe('GET', '/payments/' + encodeURIComponent(id)),
+    methoden: () => rufe('GET', '/methods')
   };
 }
 
@@ -149,7 +150,7 @@ export function bestaetigung(b, { basis, rechtOrdner }) {
 }
 
 // ---------- Anwendung ----------
-export function app(cfg, { mollie, sendeMail, laden, jetzt = Date.now, log = console }) {
+export function app(cfg, { mollie, sendeMail, laden, einrichtung = null, jetzt = Date.now, log = console }) {
   const basis = cfg.basis.replace(/\/$/, '');
   const sperren = new Map();
   const zaehler = new Map();
@@ -222,11 +223,52 @@ export function app(cfg, { mollie, sendeMail, laden, jetzt = Date.now, log = con
     return Buffer.concat(teile).toString('utf8');
   }
 
+  // ---------- Einrichtung im Browser: Schluessel und Mail-Passwort eingeben ----------
+  // Nur mit der Zahl, die beim Einrichten auf dem Server angezeigt wird. Gilt begrenzt, hoechstens 5 Fehlversuche.
+  let fehlversuche = 0;
+  function einrichtOffen() { return !!(einrichtung && cfg.einrichtCode && jetzt() < (cfg.einrichtBis || 0) && fehlversuche < 5); }
+  function seite(res, code, titel, inhalt) {
+    res.writeHead(code, { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-store', 'X-Robots-Tag': 'noindex', 'Referrer-Policy': 'no-referrer' });
+    res.end('<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>' + titel + '</title>' +
+      '<style>body{font:18px/1.5 system-ui,sans-serif;max-width:560px;margin:40px auto;padding:0 16px;color:#12324A;background:#F6F3EC}label{display:block;font-weight:700;margin:18px 0 4px}input{width:100%;box-sizing:border-box;font:inherit;padding:12px;border:2px solid #B8C4CE;border-radius:10px}button{margin-top:24px;font:inherit;font-weight:700;padding:14px 22px;border:0;border-radius:10px;background:#12324A;color:#fff;cursor:pointer}small{font-weight:400;color:#556}.f{background:#FDE2DD;padding:10px 14px;border-radius:10px}.ok{background:#E8F4EC;padding:14px;border-radius:10px}</style></head><body><h1>' + titel + '</h1>' + inhalt + '</body></html>');
+  }
+  function formular(meldung) {
+    return (meldung ? '<p class="f">' + meldung + '</p>' : '') +
+      '<form method="post" autocomplete="off">' +
+      '<label>Zahl aus der Konsole<input name="code" inputmode="numeric" required></label>' +
+      '<label>Schlüssel von Mollie <small>(beginnt mit test_ oder live_)</small><input name="key" required spellcheck="false"></label>' +
+      '<label>Passwort von kontakt@anspruchs-kompass.de' + (cfg.smtpPassDa ? ' <small>(leer lassen, wenn es gleich bleibt)</small>' : '') + '<input name="pass" type="password"' + (cfg.smtpPassDa ? '' : ' required') + '></label>' +
+      '<button>Speichern und prüfen</button></form>';
+  }
+  async function einrichten(req, res) {
+    if (!einrichtOffen()) return seite(res, 403, 'Einrichtung geschlossen', '<p>Diese Seite ist gerade nicht freigeschaltet. Tippe auf dem Server <b>ak-zahlung schluessel</b>, dann bekommst du eine neue Zahl.</p>');
+    if (req.method === 'GET') return seite(res, 200, 'Bezahlung einrichten', '<p>Trag hier die Zahl aus der Konsole, deinen Schlüssel von Mollie und das Mail-Passwort ein. Einfügen mit Strg + V geht hier.</p>' + formular(''));
+    const f = new URLSearchParams(await koerper(req, 4096));
+    const code = String(f.get('code') || '').replace(/\D/g, '');
+    const key = String(f.get('key') || '').replace(/\s+/g, '');
+    const pass = String(f.get('pass') || '');
+    const a = Buffer.from(code.padEnd(12, 'x')), b = Buffer.from(String(cfg.einrichtCode).padEnd(12, 'x'));
+    if (a.length !== b.length || !crypto.timingSafeEqual(a, b)) { fehlversuche++; return seite(res, 400, 'Bezahlung einrichten', formular('Die Zahl stimmt nicht. Schau bitte noch einmal in die Konsole.')); }
+    if (!/^(test|live)_[A-Za-z0-9]{20,}$/.test(key)) return seite(res, 400, 'Bezahlung einrichten', formular('Der Schlüssel sieht nicht richtig aus. Er beginnt mit test_ oder live_ und ist etwa 30 Zeichen lang.'));
+    if (!await einrichtung.pruefeMollie(key)) return seite(res, 400, 'Bezahlung einrichten', formular('Mollie kennt diesen Schlüssel nicht. Kopier ihn bitte noch einmal aus deinem Mollie-Konto.'));
+    if (pass || !cfg.smtpPassDa) {
+      try { await einrichtung.pruefeMail(pass); }
+      catch { return seite(res, 400, 'Bezahlung einrichten', formular('Mit diesem Passwort klappt die Anmeldung beim Postfach nicht. Bitte prüf es noch einmal.')); }
+    }
+    const modus = key.startsWith('test_') ? 'test' : 'aus';
+    await einrichtung.speichere({ key, pass: pass || null, modus });
+    cfg.mollieKey = key; cfg.modus = modus; cfg.einrichtCode = null; cfg.smtpPassDa = true;
+    log.log('Einrichtung gespeichert, Modus:', modus);
+    return seite(res, 200, 'Gespeichert', '<p class="ok"><b>Fertig.</b> Schlüssel und Passwort sind geprüft und gespeichert.</p>' +
+      (modus === 'test' ? '<p>Der Testbetrieb läuft. Probier jetzt einen Testkauf: <a href="/brief.html?test=1">anspruchs-kompass.de/brief.html?test=1</a></p>' : '<p>Das war der echte Schlüssel. Die Bezahlung ist noch aus. Eingeschaltet wird sie erst mit deinem Ja.</p>'));
+  }
+
   return async function (req, res) {
     const url = new URL(req.url, 'http://x');
     const p = url.pathname.replace(/^\/api\/zahlung/, '');
     const ip = String(req.headers['x-forwarded-for'] || req.socket.remoteAddress || '').split(',')[0].trim();
     try {
+      if (p === '/einrichten' && (req.method === 'GET' || req.method === 'POST')) return await einrichten(req, res);
       if (req.method === 'GET' && p === '/gesund') return antwort(res, 200, { ok: true, modus: cfg.modus });
 
       if (req.method === 'GET' && p === '/bereit') {

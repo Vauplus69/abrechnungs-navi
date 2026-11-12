@@ -174,3 +174,49 @@ test('Mollie-Anbindung: richtige Anfrage', async () => {
   const f = mollieClient({ key: 'x', fetchFn: async () => new Response('{"detail":"Bad key"}', { status: 401 }) });
   await assert.rejects(f.zahlung('tr_x'), /401: Bad key/);
 });
+
+test('Einrichtung im Browser: nur mit richtiger Zahl, prueft Schluessel und Passwort, speichert', async () => {
+  const ordner = fs.mkdtempSync(path.join(os.tmpdir(), 'akz-'));
+  const gespeichert = [];
+  let mollieOk = false;
+  const einrichtung = {
+    pruefeMollie: async () => mollieOk,
+    pruefeMail: async (p) => { if (p !== 'richtig') throw new Error('falsch'); },
+    speichere: async (x) => { gespeichert.push(x); }
+  };
+  const cfg = { modus: 'aus', mollieKey: '', basis: 'https://anspruchs-kompass.de', rechtOrdner: RECHT, einrichtCode: '123456', einrichtBis: Date.now() + 60000 };
+  const h = app(cfg, { mollie: {}, sendeMail: async () => {}, laden: speicher(path.join(ordner, 'b.json')), einrichtung, log: { log() {}, error() {} } });
+  const server = http.createServer(h); offen.push(server);
+  await new Promise(r => server.listen(0, '127.0.0.1', r));
+  const url = 'http://127.0.0.1:' + server.address().port + '/api/zahlung/einrichten';
+  const post = (o) => fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: new URLSearchParams(o) }).then(async r => ({ code: r.status, t: await r.text() }));
+  const KEY = 'test_ABCDEFGHIJKLMNOPQRSTUVWXYZ12';
+  assert.equal((await fetch(url)).status, 200);
+  assert.match((await post({ code: '111111', key: KEY, pass: 'richtig' })).t, /Zahl stimmt nicht/);
+  assert.match((await post({ code: '123456', key: 'test-falsch', pass: 'richtig' })).t, /sieht nicht richtig aus/);
+  assert.match((await post({ code: '123456', key: KEY, pass: 'richtig' })).t, /Mollie kennt diesen/);
+  mollieOk = true;
+  assert.match((await post({ code: '123456', key: KEY, pass: 'falsch' })).t, /Anmeldung beim Postfach/);
+  assert.equal(gespeichert.length, 0);
+  // Leerzeichen und Zeilenumbrueche beim Einfuegen werden entfernt
+  const r = await post({ code: ' 123 456 ', key: ' ' + KEY + '\n', pass: 'richtig' });
+  assert.match(r.t, /Fertig/);
+  assert.deepEqual(gespeichert, [{ key: KEY, pass: 'richtig', modus: 'test' }]);
+  assert.equal(cfg.modus, 'test');
+  assert.equal(cfg.mollieKey, KEY);
+  // danach geschlossen
+  assert.equal((await fetch(url)).status, 403);
+});
+
+test('Einrichtung: nach 5 falschen Zahlen gesperrt, abgelaufen = gesperrt', async () => {
+  const cfg = { modus: 'aus', mollieKey: '', basis: 'x', rechtOrdner: RECHT, einrichtCode: '123456', einrichtBis: Date.now() + 60000 };
+  const einrichtung = { pruefeMollie: async () => true, pruefeMail: async () => {}, speichere: async () => {} };
+  const h = app(cfg, { mollie: {}, sendeMail: async () => {}, laden: speicher(path.join(fs.mkdtempSync(path.join(os.tmpdir(), 'akz-')), 'b.json')), einrichtung, log: { log() {}, error() {} } });
+  const server = http.createServer(h); offen.push(server);
+  await new Promise(r => server.listen(0, '127.0.0.1', r));
+  const url = 'http://127.0.0.1:' + server.address().port + '/api/zahlung/einrichten';
+  for (let i = 0; i < 5; i++) await fetch(url, { method: 'POST', body: new URLSearchParams({ code: '000000', key: 'x', pass: 'y' }) });
+  assert.equal((await fetch(url)).status, 403);
+  cfg.einrichtCode = '999999'; cfg.einrichtBis = Date.now() - 1;
+  assert.equal((await fetch(url)).status, 403);
+});

@@ -11,6 +11,7 @@ services:
       - "127.0.0.1:8795:8795"
     volumes:
       - ./daten:/data
+      - ./.env:/app/einstellungen.env
       - /opt/anspruchskompass/public:/recht:ro
     logging:
       driver: json-file
