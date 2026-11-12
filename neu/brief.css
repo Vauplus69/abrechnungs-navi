@@ -55,3 +55,4 @@
   .bf-unterschrift{margin-top:18mm;border-top:.5pt solid #000;width:70mm;padding-top:1mm;font-size:9pt}
   .bf-muster{position:fixed;top:45%;left:0;right:0;text-align:center;font:700 80pt Arial,sans-serif;color:rgba(0,0,0,.08);transform:rotate(-30deg)}
 }
+.br-hinweis p{margin:0 0 6px}.br-hinweis ul{margin:0;padding-left:20px}.br-hinweis li{margin:4px 0}

@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex">
 <meta name="theme-color" content="#12324A">
-<title>Fertige Briefe · Vorschau · AnspruchsKompass</title>
+<title>Briefvorlagen · Vorschau · AnspruchsKompass</title>
 <link rel="stylesheet" href="/ak-fonts.css">
 <link rel="stylesheet" href="/start.css">
 <link rel="stylesheet" href="/brief.css">
@@ -23,20 +23,28 @@
 </header>
 
 <main id="inhalt" class="breite br nicht-drucken">
-<p class="br-vorschau"><strong>Vorschau.</strong> Die Bezahlung ist noch nicht eingeschaltet. Zum Ausprobieren kannst du jeden Brief als Muster ausdrucken.</p>
+<p class="br-vorschau"><strong>Vorschau.</strong> Die Bezahlung ist noch nicht eingeschaltet. Zum Ausprobieren kannst du jede Vorlage als Muster ausdrucken.</p>
 
-<h1>Dein Brief an Kasse, Amt oder Vermieter. Fertig in fünf Minuten.</h1>
-<p class="gross">Du füllst ein paar Felder aus, wir setzen den Brief. Du prüfst ihn, druckst ihn und schickst ihn selbst ab.</p>
+<h1>Briefvorlagen für Kasse, Amt oder Vermieter.</h1>
+<p class="gross">Allgemeine Vorlagen für häufige Anliegen. Du trägst deine Angaben ein, die Vorlage wird damit automatisch ausgefüllt. Du prüfst den Text, druckst ihn und schickst ihn selbst ab.</p>
+<div class="br-vorschau br-hinweis" role="note">
+<p><strong>Was diese Vorlagen sind und was nicht</strong></p>
+<ul>
+<li>Jede Vorlage ist ein fester Text, der für alle gleich ist. Deine Angaben werden nur an den vorgesehenen Stellen eingesetzt, automatisch in deinem Browser.</li>
+<li>Niemand von uns liest deine Angaben oder prüft deinen Fall. Wir sagen nicht, ob dir eine Leistung zusteht und ob die Vorlage zu deiner Lage passt. Das entscheidest du selbst.</li>
+<li>Fragen zu deinem Fall beantworten die Pflegeberatung deiner Pflegekasse, ein Pflegestützpunkt, ein Sozialverband wie VdK oder SoVD, die Verbraucherzentrale oder ein Anwalt.</li>
+</ul>
+</div>
 
 <section aria-labelledby="t-wahl">
 <p class="br-nr">SCHRITT 1 VON 3</p>
-<h2 id="t-wahl">Welchen Brief brauchst du?</h2>
+<h2 id="t-wahl">Welche Vorlage brauchst du?</h2>
 <h3 class="br-gruppe">Pflege</h3>
-<div class="br-wahl" role="radiogroup" aria-label="Brief wählen">
+<div class="br-wahl" role="radiogroup" aria-label="Vorlage wählen">
 <label class="br-karte"><input type="radio" name="brief" value="budget" checked><span><strong>Budgetstand anfragen</strong>Die Pflegekasse soll schriftlich sagen, was noch übrig ist, zum Beispiel beim Entlastungsbetrag.</span><em>9,90 €</em></label>
 <label class="br-karte"><input type="radio" name="brief" value="antrag"><span><strong>Erstantrag auf Pflegeleistungen</strong>Für alle, die noch keinen Pflegegrad haben. Der Antrag zählt ab dem Tag, an dem er ankommt.</span><em>9,90 €</em></label>
 <label class="br-karte"><input type="radio" name="brief" value="hoeher"><span><strong>Pflegegrad überprüfen lassen</strong>Wenn es schlechter geworden ist und mehr Hilfe nötig ist.</span><em>9,90 €</em></label>
-<label class="br-karte br-paket"><input type="radio" name="brief" value="paket"><span><strong>Paket: Budgetstand + Pflegegrad überprüfen</strong>Für alle mit Pflegegrad. Einmal ausfüllen, beide Briefe bekommen.</span><em>17,90 € <small>statt 19,80 €</small></em></label>
+<label class="br-karte br-paket"><input type="radio" name="brief" value="paket"><span><strong>Paket: Budgetstand + Pflegegrad überprüfen</strong>Für alle mit Pflegegrad. Einmal ausfüllen, beide Vorlagen bekommen.</span><em>17,90 € <small>statt 19,80 €</small></em></label>
 </div>
 <h3 class="br-gruppe">Wohnen</h3>
 <div class="br-wahl">
@@ -58,7 +66,7 @@
 <section aria-labelledby="t-daten">
 <p class="br-nr">SCHRITT 2 VON 3</p>
 <h2 id="t-daten">Deine Angaben</h2>
-<p class="unter">Deine Angaben bleiben auf deinem Gerät. Sie werden nicht an uns geschickt und nicht gespeichert.</p>
+<p class="unter">Deine Angaben bleiben auf deinem Gerät. Sie werden nicht an uns geschickt und nicht gespeichert. Was du in die Textfelder schreibst, wird Wort für Wort in die Vorlage übernommen. Wir ändern daran nichts.</p>
 <form id="angaben" class="br-form" autocomplete="on">
 <fieldset><legend id="l-person">Um wen geht es? (die versicherte Person)</legend>
 <div class="br-zwei">
@@ -126,13 +134,14 @@
 <h2 id="t-kauf">Prüfen und kaufen</h2>
 <div class="br-kasse">
 <p class="br-summe"><span id="auswahl">Budgetstand anfragen</span><strong id="preis">9,90 €</strong></p>
+<label class="br-check"><input type="checkbox" id="ok-vorlage"> Mir ist klar: Ich bekomme eine allgemeine Vorlage, ausgefüllt mit meinen Angaben. Mein Fall wird nicht geprüft.</label>
 <label class="br-check"><input type="checkbox" id="ok-agb"> Ich habe die <a href="/bedingungen-brief.html" target="_blank" rel="noopener">Bedingungen für den Briefkauf</a> gelesen.</label>
-<label class="br-check"><input type="checkbox" id="ok-widerruf"> Ich möchte den Brief sofort bekommen. Mir ist bekannt, dass mein Widerrufsrecht endet, sobald der Brief bereitsteht.</label>
-<button class="knopf dunkel" type="button" id="kaufen" disabled>Jetzt bezahlen und Brief erhalten</button>
+<label class="br-check"><input type="checkbox" id="ok-widerruf"> Ich möchte die Vorlage sofort bekommen. Mir ist bekannt, dass mein Widerrufsrecht endet, sobald die Vorlage bereitsteht.</label>
+<button class="knopf dunkel" type="button" id="kaufen" disabled>Jetzt bezahlen und Vorlage erhalten</button>
 <p class="klein grau" id="kauf-hinweis">Bezahlung per PayPal, Karte oder Überweisung über Mollie. In der Vorschau noch nicht aktiv.</p>
 <hr>
 <button class="knopf hell" type="button" id="muster">Muster ansehen und drucken</button>
-<p class="klein grau">Das Muster trägt den Aufdruck „MUSTER“. Unsere Briefe ersetzen keine Rechtsberatung. Bei Streit mit einer Behörde helfen ein Pflegestützpunkt, ein Sozialverband oder ein Anwalt.</p>
+<p class="klein grau">Das Muster trägt den Aufdruck „MUSTER“. Unsere Vorlagen ersetzen keine Beratung und keine Rechtsberatung. Bei Streit mit einer Behörde helfen ein Pflegestützpunkt, ein Sozialverband oder ein Anwalt.</p>
 </div>
 </section>
 

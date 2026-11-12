@@ -1,4 +1,4 @@
-// Fertige Briefe: alles passiert im Browser, nichts wird verschickt oder gespeichert.
+// Briefvorlagen: alles passiert im Browser, nichts wird verschickt oder gespeichert.
 (function () {
   'use strict';
   var PREISE = { budget: 9.9, antrag: 9.9, hoeher: 9.9, paket: 17.9, umbau: 9.9, vermieter: 9.9, konto: 9.9, witwe: 9.9, kita: 9.9 };
@@ -17,6 +17,7 @@
   var kaufen = document.getElementById('kaufen');
   var okAgb = document.getElementById('ok-agb');
   var okWid = document.getElementById('ok-widerruf');
+  var okVor = document.getElementById('ok-vorlage');
   function $(id) { return document.getElementById(id); }
   function esc(s) { return String(s || '').replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
   function absatz(s) { return esc(s).replace(/\n/g, '<br>'); }
@@ -59,7 +60,7 @@
     }
     $('auswahl').textContent = TITEL[w];
     $('preis').textContent = euro(PREISE[w]);
-    kaufen.disabled = !(okAgb.checked && okWid.checked);
+    kaufen.disabled = !(okVor.checked && okAgb.checked && okWid.checked);
   }
   document.addEventListener('change', anpassen);
   anpassen();
