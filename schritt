@@ -1,63 +1,37 @@
 #!/bin/bash
-# Einmalig: automatische Aktualisierung der Vorschau einrichten (alle 2 Minuten).
-# Uebernimmt nur Dateien aus dem Ordner neu/ (nie index.html) und baut die App neu.
+# Schritt 12.11.2026: Livegang schlanker Start (Freigabe Volker).
+# Livegang schlanker Start. Macht zuerst eine Sicherung von public/.
+# Zurueck: siehe Zeile ZURUECK am Ende der Ausgabe.
 set -e
-clear
-cat > /usr/local/bin/ak-auto <<'SKRIPT'
-#!/bin/bash
-# Holt neue Vorschau-Dateien von GitHub, wenn sich etwas geaendert hat.
-set -euo pipefail
 A=/opt/anspruchskompass
-S=/var/lib/ak-auto
-mkdir -p "$S"
-exec 9>"$S/sperre"; flock -n 9 || exit 0
-SHA=$(curl -fsS -m 20 -H 'Accept: application/vnd.github.sha' \
-  https://api.github.com/repos/Vauplus69/abrechnungs-navi/commits/anspruchskompass)
-[[ "$SHA" =~ ^[0-9a-f]{40}$ ]] || { logger -t ak-auto "ungueltige Antwort"; exit 1; }
-[ "$SHA" = "$(cat "$S/stand" 2>/dev/null || true)" ] && exit 0
+B=/root/sicherung-livegang-$(date +%F-%H%M)
+mkdir -p "$B" && cp -a "$A/public" "$B/"
+echo "Sicherung: $B"
 T=$(mktemp -d); trap 'rm -rf "$T"' EXIT
-curl -fsSL -m 60 "https://codeload.github.com/Vauplus69/abrechnungs-navi/tar.gz/$SHA" | tar xz -C "$T" --strip-components=1
-GEAENDERT=0
-for f in "$T"/neu/*; do
-  b=$(basename "$f")
-  [ -f "$f" ] || continue
-  [ "$b" = "index.html" ] && continue
-  [[ "$b" =~ ^[A-Za-z0-9._-]+$ ]] || continue
-  if ! cmp -s "$f" "$A/public/$b"; then cp "$f" "$A/public/$b"; GEAENDERT=1; logger -t ak-auto "neu: $b"; fi
+curl -fsSL -m 60 https://codeload.github.com/Vauplus69/abrechnungs-navi/tar.gz/anspruchskompass | tar xz -C "$T" --strip-components=1
+L="$T/livegang"; P="$A/public"
+# 1. Neue Startseite, Rechtstexte, robots, sitemap
+cp "$L/index.html" "$P/index.html"
+for f in impressum datenschutz cookies; do
+  if [ -f "$P/$f.html" ]; then cp "$L/$f.html" "$P/$f.html"; echo "ersetzt: $f.html"; else echo "ACHTUNG: $f.html nicht in public, Route im Programm pruefen"; fi
 done
-if [ "$GEAENDERT" = 1 ]; then
-  cd "$A" && docker compose build -q && docker compose up -d
-  logger -t ak-auto "eingespielt $SHA"
-fi
-echo "$SHA" > "$S/stand"
-SKRIPT
-chmod 755 /usr/local/bin/ak-auto
-
-cat > /etc/systemd/system/ak-auto.service <<'EOF'
-[Unit]
-Description=AnspruchsKompass Vorschau automatisch aktualisieren
-After=network-online.target docker.service
-[Service]
-Type=oneshot
-ExecStart=/usr/local/bin/ak-auto
-EOF
-
-cat > /etc/systemd/system/ak-auto.timer <<'EOF'
-[Unit]
-Description=AnspruchsKompass Vorschau alle 2 Minuten pruefen
-[Timer]
-OnBootSec=2min
-OnUnitActiveSec=2min
-Persistent=true
-[Install]
-WantedBy=timers.target
-EOF
-
-systemctl daemon-reload
-systemctl enable --now ak-auto.timer
-systemctl start ak-auto.service || true
-sleep 3
-for p in /vorschau /kompass /catalog-neu.js /premium-neu.html /; do printf '%-18s %s\n' "$p" "$(curl -s -o /dev/null -w '%{http_code}' http://127.0.0.1:8787$p)"; done
-systemctl is-active ak-auto.timer
-journalctl -t ak-auto --no-pager -n 5
-echo FERTIG
+cp "$L/robots.txt" "$P/robots.txt"; cp "$L/sitemap.xml" "$P/sitemap.xml"
+# 2. Alte Abo-Seiten auf die Startseite umleiten
+for f in premium agb kuendigen; do
+  if [ -f "$P/$f.html" ]; then cp "$L/weiter.html" "$P/$f.html"; echo "umgeleitet: $f.html"; else echo "ACHTUNG: $f.html nicht in public, Route im Programm pruefen"; fi
+done
+# 2b. Widerrufsknopf: neue Seite, nutzt die vorhandene Widerrufs-Technik
+if [ -f "$P/vertrag-widerrufen.html" ]; then cp "$L/vertrag-widerrufen.html" "$P/vertrag-widerrufen.html"; echo "ersetzt: vertrag-widerrufen.html"; else echo "ACHTUNG: vertrag-widerrufen.html nicht in public"; fi
+# 2b2. AGB fuer den Briefkauf (Text IT-Recht Kanzlei)
+cp "$L/bedingungen-brief.html" "$P/bedingungen-brief.html"; echo "ersetzt: bedingungen-brief.html"
+# 2b3. Widerrufsbelehrung (Text IT-Recht Kanzlei)
+if [ -f "$P/widerruf.html" ]; then cp "$L/widerruf.html" "$P/widerruf.html"; echo "ersetzt: widerruf.html"; else echo "ACHTUNG: widerruf.html nicht in public"; fi
+# 2c. Neuer Buchungslink (Kalender betriva360)
+cp "$L/termin.html" "$P/termin.html"; echo "ersetzt: termin.html"
+# 3. Neu bauen
+cd "$A" && docker compose build -q && docker compose up -d
+sleep 5
+for u in / /kompass /impressum /datenschutz /cookies /vertrag-widerrufen /widerruf /bedingungen-brief.html /termin /premium /rente.html /robots.txt; do
+  printf "%-16s %s\n" "$u" "$(curl -s -o /dev/null -w '%{http_code}' -H 'Host: anspruchs-kompass.de' http://127.0.0.1:8787$u)"
+done
+echo "ZURUECK: rm -rf $A/public && cp -a $B/public $A/ && cd $A && docker compose build -q && docker compose up -d"
