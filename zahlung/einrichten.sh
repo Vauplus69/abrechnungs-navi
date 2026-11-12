@@ -35,6 +35,12 @@ EINRICHT_CODE=$CODE
 EINRICHT_BIS=$BIS
 ENV
 fi
+# Noch kein Schluessel eingetragen: frische Zahl, gilt 2 Stunden
+if ! grep -q '^MOLLIE_KEY=' "$Z/.env"; then
+  neuer_code
+  sed -i '/^EINRICHT_CODE=/d;/^EINRICHT_BIS=/d' "$Z/.env"
+  printf 'EINRICHT_CODE=%s\nEINRICHT_BIS=%s\n' "$CODE" "$BIS" >> "$Z/.env"
+fi
 chown 1000:1000 "$Z/.env"; chmod 600 "$Z/.env"
 
 # 3) Bauen, pruefen, starten
@@ -48,8 +54,17 @@ sleep 4
 curl -sf http://127.0.0.1:8795/api/zahlung/gesund >/dev/null && echo "== Bezahl-Dienst laeuft" || { echo "ABBRUCH: Dienst startet nicht"; docker compose logs --tail 20; exit 1; }
 
 # 4) Caddy: /api/zahlung/* an den Dienst weiterleiten (nur einmal)
-C=$(grep -rlE "^[^#]*anspruchs-kompass\.de" /etc/caddy 2>/dev/null | head -1 || true)
-[ -n "$C" ] || { echo "ABBRUCH: Caddy-Einstellung fuer anspruchs-kompass.de nicht gefunden."; exit 1; }
+# Nur Dateien, die Caddy wirklich laedt: die Hauptdatei und ihre import-Zeilen (keine Sicherungskopien).
+C=""
+cd /etc/caddy
+for f in /etc/caddy/Caddyfile $(grep -E '^[[:space:]]*import[[:space:]]' /etc/caddy/Caddyfile | awk '{print $2}'); do
+  for g in $f; do
+    [ -f "$g" ] || continue
+    if grep -qE "^[^#]*anspruchs-kompass\.de" "$g" && grep -qE "^[^#]*8787" "$g"; then C=$(readlink -f "$g"); break 2; fi
+  done
+done
+cd "$Z"
+[ -n "$C" ] || { echo "ABBRUCH: Caddy-Einstellung fuer anspruchs-kompass.de nicht gefunden. Dateien:"; ls /etc/caddy; grep -n import /etc/caddy/Caddyfile; exit 1; }
 if grep -q "/api/zahlung/" "$C"; then
   echo "== Caddy-Weiterleitung ist schon da ($C)"
 else
