@@ -237,7 +237,7 @@ export function app(cfg, { mollie, sendeMail, laden, einrichtung = null, jetzt =
       '<form method="post" autocomplete="off">' +
       '<label>Zahl aus der Konsole<input name="code" inputmode="numeric" required></label>' +
       '<label>Schlüssel von Mollie <small>(beginnt mit test_ oder live_)</small><input name="key" required spellcheck="false"></label>' +
-      '<label>Passwort von kontakt@anspruchs-kompass.de' + (cfg.smtpPassDa ? ' <small>(leer lassen, wenn es gleich bleibt)</small>' : '') + '<input name="pass" type="password"' + (cfg.smtpPassDa ? '' : ' required') + '></label>' +
+      '<label>Passwort von kontakt@anspruchs-kompass.de <small>(' + (cfg.smtpPassDa ? 'leer lassen, wenn es gleich bleibt' : 'freiwillig, kann auch später kommen') + ')</small><input name="pass" type="password"></label>' +
       '<button>Speichern und prüfen</button></form>';
   }
   async function einrichten(req, res) {
@@ -251,15 +251,15 @@ export function app(cfg, { mollie, sendeMail, laden, einrichtung = null, jetzt =
     if (a.length !== b.length || !crypto.timingSafeEqual(a, b)) { fehlversuche++; return seite(res, 400, 'Bezahlung einrichten', formular('Die Zahl stimmt nicht. Schau bitte noch einmal in die Konsole.')); }
     if (!/^(test|live)_[A-Za-z0-9]{20,}$/.test(key)) return seite(res, 400, 'Bezahlung einrichten', formular('Der Schlüssel sieht nicht richtig aus. Er beginnt mit test_ oder live_ und ist etwa 30 Zeichen lang.'));
     if (!await einrichtung.pruefeMollie(key)) return seite(res, 400, 'Bezahlung einrichten', formular('Mollie kennt diesen Schlüssel nicht. Kopier ihn bitte noch einmal aus deinem Mollie-Konto.'));
-    if (pass || !cfg.smtpPassDa) {
+    if (pass) {
       try { await einrichtung.pruefeMail(pass); }
       catch { return seite(res, 400, 'Bezahlung einrichten', formular('Mit diesem Passwort klappt die Anmeldung beim Postfach nicht. Bitte prüf es noch einmal.')); }
     }
     const modus = key.startsWith('test_') ? 'test' : 'aus';
     await einrichtung.speichere({ key, pass: pass || null, modus });
-    cfg.mollieKey = key; cfg.modus = modus; cfg.einrichtCode = null; cfg.smtpPassDa = true;
+    cfg.mollieKey = key; cfg.modus = modus; cfg.einrichtCode = null; if (pass) cfg.smtpPassDa = true;
     log.log('Einrichtung gespeichert, Modus:', modus);
-    return seite(res, 200, 'Gespeichert', '<p class="ok"><b>Fertig.</b> Schlüssel und Passwort sind geprüft und gespeichert.</p>' +
+    return seite(res, 200, 'Gespeichert', '<p class="ok"><b>Fertig.</b> ' + (cfg.smtpPassDa ? 'Schlüssel und Passwort sind geprüft und gespeichert.' : 'Der Schlüssel ist geprüft und gespeichert. Ohne Mail-Passwort werden noch keine Bestätigungs-Mails verschickt.') + '</p>' +
       (modus === 'test' ? '<p>Der Testbetrieb läuft. Probier jetzt einen Testkauf: <a href="/brief.html?test=1">anspruchs-kompass.de/brief.html?test=1</a></p>' : '<p>Das war der echte Schlüssel. Die Bezahlung ist noch aus. Eingeschaltet wird sie erst mit deinem Ja.</p>'));
   }
 

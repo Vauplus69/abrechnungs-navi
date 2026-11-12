@@ -197,6 +197,7 @@ test('Einrichtung im Browser: nur mit richtiger Zahl, prueft Schluessel und Pass
   assert.match((await post({ code: '123456', key: KEY, pass: 'richtig' })).t, /Mollie kennt diesen/);
   mollieOk = true;
   assert.match((await post({ code: '123456', key: KEY, pass: 'falsch' })).t, /Anmeldung beim Postfach/);
+  assert.match((await fetch(url).then(r => r.text())), /freiwillig/);
   assert.equal(gespeichert.length, 0);
   // Leerzeichen und Zeilenumbrueche beim Einfuegen werden entfernt
   const r = await post({ code: ' 123 456 ', key: ' ' + KEY + '\n', pass: 'richtig' });
@@ -219,4 +220,17 @@ test('Einrichtung: nach 5 falschen Zahlen gesperrt, abgelaufen = gesperrt', asyn
   assert.equal((await fetch(url)).status, 403);
   cfg.einrichtCode = '999999'; cfg.einrichtBis = Date.now() - 1;
   assert.equal((await fetch(url)).status, 403);
+});
+
+test('Einrichtung ohne Mail-Passwort: Schluessel wird gespeichert, Mail noch aus', async () => {
+  const gespeichert = [];
+  const cfg = { modus: 'aus', mollieKey: '', basis: 'x', rechtOrdner: RECHT, einrichtCode: '123456', einrichtBis: Date.now() + 60000 };
+  const einrichtung = { pruefeMollie: async () => true, pruefeMail: async () => { throw new Error('darf nicht'); }, speichere: async (x) => { gespeichert.push(x); } };
+  const h = app(cfg, { mollie: {}, sendeMail: async () => {}, laden: speicher(path.join(fs.mkdtempSync(path.join(os.tmpdir(), 'akz-')), 'b.json')), einrichtung, log: { log() {}, error() {} } });
+  const server = http.createServer(h); offen.push(server);
+  await new Promise(r => server.listen(0, '127.0.0.1', r));
+  const r = await fetch('http://127.0.0.1:' + server.address().port + '/api/zahlung/einrichten', { method: 'POST', body: new URLSearchParams({ code: '123456', key: 'test_ABCDEFGHIJKLMNOPQRSTUVWXYZ12', pass: '' }) });
+  assert.match(await r.text(), /noch keine Bestätigungs-Mails/);
+  assert.deepEqual(gespeichert, [{ key: 'test_ABCDEFGHIJKLMNOPQRSTUVWXYZ12', pass: null, modus: 'test' }]);
+  assert.equal(cfg.modus, 'test');
 });

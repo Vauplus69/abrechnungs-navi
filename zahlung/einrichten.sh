@@ -31,9 +31,24 @@ SMTP_PORT=465
 SMTP_USER=kontakt@anspruchs-kompass.de
 MAIL_VON=AnspruchsKompass <kontakt@anspruchs-kompass.de>
 MAIL_KOPIE=kontakt@anspruchs-kompass.de
+MAIL_PRUEFEN=1
 EINRICHT_CODE=$CODE
 EINRICHT_BIS=$BIS
 ENV
+fi
+# Mail-Passwort fehlt: aus den Einstellungen der Webseite uebernehmen (die schickt schon Widerrufs-Mails). Wird nicht angezeigt.
+if ! grep -q '^SMTP_PASS=.' "$Z/.env"; then
+  W=$(grep -hE '^[[:space:]-]*[A-Z_]*(SMTP|MAIL)[A-Z_]*PASS[A-Z_]*[=:]' /opt/anspruchskompass/.env /opt/anspruchskompass/compose.yaml 2>/dev/null | head -1 || true)
+  if [ -n "$W" ]; then
+    WP=$(echo "$W" | sed -E 's/^[^=:]*[=:][[:space:]]*//; s/^["'"'"']//; s/["'"'"'][[:space:]]*$//')
+    if [ -n "$WP" ] && [[ "$WP" != *'${'* ]]; then
+      sed -i '/^SMTP_PASS=/d' "$Z/.env"; printf 'SMTP_PASS=%s\n' "$WP" >> "$Z/.env"
+      echo "== Mail-Passwort aus den Einstellungen der Webseite uebernommen"
+    fi
+    unset W WP
+  else
+    echo "== Mail-Passwort nicht gefunden (kann spaeter im Browser eingetragen werden)"
+  fi
 fi
 # Noch kein Schluessel eingetragen: frische Zahl, gilt 2 Stunden
 if ! grep -q '^MOLLIE_KEY=' "$Z/.env"; then
@@ -49,7 +64,7 @@ docker compose build -q
 echo "== Tests:"
 docker compose run --rm --no-deps -T --entrypoint node zahlung --test test/zahlung.test.mjs 2>&1 | grep -E "^# (pass|fail)" | tr '\n' ' ' || true; echo
 docker compose run --rm --no-deps -T --entrypoint node zahlung --test test/zahlung.test.mjs >/dev/null 2>&1 || { echo "ABBRUCH: Tests fehlgeschlagen. Am Server wurde nichts umgestellt."; exit 1; }
-docker compose up -d
+docker compose up -d --force-recreate
 sleep 4
 curl -sf http://127.0.0.1:8795/api/zahlung/gesund >/dev/null && echo "== Bezahl-Dienst laeuft" || { echo "ABBRUCH: Dienst startet nicht"; docker compose logs --tail 20; exit 1; }
 
