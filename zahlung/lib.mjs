@@ -251,12 +251,13 @@ export function app(cfg, { mollie, sendeMail, laden, einrichtung = null, jetzt =
     if (a.length !== b.length || !crypto.timingSafeEqual(a, b)) { fehlversuche++; return seite(res, 400, 'Bezahlung einrichten', formular('Die Zahl stimmt nicht. Schau bitte noch einmal in die Konsole.')); }
     if (!/^(test|live)_[A-Za-z0-9]{20,}$/.test(key)) return seite(res, 400, 'Bezahlung einrichten', formular('Der Schlüssel sieht nicht richtig aus. Er beginnt mit test_ oder live_ und ist etwa 30 Zeichen lang.'));
     if (!await einrichtung.pruefeMollie(key)) return seite(res, 400, 'Bezahlung einrichten', formular('Mollie kennt diesen Schlüssel nicht. Kopier ihn bitte noch einmal aus deinem Mollie-Konto.'));
+    let smtpHost = null;
     if (pass) {
-      try { await einrichtung.pruefeMail(pass); }
+      try { smtpHost = await einrichtung.pruefeMail(pass); }
       catch { return seite(res, 400, 'Bezahlung einrichten', formular('Mit diesem Passwort klappt die Anmeldung beim Postfach nicht. Bitte prüf es noch einmal.')); }
     }
     const modus = key.startsWith('test_') ? 'test' : 'aus';
-    await einrichtung.speichere({ key, pass: pass || null, modus });
+    await einrichtung.speichere({ key, pass: pass || null, modus, smtpHost });
     cfg.mollieKey = key; cfg.modus = modus; cfg.einrichtCode = null; if (pass) cfg.smtpPassDa = true;
     log.log('Einrichtung gespeichert, Modus:', modus);
     return seite(res, 200, 'Gespeichert', '<p class="ok"><b>Fertig.</b> ' + (cfg.smtpPassDa ? 'Schlüssel und Passwort sind geprüft und gespeichert.' : 'Der Schlüssel ist geprüft und gespeichert. Ohne Mail-Passwort werden noch keine Bestätigungs-Mails verschickt.') + '</p>' +

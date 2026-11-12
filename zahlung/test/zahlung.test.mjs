@@ -181,7 +181,7 @@ test('Einrichtung im Browser: nur mit richtiger Zahl, prueft Schluessel und Pass
   let mollieOk = false;
   const einrichtung = {
     pruefeMollie: async () => mollieOk,
-    pruefeMail: async (p) => { if (p !== 'richtig') throw new Error('falsch'); },
+    pruefeMail: async (p) => { if (p !== 'richtig') throw new Error('falsch'); return 'smtps.udag.de'; },
     speichere: async (x) => { gespeichert.push(x); }
   };
   const cfg = { modus: 'aus', mollieKey: '', basis: 'https://anspruchs-kompass.de', rechtOrdner: RECHT, einrichtCode: '123456', einrichtBis: Date.now() + 60000 };
@@ -202,7 +202,7 @@ test('Einrichtung im Browser: nur mit richtiger Zahl, prueft Schluessel und Pass
   // Leerzeichen und Zeilenumbrueche beim Einfuegen werden entfernt
   const r = await post({ code: ' 123 456 ', key: ' ' + KEY + '\n', pass: 'richtig' });
   assert.match(r.t, /Fertig/);
-  assert.deepEqual(gespeichert, [{ key: KEY, pass: 'richtig', modus: 'test' }]);
+  assert.deepEqual(gespeichert, [{ key: KEY, pass: 'richtig', modus: 'test', smtpHost: 'smtps.udag.de' }]);
   assert.equal(cfg.modus, 'test');
   assert.equal(cfg.mollieKey, KEY);
   // danach geschlossen
@@ -231,6 +231,6 @@ test('Einrichtung ohne Mail-Passwort: Schluessel wird gespeichert, Mail noch aus
   await new Promise(r => server.listen(0, '127.0.0.1', r));
   const r = await fetch('http://127.0.0.1:' + server.address().port + '/api/zahlung/einrichten', { method: 'POST', body: new URLSearchParams({ code: '123456', key: 'test_ABCDEFGHIJKLMNOPQRSTUVWXYZ12', pass: '' }) });
   assert.match(await r.text(), /noch keine Bestätigungs-Mails/);
-  assert.deepEqual(gespeichert, [{ key: 'test_ABCDEFGHIJKLMNOPQRSTUVWXYZ12', pass: null, modus: 'test' }]);
+  assert.deepEqual(gespeichert, [{ key: 'test_ABCDEFGHIJKLMNOPQRSTUVWXYZ12', pass: null, modus: 'test', smtpHost: null }]);
   assert.equal(cfg.modus, 'test');
 });

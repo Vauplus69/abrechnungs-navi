@@ -26,7 +26,7 @@ if [ ! -f "$Z/.env" ]; then
   cat > "$Z/.env" <<ENV
 MODUS=aus
 BASIS_URL=https://anspruchs-kompass.de
-SMTP_HOST=smtp.hostinger.com
+SMTP_HOST=smtps.udag.de
 SMTP_PORT=465
 SMTP_USER=kontakt@anspruchs-kompass.de
 MAIL_VON=AnspruchsKompass <kontakt@anspruchs-kompass.de>

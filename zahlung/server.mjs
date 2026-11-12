@@ -22,9 +22,10 @@ if (cfg.modus !== 'aus' && !/^(test|live)_[A-Za-z0-9]{20,}$/.test(cfg.mollieKey)
   cfg.modus = 'aus';
 }
 
-function neuerTransport(pass) {
+let smtpHost = env.SMTP_HOST || 'smtps.udag.de';
+function neuerTransport(pass, host = smtpHost) {
   return nodemailer.createTransport({
-    host: env.SMTP_HOST || 'smtp.hostinger.com',
+    host,
     port: Number(env.SMTP_PORT || 465),
     secure: Number(env.SMTP_PORT || 465) === 465,
     auth: { user: env.SMTP_USER || 'kontakt@anspruchs-kompass.de', pass }
@@ -44,12 +45,19 @@ const einrichtung = {
   async pruefeMollie(key) {
     try { await mollieClient({ key }).methoden(); return true; } catch (e) { console.error('Schluesselpruefung:', e.message); return false; }
   },
-  async pruefeMail(pass) { await neuerTransport(pass).verify(); },
-  async speichere({ key, pass, modus }) {
-    let t = fs.readFileSync(ENV_DATEI, 'utf8').split('\n').filter(l => !/^(EINRICHT_CODE|EINRICHT_BIS|MOLLIE_KEY|MODUS)=/.test(l) && !(pass && /^SMTP_PASS=/.test(l)));
+  // Probiert die Mail-Server der ueblichen Anbieter (United Domains, Hostinger) und merkt sich den, der klappt.
+  async pruefeMail(pass) {
+    const liste = [...new Set([smtpHost, 'smtps.udag.de', 'smtp.udag.de', 'smtp.hostinger.com'])];
+    for (const host of liste) {
+      try { await neuerTransport(pass, host).verify(); return host; } catch (e) { console.error('Mail-Anmeldung bei', host, 'fehlgeschlagen:', e.message); }
+    }
+    throw new Error('Mail-Anmeldung fehlgeschlagen');
+  },
+  async speichere({ key, pass, modus, smtpHost: host }) {
+    let t = fs.readFileSync(ENV_DATEI, 'utf8').split('\n').filter(l => !/^(EINRICHT_CODE|EINRICHT_BIS|MOLLIE_KEY|MODUS)=/.test(l) && !(pass && /^SMTP_(PASS|HOST)=/.test(l)));
     t = t.filter((l, i) => l || i < t.length - 1);
     t.push('MODUS=' + modus, 'MOLLIE_KEY=' + key);
-    if (pass) t.push('SMTP_PASS=' + pass);
+    if (pass) { if (host) smtpHost = host; t.push('SMTP_HOST=' + smtpHost, 'SMTP_PASS=' + pass); }
     fs.writeFileSync(ENV_DATEI, t.join('\n') + '\n');
     if (pass) transport = neuerTransport(pass);
   }
