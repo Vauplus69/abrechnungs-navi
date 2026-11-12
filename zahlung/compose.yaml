@@ -1,0 +1,17 @@
+# Bezahl-Dienst fuer die Briefvorlagen. Laeuft nur intern, Caddy leitet /api/zahlung/* hierher.
+services:
+  zahlung:
+    build: .
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      DATEN: /data
+      RECHT_ORDNER: /recht
+    ports:
+      - "127.0.0.1:8795:8795"
+    volumes:
+      - ./daten:/data
+      - /opt/anspruchskompass/public:/recht:ro
+    logging:
+      driver: json-file
+      options: { max-size: "5m", max-file: "3" }

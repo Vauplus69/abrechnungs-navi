@@ -10,7 +10,11 @@
   };
   var PFLEGE = ['budget', 'antrag', 'hoeher', 'paket', 'umbau'];
   var RENTE = ['konto', 'witwe'];
-  var BEZAHLUNG_AKTIV = false; // wird erst nach Freigabe und Rechtsprüfung eingeschaltet
+  // Ob verkauft wird, entscheidet der Bezahl-Dienst auf dem Server (aus, Test oder live).
+  // Ohne Antwort vom Server bleibt die Bezahlung aus.
+  var BEZAHLUNG_AKTIV = false;
+  var TEST = new URLSearchParams(location.search).get('test') === '1';
+  var SPEICHER = 'ak-brief-angaben';
 
   var form = document.getElementById('angaben');
   var druck = document.getElementById('druck');
@@ -61,7 +65,9 @@
     $('auswahl').textContent = TITEL[w];
     $('preis').textContent = euro(PREISE[w]);
     kaufen.disabled = !(okVor.checked && okAgb.checked && okWid.checked);
+    if (bezahlt) $('bezahlt-text').textContent = 'Deine Vorlage „' + TITEL[bezahlt.brief] + '“ steht bereit. Prüfe deine Angaben oben und drucke sie dann.';
   }
+  var bezahlt = null;
   document.addEventListener('change', anpassen);
   anpassen();
 
@@ -198,14 +204,88 @@
     window.print();
   });
 
+  function hinweis(html) { $('kauf-hinweis').innerHTML = html; }
+
+  // Angaben nur in diesem Browserfenster merken, damit sie nach dem Bezahlen wieder da sind.
+  function merken() {
+    try { sessionStorage.setItem(SPEICHER, JSON.stringify({ wahl: wahl(), felder: d() })); } catch (e) { /* ohne Speicher geht es auch */ }
+  }
+  function zurueckholen() {
+    var s; try { s = JSON.parse(sessionStorage.getItem(SPEICHER) || 'null'); } catch (e) { s = null; }
+    if (!s) return false;
+    var r = document.querySelector('input[name=brief][value=' + s.wahl + ']'); if (r) r.checked = true;
+    Object.keys(s.felder || {}).forEach(function (k) {
+      var f = form.elements[k]; if (!f) return;
+      if (f.type === 'checkbox') f.checked = !!s.felder[k];
+      else if (f.length && f[0] && f[0].type === 'radio') { Array.prototype.forEach.call(f, function (x) { x.checked = x.value === s.felder[k]; }); }
+      else f.value = s.felder[k];
+    });
+    return true;
+  }
+
+  function api(pfad, daten) {
+    return fetch('/api/zahlung' + pfad, daten ? { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(daten) } : { cache: 'no-store' })
+      .then(function (r) { return r.json().catch(function () { return {}; }).then(function (j) { j._code = r.status; return j; }); });
+  }
+
   kaufen.addEventListener('click', function () {
     if (!pflicht(wahl())) return;
     if (!BEZAHLUNG_AKTIV) {
-      $('kauf-hinweis').innerHTML = '<strong>Die Bezahlung ist in der Vorschau noch nicht eingeschaltet.</strong> Nutze bitte „Muster ansehen und drucken“.';
+      hinweis('<strong>Die Bezahlung ist noch nicht eingeschaltet.</strong> Nutze bitte „Muster ansehen und drucken“.');
       return;
     }
-    // Später: Zahlung über Mollie starten, nach Rückkehr Brief ohne Muster-Aufdruck setzen und drucken.
+    var mail = $('email'); mail.closest('label').classList.remove('br-fehlt');
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(mail.value.trim())) { mail.closest('label').classList.add('br-fehlt'); mail.focus(); hinweis('Bitte trag deine E-Mail-Adresse ein. Dorthin schicken wir die Bestätigung.'); return; }
+    merken();
+    kaufen.disabled = true;
+    hinweis('Einen Moment, die Bezahlseite von Mollie wird geöffnet …');
+    api('/start', { brief: wahl(), email: mail.value.trim(), test: TEST, zustimmung: { vorlage: okVor.checked, agb: okAgb.checked, widerruf: okWid.checked } })
+      .then(function (j) {
+        if (j.checkout) { location.href = j.checkout; return; }
+        kaufen.disabled = false; hinweis('<span class="br-meldung">' + esc(j.fehler || 'Das hat gerade nicht geklappt. Bitte versuch es gleich noch einmal.') + '</span>');
+      })
+      .catch(function () { kaufen.disabled = false; hinweis('<span class="br-meldung">Keine Verbindung. Bitte versuch es gleich noch einmal.</span>'); });
   });
+
+  function freischalten(brief, id) {
+    bezahlt = { brief: brief, id: id };
+    var r = document.querySelector('input[name=brief][value=' + brief + ']'); if (r) r.checked = true;
+    document.querySelectorAll('input[name=brief]').forEach(function (x) { x.disabled = x.value !== brief; });
+    $('kasse').hidden = true; $('bezahlt').hidden = false;
+    anpassen();
+    $('bezahlt').scrollIntoView({ block: 'center' });
+  }
+
+  $('drucken').addEventListener('click', function () {
+    if (!bezahlt || !pflicht(bezahlt.brief)) return;
+    merken();
+    setzen(false);
+    window.print();
+  });
+
+  // Rückkehr von Mollie: Stand der Zahlung abfragen.
+  function pruefen(id, versuch) {
+    api('/status?b=' + encodeURIComponent(id)).then(function (j) {
+      if (j.status === 'bezahlt') { freischalten(j.brief, id); return; }
+      if (j.status === 'offen' && versuch < 15) { hinweis('Deine Zahlung wird noch bestätigt …'); setTimeout(function () { pruefen(id, versuch + 1); }, 2000); return; }
+      if (j.status === 'offen') { hinweis('<span class="br-meldung">Deine Zahlung ist noch nicht bestätigt. Lade die Seite in ein paar Minuten neu. Wenn das Geld abgebucht ist, bekommst du die Vorlage auf jeden Fall.</span>'); return; }
+      if (j.status === 'abgebrochen') { hinweis('<span class="br-meldung">Die Zahlung wurde abgebrochen. Es wurde nichts abgebucht. Du kannst es noch einmal versuchen.</span>'); return; }
+      hinweis('<span class="br-meldung">Diese Bestellung haben wir nicht gefunden. Schreib uns bitte an kontakt@anspruchs-kompass.de.</span>');
+    }).catch(function () { if (versuch < 15) setTimeout(function () { pruefen(id, versuch + 1); }, 3000); });
+  }
+
+  var bestellung = new URLSearchParams(location.search).get('bestellung');
+  if (bestellung) { zurueckholen(); anpassen(); }
+
+  api('/bereit' + (TEST ? '?test=1' : '')).then(function (j) {
+    BEZAHLUNG_AKTIV = j && j.aktiv === true;
+    if (BEZAHLUNG_AKTIV) {
+      var v = document.querySelector('.br-vorschau'); if (v && !j.test) v.hidden = true;
+      if (v && j.test) v.innerHTML = '<strong>Testbetrieb.</strong> Bezahlt wird nur zum Schein über die Testseite von Mollie.';
+      hinweis('Bezahlung über Mollie, zum Beispiel mit PayPal, Karte oder Überweisung. Danach kommst du hierher zurück und kannst die Vorlage sofort drucken.');
+    }
+    if (bestellung) pruefen(bestellung, 0);
+  }).catch(function () { if (bestellung) pruefen(bestellung, 0); });
 
   window.addEventListener('afterprint', function () { druck.innerHTML = ''; });
 })();

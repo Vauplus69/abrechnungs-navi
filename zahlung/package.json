@@ -1,0 +1,8 @@
+{
+  "name": "ak-zahlung",
+  "private": true,
+  "type": "module",
+  "description": "Bezahlung der Briefvorlagen ueber Mollie und Bestaetigungs-Mail",
+  "scripts": { "start": "node server.mjs", "test": "node --test test/*.test.mjs" },
+  "dependencies": { "nodemailer": "10.2.1" }
+}

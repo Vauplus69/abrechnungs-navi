@@ -56,3 +56,10 @@
   .bf-muster{position:fixed;top:45%;left:0;right:0;text-align:center;font:700 80pt Arial,sans-serif;color:rgba(0,0,0,.08);transform:rotate(-30deg)}
 }
 .br-hinweis p{margin:0 0 6px}.br-hinweis ul{margin:0;padding-left:20px}.br-hinweis li{margin:4px 0}
+.br-mail{display:block;font-weight:700;margin:0 0 14px}
+.br-mail input{display:block;width:100%;box-sizing:border-box;margin-top:6px;font:inherit;font-weight:400;padding:11px 13px;border:2px solid var(--linie);border-radius:10px;background:#fff;color:var(--nacht)}
+.br-mail input:focus{border-color:var(--nacht);outline:none}
+.br-mail.br-fehlt input{border-color:#C0392B}
+.br-bezahlt{background:#E8F4EC;border-radius:12px;padding:16px 18px;margin:0 0 6px}
+.br-bezahlt p{margin:0 0 12px}
+.br-meldung{background:#FFF4D6;border-radius:10px;padding:10px 14px}

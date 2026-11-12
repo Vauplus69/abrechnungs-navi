@@ -133,12 +133,20 @@
 <p class="br-nr">SCHRITT 3 VON 3</p>
 <h2 id="t-kauf">Prüfen und kaufen</h2>
 <div class="br-kasse">
+<div class="br-bezahlt" id="bezahlt" hidden role="status">
+<p><strong>Danke, deine Zahlung ist angekommen.</strong> <span id="bezahlt-text"></span></p>
+<button class="knopf dunkel" type="button" id="drucken">Vorlage drucken oder als PDF speichern</button>
+<p class="klein grau">Im Druckfenster kannst du statt eines Druckers auch „Als PDF speichern“ wählen. Die Bestätigung mit Bestellnummer bekommst du per E-Mail.</p>
+</div>
+<div id="kasse">
 <p class="br-summe"><span id="auswahl">Budgetstand anfragen</span><strong id="preis">9,90 €</strong></p>
+<label class="br-mail">Deine E-Mail-Adresse <small>(für die Bestätigung deines Kaufs)</small><input type="email" id="email" autocomplete="email" inputmode="email"></label>
 <label class="br-check"><input type="checkbox" id="ok-vorlage"> Mir ist klar: Ich bekomme eine allgemeine Vorlage, ausgefüllt mit meinen Angaben. Mein Fall wird nicht geprüft.</label>
 <label class="br-check"><input type="checkbox" id="ok-agb"> Ich habe die <a href="/bedingungen-brief.html" target="_blank" rel="noopener">Bedingungen für den Briefkauf</a> gelesen.</label>
-<label class="br-check"><input type="checkbox" id="ok-widerruf"> Ich möchte die Vorlage sofort bekommen. Mir ist bekannt, dass mein Widerrufsrecht endet, sobald die Vorlage bereitsteht.</label>
-<button class="knopf dunkel" type="button" id="kaufen" disabled>Jetzt bezahlen und Vorlage erhalten</button>
-<p class="klein grau" id="kauf-hinweis">Bezahlung per PayPal, Karte oder Überweisung über Mollie. In der Vorschau noch nicht aktiv.</p>
+<label class="br-check"><input type="checkbox" id="ok-widerruf"> Ich stimme ausdrücklich zu, dass ihr vor Ablauf der Widerrufsfrist mit der Bereitstellung der Vorlage beginnt. Mir ist bekannt, dass ich dadurch mein Widerrufsrecht verliere.</label>
+<button class="knopf dunkel" type="button" id="kaufen" disabled>Zahlungspflichtig bestellen</button>
+<p class="klein grau" id="kauf-hinweis">Bezahlung über Mollie. In der Vorschau noch nicht aktiv.</p>
+</div>
 <hr>
 <button class="knopf hell" type="button" id="muster">Muster ansehen und drucken</button>
 <p class="klein grau">Das Muster trägt den Aufdruck „MUSTER“. Unsere Vorlagen ersetzen keine Beratung und keine Rechtsberatung. Bei Streit mit einer Behörde helfen ein Pflegestützpunkt, ein Sozialverband oder ein Anwalt.</p>
