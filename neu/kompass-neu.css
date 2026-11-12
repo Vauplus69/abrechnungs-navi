@@ -46,3 +46,48 @@ nav button small{font-size:11px}
 .ak-knopf.hell{background:#fff;color:var(--ink);border:2px solid var(--ink)}
 .ak-klein{font-size:14px!important}
 @media (max-width:860px){.ak-angebote{grid-template-columns:1fr}}
+/* Seitenleiste aufgeraeumt (12.11.2026): Schriftzug passt, nichts ragt heraus */
+.sidebar{width:280px;padding:28px 22px;overflow-y:auto;overflow-x:hidden}
+.brand{gap:10px;font-size:18px;line-height:1.15;white-space:nowrap;margin-bottom:34px}
+.brand-icon{width:32px;height:32px;flex:0 0 32px}
+.brand-name{display:block;min-width:0}
+.brand small{display:block;font-size:12px;letter-spacing:0;margin-top:4px;font-weight:400}
+.sidebar .nav-label{margin-bottom:10px}
+nav{gap:4px}
+nav button{padding:12px 12px;border-radius:10px;line-height:1.3}
+nav button:hover{background:var(--paper)}
+nav button span{width:24px;text-align:center;color:var(--moos)}
+nav button small{background:var(--paper)}
+.side-note{margin-top:28px;padding:18px 16px;border-radius:14px}
+.side-note strong{font-size:18px;margin:6px 0 8px}
+.side-note p{font-size:14px;line-height:1.5}
+.side-talk{display:block;margin-top:16px;padding:13px 14px;border-radius:10px;background:var(--gelb);color:var(--ink);font-weight:700;font-size:15px;text-align:center;text-decoration:none}
+.side-talk:hover{background:#f0a91f}
+.sidebar .privacy-link{font-size:14px;padding:16px 0 4px}
+.topbar{height:64px}
+.back-home{font-weight:700;text-decoration:none;color:var(--ink)}
+.back-home:hover{text-decoration:underline}
+main:focus{outline:none}
+footer{font-size:13px}
+footer button{font-size:13px}
+@media (max-width:1100px){.sidebar{width:240px;padding:24px 16px}.brand{font-size:16px}}
+@media (max-width:760px){.sidebar{width:100%;overflow:visible;padding:16px 18px 0}.brand{margin-bottom:0;font-size:20px}.side-note,.side-talk,.sidebar .privacy-link{display:none}nav button span{width:auto}}
+/* Besser lesbar: kleine Schriften auf ein angenehmes Mass angehoben */
+.subtitle{font-size:16px}
+.notice{font-size:15px;line-height:1.55}
+.fineprint{font-size:13px}
+.card p,.benefit p,.scope-note p,.catalog-intro p,.guide-grid ul,.guide-grid ol,.help{font-size:15px;line-height:1.6}
+.card-head h3{font-size:16px}.card-head small,.bar-caption,.card-foot{font-size:13px}.card-foot button{font-size:14px}
+.tag,.pill,.benefit-tags .pill{font-size:12px}
+.benefit h2{font:700 19px/1.35 'Atkinson Hyperlegible',system-ui,sans-serif}
+.benefit-kicker{font-size:12px}
+.benefit-amount{font-size:25px}
+.benefit-details h3{font-size:15px}.benefit-details a,.benefit-details .notice{font-size:14px}.benefit-details .source-meta{font-size:13px}
+.mark-button{font-size:14px}
+.catalog-tools label{font-size:14px}.catalog-tools input,.catalog-tools select{font-size:16px}
+.catalog-status p,.catalog-status label{font-size:14px}
+.related-list a{font-size:15px}
+.task strong{font-size:15px}.task small{font-size:13px}
+.eyebrow{font-size:13px}
+.text-button,[data-explain].text-button{font-size:15px}
+.source-link{font-size:14px}
