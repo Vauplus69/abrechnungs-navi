@@ -4,8 +4,8 @@ H="Accept: application/vnd.github.raw"; R="https://api.github.com/repos/Vauplus6
 curl -fsSL -H "$H" "$R/startseite/einspielen.sh?ref=anspruchskompass" -o /root/startseite-einspielen.sh && bash /root/startseite-einspielen.sh || exit 1
 if [ ! -f /opt/ak-zahlung/.env ]; then
   echo
-  read -r -p "Bezahlung (Mollie) jetzt auch einrichten? Dafuer brauchst du den Mollie-Test-Schluessel. (j/n): " A </dev/tty
-  if [ "$A" = j ] || [ "$A" = J ]; then
+  read -r -p "Bezahlung (Mollie) jetzt auch einrichten? Dafuer brauchst du den Mollie-Test-Schluessel. (Enter = ja, n = nein): " A </dev/tty
+  if [ "$A" != n ] && [ "$A" != N ]; then
     curl -fsSL -H "$H" "$R/zahlung/einrichten.sh?ref=anspruchskompass" -o /root/zahlung-einrichten.sh && bash /root/zahlung-einrichten.sh
   else
     echo "Ok, Bezahlung bleibt aus. Spaeter einfach wieder ak tippen."
