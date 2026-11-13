@@ -1,0 +1,25 @@
+{
+  "brand": "abrechnungs-navi",
+  "enabled": false,
+  "online_contract_approved": false,
+  "documents": {
+    "terms": {
+      "path": "/etc/an-upload/contracts/terms.pdf",
+      "mime": "application/pdf",
+      "version": "NICHT-FREIGEGEBEN",
+      "sha256": "VOLLSTAENDIGE-SHA256-DER-FREIGEGEBENEN-DATEI"
+    },
+    "avv": {
+      "path": "/etc/an-upload/contracts/avv.pdf",
+      "mime": "application/pdf",
+      "version": "NICHT-FREIGEGEBEN",
+      "sha256": "VOLLSTAENDIGE-SHA256-DER-FREIGEGEBENEN-DATEI"
+    },
+    "consumer": {
+      "path": "/etc/an-upload/contracts/consumer.pdf",
+      "mime": "application/pdf",
+      "version": "NICHT-FREIGEGEBEN",
+      "sha256": "VOLLSTAENDIGE-SHA256-DER-FREIGEGEBENEN-DATEI"
+    }
+  }
+}

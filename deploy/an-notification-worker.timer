@@ -1,0 +1,10 @@
+[Unit]
+Description=Abrechnungs-Navi Benachrichtigungsagent
+
+[Timer]
+OnBootSec=30s
+OnUnitInactiveSec=5s
+Unit=an-notification-worker.service
+
+[Install]
+WantedBy=timers.target

@@ -71,7 +71,7 @@ class EndToEnd(unittest.TestCase):
                 def request(method,path,body=None,cookie='',origin=True):
                     conn=http.client.HTTPConnection('127.0.0.1',server.server_port,timeout=5)
                     headers={}
-                    if origin:headers['Origin']='http://127.0.0.1'
+                    if origin:headers['Origin']=origin if isinstance(origin,str) else 'http://127.0.0.1'
                     if cookie:headers['Cookie']=cookie
                     if isinstance(body,dict):body=urllib.parse.urlencode(body);headers['Content-Type']='application/x-www-form-urlencoded'
                     conn.request(method,path,body=body,headers=headers)
@@ -79,9 +79,14 @@ class EndToEnd(unittest.TestCase):
                     return status,h,result
                 try:
                     self.assertEqual(request('GET','/verwaltung')[0],401)
+                    self.assertEqual(request('GET','/verwaltung/bestellungen')[0],401)
+                    self.assertEqual(request('POST','/verwaltung/zahlungen/abgleichen',{})[0],401)
                     status,headers,_=request('POST','/verwaltung/anmelden',{'otp':workflow.totp(otp.read_text())})
                     self.assertEqual(status,303);admin_cookie=headers['Set-Cookie'].split(';')[0]
                     self.assertEqual(request('GET','/verwaltung',cookie=admin_cookie)[0],200)
+                    self.assertEqual(request('GET','/verwaltung/bestellungen',cookie=admin_cookie)[0],200)
+                    self.assertEqual(request('POST','/verwaltung/zahlungen/abgleichen',{},admin_cookie)[0],403)
+                    self.assertEqual(request('POST','/verwaltung/zahlungen/abgleichen',{},admin_cookie,origin='https://abrechnungs-navi.de')[0],400)
                     values={'name':'TEST SYNTHETIC','order':'TEST-001','contract_at':time.time()-15*86400,
                             'avv':'yes','paid':'yes','expired':'yes','evidence':'TEST LOCAL ONLY'}
                     self.assertEqual(request('POST','/verwaltung/neu',{**values,'avv':'no'},admin_cookie)[0],400)
@@ -98,6 +103,12 @@ class EndToEnd(unittest.TestCase):
                     self.assertEqual(request('PUT',f'/hochladen/api/{token}?name=beleg.pdf',pdf())[0],403)
                     status,headers,_=request('POST',f'/hochladen/{token}/anmelden',{'code':code})
                     self.assertEqual(status,303);client_cookie=headers['Set-Cookie'].split(';')[0]
+                    self.assertEqual(request('GET','/verwaltung/bestellungen',cookie=client_cookie)[0],401)
+                    self.assertEqual(request('POST','/verwaltung/zahlungen/abgleichen',{},client_cookie,origin='https://abrechnungs-navi.de')[0],401)
+                    db=app.load();db[token]['payment_order_id']='AN-'+'f'*32;app.save(db)
+                    self.assertEqual(request('GET',f'/hochladen/{token}',cookie=client_cookie)[0],409)
+                    self.assertEqual(request('PUT',f'/hochladen/api/{token}?name=beleg.pdf',payload,client_cookie)[0],403)
+                    db=app.load();del db[token]['payment_order_id'];app.save(db)
                     self.assertEqual(request('PUT',f'/hochladen/api/{token}?name=beleg.pdf',payload,client_cookie,False)[0],403)
                     self.assertEqual(request('PUT',f'/hochladen/api/{token}?name=beleg.pdf',pdf(True),client_cookie)[0],400)
                     self.assertEqual(request('PUT',f'/hochladen/api/{token}?name=beleg.pdf',payload,client_cookie)[0],201)

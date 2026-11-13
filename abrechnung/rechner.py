@@ -110,7 +110,7 @@ def belegt(value, label):
         raise ValueError(f"{label}: Beleg-/Prüfreferenz erforderlich")
 
 
-def berechne(auftrag):
+def berechne(auftrag, *, entwurf=False):
     # Keine abgeleiteten Werte in den Eingabedaten speichern.
     auftrag = deepcopy(auftrag)
     z_von, z_bis = auftrag["zeitraum"]["von"], auftrag["zeitraum"]["bis"]
@@ -152,8 +152,10 @@ def berechne(auftrag):
             continue
         if any(w in name.lower() for w in VERDAECHTIG):
             raise ValueError(f"{name}: gesperrte Kostenart; separat fachlich klären und nicht umlegen")
-        if k.get("umlage_geprueft") is not True:
+        if k.get("umlage_geprueft") is not True and entwurf is not True:
             raise ValueError(f"{name}: Umlagefähigkeit und vertraglicher Schlüssel nicht bestätigt")
+        if k.get("umlage_geprueft") is not True:
+            hinweise.append(f"ENTWURF: {name}: Umlagefähigkeit und vertraglicher Schlüssel vor Schlussfreigabe prüfen.")
         belegt(k.get("beleg"), name)
         if k["schluessel"] not in SCHLUESSEL:
             raise ValueError(f"Unbekannter Schlüssel bei {name}")
@@ -164,8 +166,10 @@ def berechne(auftrag):
         if start.month != 1 or start.day != 1 or end != date(start.year, 12, 31):
             raise ValueError("CO2: automatischer Rechner unterstützt nur vollständige Kalenderjahre; verkürzten/abweichenden Zeitraum fachlich separat berechnen")
         belegt(co2.get("beleg"), "CO2-Gebäudewerte")
-        if co2.get("wohngebaeude_regelfall_geprueft") is not True:
+        if co2.get("wohngebaeude_regelfall_geprueft") is not True and entwurf is not True:
             raise ValueError("CO2: Wohngebäude-Regelfall ohne Sonderbegrenzungen muss fachlich bestätigt sein")
+        if co2.get("wohngebaeude_regelfall_geprueft") is not True:
+            hinweise.append("ENTWURF: CO2-Wohngebäude-Regelfall und Sonderbegrenzungen vor Schlussfreigabe prüfen.")
         co2["kg_pro_m2"] = zahl(co2["kg_co2_gesamt"], "CO2-Ausstoß") / area
         co2["vermieteranteil"] = Decimal(str(co2_vermieteranteil(co2["kg_pro_m2"])))
     person_days = any(k["schluessel"] == "personen" for k in costs)
@@ -293,7 +297,9 @@ def pdf(auftrag, e, pfad):
                   f"Ihr Nutzungszeitraum: {fmt(m.get('von', z['von']))} – {fmt(m.get('bis', z['bis']))} ({e['tage']} Tage)", norm),
         Spacer(1, 5 * mm),
     ]
-    if auftrag.get("testauftrag") is True:
+    if auftrag.get("entwurf") is True:
+        story.insert(0, Paragraph("ENTWURF - noch nicht freigegeben", h1))
+    elif auftrag.get("testauftrag") is True:
         story.insert(0, Paragraph("MUSTER - keine echte Abrechnung", h1))
     rows = [["Kostenart", "Gesamtkosten", "Verteilung", "Ihr Anteil"]]
     for p in e["posten"]:

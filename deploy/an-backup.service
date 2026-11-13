@@ -3,3 +3,4 @@ Description=Abrechnungs-Navi verschluesselt extern sichern
 [Service]
 Type=oneshot
 ExecStart=/usr/local/bin/an-backup
+TimeoutStartSec=2400

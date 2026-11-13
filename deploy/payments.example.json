@@ -1,0 +1,11 @@
+{
+  "brand": "abrechnungs-navi",
+  "profile_id": "pfl_2fcc6rqot8",
+  "mode": "live",
+  "enabled": false,
+  "live_release": false,
+  "key_path": "/etc/an-upload/mollie-live.key",
+  "binding_path": "/etc/an-upload/mollie-live-binding.json",
+  "invoice_dir": "/srv/an-upload/invoices",
+  "issuer_path": "/etc/an-upload/invoice-issuer.json"
+}

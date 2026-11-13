@@ -12,10 +12,12 @@ case "$RESTIC_REPOSITORY" in /*|file:* ) echo 'Nur externer Sicherungsort erlaub
 command -v restic >/dev/null || { echo 'restic muss installiert sein'; exit 1; }
 RESTIC_OPTIONS=()
 if [ -n "${AN_SFTP_COMMAND:-}" ]; then RESTIC_OPTIONS=(-o "sftp.command=$AN_SFTP_COMMAND"); fi
-# App fuer einen konsistenten Stand kurz anhalten; nach Fehler wieder starten.
+# Alle AN-Schreiber fuer den Sicherungsstand koordinieren. Keine fremden Dienste.
+PAUSED_TIMERS=()
 finish_backup() {
   result=$?
   systemctl start an-upload || true
+  for timer in "${PAUSED_TIMERS[@]}"; do systemctl start "$timer" || true; done
   if [ "$result" -ne 0 ]; then
     date +%s > /etc/an-upload/backup-last-failure
     chmod 600 /etc/an-upload/backup-last-failure
@@ -24,6 +26,20 @@ finish_backup() {
   exit "$result"
 }
 trap finish_backup EXIT
+for timer in an-payment-worker.timer an-agent-worker.timer an-notification-worker.timer; do
+  if systemctl is-active --quiet "$timer"; then
+    PAUSED_TIMERS+=("$timer")
+    systemctl stop "$timer"
+  fi
+done
+# Laufende API-/SMTP-Aufrufe geordnet beenden lassen statt sie blind abzubrechen.
+for unit in an-payment-worker.service an-agent-worker.service an-notification-worker.service; do
+  deadline=$((SECONDS + 700))
+  while [[ "$(systemctl show -p ActiveState --value "$unit" 2>/dev/null)" =~ ^(active|activating|deactivating|reloading)$ ]]; do
+    [ "$SECONDS" -lt "$deadline" ] || { echo 'AN-Hintergrunddienst beendet sich nicht rechtzeitig'; exit 1; }
+    sleep 1
+  done
+done
 systemctl stop an-upload
 # Vollstaendiger AN-Wiederanlauf: Daten, Programmstand und eigene Konfiguration.
 # Der Entschluesselungsschluessel bleibt separat; kein fremder Dienst wird gesichert.
@@ -32,6 +48,9 @@ restic "${RESTIC_OPTIONS[@]}" backup \
   /var/www/abrechnungs-navi /etc/an-upload \
   /etc/caddy/abrechnungs-navi.caddy /etc/caddy/an-admin-auth.caddy \
   /etc/systemd/system/an-upload.service \
+  /etc/systemd/system/an-payment-worker.service /etc/systemd/system/an-payment-worker.timer \
+  /etc/systemd/system/an-agent-worker.service /etc/systemd/system/an-agent-worker.timer \
+  /etc/systemd/system/an-notification-worker.service /etc/systemd/system/an-notification-worker.timer \
   /etc/systemd/system/an-backup.service /etc/systemd/system/an-backup.timer \
   /etc/systemd/system/an-monitor.service /etc/systemd/system/an-monitor.timer \
   /etc/systemd/system/an-aktualisieren.service /etc/systemd/system/an-aktualisieren.timer \

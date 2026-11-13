@@ -1,0 +1,30 @@
+{
+  "brand": "abrechnungs-navi",
+  "region": "eu1",
+  "enabled": false,
+  "mail_enabled": false,
+  "mail_provider_approved": false,
+  "mail_provider_evidence_sha256": "",
+  "automatic_start_policy_approved": false,
+  "avv_sha256": "",
+  "reviewer_name": "Volker Cyrener",
+  "invoice_dir": "/srv/an-upload/invoices",
+  "max_pages_total": 0,
+  "budget_id": "",
+  "extend_key_path": "/etc/an-upload/extend-production.key",
+  "smtp_password_path": "/etc/an-upload/smtp.conf",
+  "provider_approval": {
+    "brand": "abrechnungs-navi",
+    "region": "eu1",
+    "contract_verified": false,
+    "subprocessors_verified": false,
+    "retention_verified": false,
+    "customer_avv_allows_extraction": false,
+    "provider_evidence_sha256": ""
+  },
+  "terms_sha256": "",
+  "consumer_information_sha256": "",
+  "release_mode": "manual",
+  "provider_cleanup_enabled": false,
+  "mail_receipts_enabled": false
+}
