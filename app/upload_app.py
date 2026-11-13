@@ -522,6 +522,7 @@ import shutil
 import struct
 import time
 import urllib.parse
+import customer_lifecycle as lifecycle
 
 DAY = 86400
 VERSION = '4-2026-11-03'
@@ -679,6 +680,8 @@ def install(app):
         with app.LOCK:
             db = app.load()
             for token, c in list(db.items()):
+                if lifecycle.blocked(c) and c['lifecycle']['state'] != 'local_deleted':
+                    continue  # Keep provider references until reviewed erasure; never report completion.
                 if delete_at(c) > time.time():
                     continue
                 root = Path(app.customer_dir(token))
@@ -758,6 +761,23 @@ def install(app):
         except (OSError, ValueError):
             pass
         for token, c in db.items():
+            if lifecycle.blocked(c):
+                info = lifecycle.summary(c)
+                label = {'closed':'Gekuendigt / geschlossen', 'deletion_requested':'Loeschwunsch in Pruefung', 'local_deleted':'Portal geloescht; externe Pruefung dokumentiert'}.get(info['state'], 'Gesperrt')
+                hidden = f'<input type="hidden" name="token" value="{esc(token)}">'
+                top += f'<div class="card"><h2>Vorgang {esc(info["reference"])}</h2><p>{esc(label)}. Zugang und Bearbeitung gesperrt.</p>'
+                if info['state'] == 'closed':
+                    top += form('/verwaltung/datenschutz/anfordern', hidden + '<input type="hidden" name="confirm" value="yes">', 'Loeschwunsch erfassen')
+                if info['state'] == 'deletion_requested':
+                    top += '<p>Nur die Anzeige ist pseudonymisiert. Personenbezogene Daten sind bis zur geprueften Loeschung noch vorhanden. Externe Systeme und Sicherungen muessen separat abgearbeitet werden.</p>'
+                    fields = hidden + '<label>Gepruefte Kontaktadresse (wird nicht in der Uebersicht angezeigt)<input name="privacy_email" type="email" required></label><label>Pruefreferenz ohne Personendaten<input name="evidence" pattern="PR-[A-Z0-9-]{8,64}" required></label>'
+                    labels = {'identity_scope':'Identitaet, Umfang und weitere Auftraege geprueft; Kontaktadresse am Auftrag hinterlegt', 'extend':'Extend: keine Daten vorhanden oder Loeschung bestaetigt', 'chatwoot':'Chatwoot und angebundene Kopien geloescht oder begruendet gesperrt', 'email':'Postfaecher, Anhaenge und Weiterleitungen abgearbeitet', 'automation':'Automationen, Warteschlangen und Arbeitsdateien abgearbeitet', 'backups':'Betroffene Sicherungen abgelaufen oder geloescht; kein Wiederaufleben moeglich', 'retention':'Aufbewahrungspflichten geprueft; erforderliche Belege getrennt und gesperrt archiviert'}
+                    for key, text in labels.items():
+                        fields += f'<label><input name="{key}" type="checkbox" value="yes" required> {text}</label>'
+                    fields += '<label>Zur unwiderruflichen Portal-Loeschung Vorgangsnummer eingeben<input name="confirm" required></label>'
+                    top += form('/verwaltung/datenschutz/loeschen', fields, 'Portaldaten unwiderruflich loeschen')
+                top += '</div>'
+                continue
             if c.get('workflow') != VERSION:
                 top += '<div class="card"><h2>Bestandsauftrag</h2><p>' + esc(c['name']) + '</p><p>Keine automatische Umstellung der bisherigen Frist. Migration erst nach dokumentierter Kundenabstimmung.</p></div>'
                 continue
@@ -770,15 +790,17 @@ def install(app):
             top += f'<input type="file" class="result" data-token="{token}" accept="application/pdf"><p>Erst nach menschlicher Pruefung freigeben.</p>'
             top += form('/verwaltung/fertig', hidden + '<label><input name="reviewed" type="checkbox" required value="yes"> Inhalt und Zahlen menschlich geprueft</label><label><input name="notice" type="checkbox" required value="yes"> Kunde ueber Bereitstellung und konkreten Loeschtermin informiert</label>', 'Ergebnis bereitstellen')
             top += form('/verwaltung/code', hidden, 'Zugangscode erneuern')
+            top += form('/verwaltung/datenschutz/schliessen', hidden + '<label><input name="confirm" type="checkbox" value="yes" required> Kuendigung geprueft; Zugang und Bearbeitung jetzt schliessen</label>', 'Vorgang schliessen')
+            top += form('/verwaltung/datenschutz/anfordern', hidden + '<label>Kontaktadresse fuer die systemuebergreifende Loeschpruefung<input name="privacy_email" type="email" required></label><label><input name="confirm" type="checkbox" value="yes" required> Identitaet und Loeschwunsch geprueft; Zugang jetzt sperren</label>', 'Loeschwunsch erfassen')
             top += '</div>'
         top += '''<script>document.querySelectorAll('.result').forEach(e=>e.onchange=async()=>{if(!e.files[0])return;let r=await fetch('/verwaltung/ergebnis/'+e.dataset.token,{method:'PUT',body:e.files[0]});alert(await r.text());if(r.ok)location.reload();});</script>'''
         # Anfragen bleiben sichtbar; die alten Kundenaktionen werden nicht erneut eingeblendet.
         anfr = app.load_anfragen()
         top += '<div class="card"><h2>Formularanfragen</h2>'
-        top += ''.join(f'<p>{esc(a["name"])} | {esc(a["email"])} | {esc(a["nachricht"])} | Mail: {bool(a.get("mail"))}</p>' for a in anfr[-50:]) + '</div>'
+        top += ''.join(f'<p>{esc(a["name"])} | {esc(a["email"])} | {esc(a["nachricht"])} | Mail: {bool(a.get("mail"))}</p>' for a in anfr[-50:] if not lifecycle.hide_auxiliary(a, db)) + '</div>'
         if withdrawal_path.exists():
             top += '<div class="card"><h2>Eingegangene Widerrufe</h2>'
-            top += ''.join(f'<p>{esc(r["name"])} | {esc(r["vertrag"])} | {esc(r["id"])} | Mailquittung: {bool(r.get("mail"))}</p>' for r in json.loads(withdrawal_path.read_text())) + '</div>'
+            top += ''.join(f'<p>{esc(r["name"])} | {esc(r["vertrag"])} | {esc(r["id"])} | Mailquittung: {bool(r.get("mail"))}</p>' for r in json.loads(withdrawal_path.read_text()) if not lifecycle.hide_auxiliary(r, db)) + '</div>'
         return app.page('Verwaltung',top)
     app.admin_page = admin_page
 
@@ -847,7 +869,7 @@ def install(app):
             if not app.TOKEN_RE.fullmatch(token):
                 return None
             c = app.load().get(token)
-            if not c or c.get('workflow') != VERSION or delete_at(c) <= time.time():
+            if not c or lifecycle.blocked(c) or c.get('workflow') != VERSION or delete_at(c) <= time.time():
                 return None
             if not c.get('done') and c['expires'] <= time.time():
                 return None
@@ -864,6 +886,12 @@ def install(app):
             if path == '/verwaltung' or path.startswith('/verwaltung/'):
                 if not self.admin_auth():
                     return
+                match = re.fullmatch(r'/verwaltung/datei/([A-Za-z0-9_-]+)/.+', path)
+                if match:
+                    with app.LOCK:
+                        if lifecycle.blocked(app.load().get(match.group(1), {})):
+                            return self.send(404, 'Vorgang gesperrt')
+                        return super().do_GET()
                 if path == invoicing.BASE or path.startswith(invoicing.BASE+'/'):
                     return invoicing.get(self,app,path)
                 return super().do_GET()
@@ -881,11 +909,15 @@ def install(app):
                         return self.send(404, 'Nicht gefunden')
                     if name == 'ergebnis.pdf' and not c.get('done'):
                         return self.send(404, 'Noch nicht freigegeben')
-                    f = Path(app.customer_dir(token))/name
-                    if not f.is_file():
-                        return self.send(404, 'Nicht gefunden')
-                    audit('download', c['order'])
-                    return self.send(200,f.read_bytes(),'application/octet-stream',{'Content-Disposition': "attachment; filename*=UTF-8''"+urllib.parse.quote(name)})
+                    with app.LOCK:
+                        current = app.load().get(token)
+                        if not current or lifecycle.blocked(current):
+                            return self.send(404, 'Vorgang gesperrt')
+                        f = Path(app.customer_dir(token))/name
+                        if not f.is_file():
+                            return self.send(404, 'Nicht gefunden')
+                        audit('download', c['order'])
+                        return self.send(200,f.read_bytes(),'application/octet-stream',{'Content-Disposition': "attachment; filename*=UTF-8''"+urllib.parse.quote(name)})
                 if len(parts) != 2:
                     return self.send(404,'Nicht gefunden')
                 if not c.get('done') and readiness():
@@ -930,7 +962,7 @@ def install(app):
             with app.LOCK:
                 # Nach dem Einlesen erneut pruefen: keine Auferstehung nach Loeschung/Freigabe.
                 current = app.load().get(token)
-                if not current or (current.get('done') and not is_result) or delete_at(current) <= time.time():
+                if not current or lifecycle.blocked(current) or (current.get('done') and not is_result) or delete_at(current) <= time.time():
                     return self.send(403,'Upload geschlossen')
                 if is_result and current.get('done'):
                     # Korrekturen zuerst als Entwurf, nie ungeprueft publizieren.
@@ -1064,6 +1096,40 @@ def install(app):
             if not self.admin_auth():return
             with app.LOCK:
                 db=app.load();token=g('token');c=db.get(token);message=''
+                if path.startswith('/verwaltung/datenschutz/'):
+                    if not c:
+                        return self.send(404, 'Vorgang nicht gefunden')
+                    if path == '/verwaltung/datenschutz/loeschen':
+                        if g('confirm') != c.get('lifecycle', {}).get('reference'):
+                            return self.send(400, 'Vorgangsnummer als Loeschbestaetigung erforderlich')
+                        if not app.EMAIL_RE.fullmatch(g('privacy_email')):
+                            return self.send(400, 'Gepruefte Kontaktadresse erforderlich')
+                        c['privacy_email'] = g('privacy_email').casefold()
+                        app.save(db)
+                        try:
+                            result = lifecycle.purge_local(app, token, {key:g(key)=='yes' for key in lifecycle.CHECKS}, g('evidence'))
+                        except (ValueError, OSError):
+                            return self.send(409, 'Loeschung nicht abgeschlossen. Kontaktzuordnung, weitere Auftraege, Systempruefung und Dateizugriff kontrollieren; Vorgang bleibt gesperrt.')
+                        audit('privacy_local_deleted', result['reference'])
+                    elif path in ('/verwaltung/datenschutz/schliessen', '/verwaltung/datenschutz/anfordern'):
+                        if g('confirm') != 'yes':
+                            return self.send(400, 'Bestaetigung erforderlich')
+                        action = 'close' if path.endswith('/schliessen') else 'request_deletion'
+                        if g('privacy_email'):
+                            if not app.EMAIL_RE.fullmatch(g('privacy_email')):
+                                return self.send(400, 'Kontaktadresse ungueltig')
+                            c['privacy_email'] = g('privacy_email').casefold()
+                        db[token] = lifecycle.request(c, action)
+                        app.save(db)
+                        for key in list(sessions):
+                            if sessions[key]['token'] == token:
+                                del sessions[key]
+                        audit('privacy_' + action, db[token]['lifecycle']['reference'])
+                    else:
+                        return self.send(404, 'Nicht gefunden')
+                    return self.send(200, app.admin_page(app.load(), 'Datenschutzstatus aktualisiert.', self.base_url()))
+                if c and lifecycle.blocked(c):
+                    return self.send(409, 'Vorgang geschlossen oder zur Loeschung gesperrt')
                 if path == '/verwaltung/neu':
                     if readiness():return self.send(503,'Betreiberfreigabe fehlt: '+', '.join(readiness()))
                     try:
@@ -1108,6 +1174,7 @@ def install(app):
     app.H=H
     app.readiness=readiness
     app.workflow_audit=audit
+
 # END GENERATED WORKFLOW
 
 if __name__ == "__main__":

@@ -17,7 +17,7 @@ trap 'rm -rf "$TMP"' EXIT
 if [ "${1:-}" = "--auto" ]; then
   NEW=$(curl -fsS https://api.github.com/repos/Vauplus69/abrechnungs-navi/commits/main | python3 -c 'import sys,json;print(json.load(sys.stdin)["sha"])' 2>/dev/null || true)
   [ -n "$NEW" ] || exit 0
-  if [ "$NEW" = "$(cat "$VERSION_FILE" 2>/dev/null)" ] && [ -x /srv/an-upload/venv/bin/python ] && [ -f "$APP_DIR/workflow.py" ] && [ -x /usr/local/bin/an-betriebsfreigabe ] && [ -f /etc/systemd/system/an-monitor.timer ] && [ -f "$APP_DIR/monitor.py" ] && [ -f "$APP_DIR/invoicing.py" ]; then exit 0; fi
+  if [ "$NEW" = "$(cat "$VERSION_FILE" 2>/dev/null)" ] && [ -x /srv/an-upload/venv/bin/python ] && [ -f "$APP_DIR/workflow.py" ] && [ -f "$APP_DIR/customer_lifecycle.py" ] && [ -x /usr/local/bin/an-betriebsfreigabe ] && [ -f /etc/systemd/system/an-monitor.timer ] && [ -f "$APP_DIR/monitor.py" ] && [ -f "$APP_DIR/invoicing.py" ]; then exit 0; fi
   echo "Neue Fassung $NEW gefunden"
 fi
 NEW_SHA=$(curl -fsS https://api.github.com/repos/Vauplus69/abrechnungs-navi/commits/main | python3 -c 'import sys,json;print(json.load(sys.stdin)["sha"])' 2>/dev/null || true)
@@ -36,7 +36,7 @@ if [ ! -x /srv/an-upload/venv/bin/python ]; then
   fi
 fi
 /srv/an-upload/venv/bin/python -m pip install --disable-pip-version-check -r "$SRC/app/requirements.txt"
-/srv/an-upload/venv/bin/python -m py_compile "$SRC/app/upload_app.py" "$SRC/app/workflow.py" "$SRC/app/monitor.py" "$SRC/app/invoicing.py" "$SRC/app/consent_tracking.py" "$SRC/abrechnung/rechner.py"
+/srv/an-upload/venv/bin/python -m py_compile "$SRC/app/upload_app.py" "$SRC/app/workflow.py" "$SRC/app/customer_lifecycle.py" "$SRC/app/monitor.py" "$SRC/app/invoicing.py" "$SRC/app/consent_tracking.py" "$SRC/abrechnung/rechner.py"
 
 # Nur Programm und oeffentliche Seiten sichern, keine Kundendaten oder Geheimnisse.
 mkdir -p "$TMP/previous-app" "$TMP/previous-site"
