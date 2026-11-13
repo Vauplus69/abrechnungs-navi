@@ -1,0 +1,10 @@
+[Unit]
+Description=Abrechnungs-Navi Beleg- und Pruefagenten
+
+[Timer]
+OnBootSec=30s
+OnUnitInactiveSec=15s
+Unit=an-agent-worker.service
+
+[Install]
+WantedBy=timers.target

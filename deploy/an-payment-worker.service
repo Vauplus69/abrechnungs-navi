@@ -1,0 +1,21 @@
+[Unit]
+Description=Abrechnungs-Navi Zahlungsabgleich
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+User=annavi
+Group=annavi
+Environment=AN_INVOICE_DIR=/srv/an-upload/invoices
+LoadCredential=mollie-key:/etc/an-upload/mollie-live.key
+LoadCredential=mollie-binding:/etc/an-upload/mollie-live-binding.json
+ExecStart=/srv/an-upload/venv/bin/python /srv/an-upload/app/payment_worker.py
+TimeoutStartSec=300
+UMask=0077
+NoNewPrivileges=yes
+ProtectSystem=strict
+ProtectHome=yes
+PrivateTmp=yes
+ReadWritePaths=/srv/an-upload/invoices
+

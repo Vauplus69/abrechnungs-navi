@@ -17,7 +17,7 @@ trap 'rm -rf "$TMP"' EXIT
 if [ "${1:-}" = "--auto" ]; then
   NEW=$(curl -fsS https://api.github.com/repos/Vauplus69/abrechnungs-navi/commits/main | python3 -c 'import sys,json;print(json.load(sys.stdin)["sha"])' 2>/dev/null || true)
   [ -n "$NEW" ] || exit 0
-  if [ "$NEW" = "$(cat "$VERSION_FILE" 2>/dev/null)" ] && [ -x /srv/an-upload/venv/bin/python ] && [ -f "$APP_DIR/workflow.py" ] && [ -f "$APP_DIR/customer_lifecycle.py" ] && [ -x /usr/local/bin/an-betriebsfreigabe ] && [ -f /etc/systemd/system/an-monitor.timer ] && [ -f "$APP_DIR/monitor.py" ] && [ -f "$APP_DIR/invoicing.py" ]; then exit 0; fi
+  if [ "$NEW" = "$(cat "$VERSION_FILE" 2>/dev/null)" ] && [ -x /srv/an-upload/venv/bin/python ] && [ -f "$APP_DIR/workflow.py" ] && [ -f "$APP_DIR/customer_lifecycle.py" ] && [ -f "$APP_DIR/checkout_notices.py" ] && [ -x /usr/local/bin/an-betriebsfreigabe ] && [ -f /etc/systemd/system/an-monitor.timer ] && [ -f "$APP_DIR/monitor.py" ] && [ -f "$APP_DIR/invoicing.py" ] && [ -f "$APP_DIR/checkout.py" ] && [ -f "$APP_DIR/payment_flow.py" ] && [ -f /etc/systemd/system/an-payment-worker.service ] && [ -f "$APP_DIR/automation_core.py" ] && [ -f /etc/systemd/system/an-agent-worker.service ]; then exit 0; fi
   echo "Neue Fassung $NEW gefunden"
 fi
 NEW_SHA=$(curl -fsS https://api.github.com/repos/Vauplus69/abrechnungs-navi/commits/main | python3 -c 'import sys,json;print(json.load(sys.stdin)["sha"])' 2>/dev/null || true)
@@ -36,7 +36,7 @@ if [ ! -x /srv/an-upload/venv/bin/python ]; then
   fi
 fi
 /srv/an-upload/venv/bin/python -m pip install --disable-pip-version-check -r "$SRC/app/requirements.txt"
-/srv/an-upload/venv/bin/python -m py_compile "$SRC/app/upload_app.py" "$SRC/app/workflow.py" "$SRC/app/customer_lifecycle.py" "$SRC/app/monitor.py" "$SRC/app/invoicing.py" "$SRC/app/consent_tracking.py" "$SRC/abrechnung/rechner.py"
+/srv/an-upload/venv/bin/python -m py_compile "$SRC/app/upload_app.py" "$SRC/app/workflow.py" "$SRC/app/customer_lifecycle.py" "$SRC/app/checkout_notices.py" "$SRC/app/monitor.py" "$SRC/app/invoicing.py" "$SRC/app/checkout.py" "$SRC/app/payment_flow.py" "$SRC/app/payment_worker.py" "$SRC/app/automation_core.py" "$SRC/app/automation_web.py" "$SRC/app/agent_worker.py" "$SRC/app/notification_worker.py" "$SRC/app/notice_agent.py" "$SRC/app/notification_templates.py" "$SRC/app/provider_cleanup.py" "$SRC/app/mail_receipts.py" "$SRC/app/restore_guard.py" "$SRC/app/document_extraction.py" "$SRC/app/document_dossier.py" "$SRC/app/document_review.py" "$SRC/app/mollie_payments.py" "$SRC/app/consent_tracking.py" "$SRC/abrechnung/rechner.py"
 
 # Nur Programm und oeffentliche Seiten sichern, keine Kundendaten oder Geheimnisse.
 mkdir -p "$TMP/previous-app" "$TMP/previous-site"
@@ -50,7 +50,7 @@ rollback_app() {
 
 echo "== 2/6 Webseite"
 mkdir -p "$SITE_DIR"
-find "$SRC" -maxdepth 1 -type f \( -name '*.html' -o -name '*.pdf' -o -name '*.css' -o -name '*.js' -o -name '*.png' -o -name '*.jpg' -o -name '*.svg' -o -name '*.ico' -o -name '*.txt' -o -name '*.xml' \) -exec cp {} "$SITE_DIR"/ \;
+find "$SRC" -maxdepth 1 -type f \( -name '*.html' -o -name '*.pdf' -o -name '*.css' -o -name '*.js' -o -name '*.png' -o -name '*.jpg' -o -name '*.svg' -o -name '*.ttf' -o -name '*.ico' -o -name '*.txt' -o -name '*.xml' \) -exec cp {} "$SITE_DIR"/ \;
 chmod -R a+rX "$SITE_DIR"
 
 echo "== 3/6 Upload-Programm"
@@ -63,6 +63,9 @@ cp -a "$SRC/abrechnung/." "$APP_DIR/abrechnung/"
 chown -R root:root "$APP_DIR"; chmod 755 "$APP_DIR"; chmod 644 "$APP_DIR/upload_app.py"
 chown -R annavi:annavi "$DATA_DIR"; chmod 700 /srv/an-upload/data "$DATA_DIR/kunden"
 chmod 755 /srv/an-upload
+cp "$SRC/deploy/an-payment-worker.service" "$SRC/deploy/an-payment-worker.timer" /etc/systemd/system/
+cp "$SRC/deploy/an-agent-worker.service" "$SRC/deploy/an-agent-worker.timer" "$SRC/deploy/an-notification-worker.service" "$SRC/deploy/an-notification-worker.timer" /etc/systemd/system/
+# Agent, notice and payment timers remain disabled until explicit production release.
 cp "$SRC/deploy/an-upload.service" /etc/systemd/system/an-upload.service
 install -m 755 "$SRC/deploy/an-passwort" /usr/local/bin/an-passwort
 install -m 755 "$SRC/deploy/an-mailpasswort" /usr/local/bin/an-mailpasswort
@@ -72,6 +75,15 @@ cp "$SRC/deploy/an-backup.service" "$SRC/deploy/an-backup.timer" "$SRC/deploy/an
 mkdir -p /etc/an-upload; chown root:annavi /etc/an-upload; chmod 750 /etc/an-upload
 if [ ! -e /etc/an-upload/invoice-issuer.json ]; then
   install -m 640 -o root -g annavi "$SRC/deploy/invoice-issuer.example.json" /etc/an-upload/invoice-issuer.json
+fi
+if [ ! -e /etc/an-upload/payments.json ]; then
+  install -m 640 -o root -g annavi "$SRC/deploy/payments.example.json" /etc/an-upload/payments.json
+fi
+if [ ! -e /etc/an-upload/checkout.json ]; then
+  install -m 640 -o root -g annavi "$SRC/deploy/checkout.example.json" /etc/an-upload/checkout.json
+fi
+if [ ! -e /etc/an-upload/automation.json ]; then
+  install -m 640 -o root -g annavi "$SRC/deploy/automation.example.json" /etc/an-upload/automation.json
 fi
 install -m 755 "$SRC/deploy/setup.sh" /usr/local/bin/an-aktualisieren
 cp "$SRC/deploy/an-aktualisieren.service" "$SRC/deploy/an-aktualisieren.timer" /etc/systemd/system/

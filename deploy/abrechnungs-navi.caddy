@@ -1,7 +1,7 @@
 # Abrechnungs-Navi – wird von deploy/setup.sh nach /etc/caddy/ kopiert
 abrechnungs-navi.de {
 	encode gzip
-	@non_search_pages path /verwaltung* /hochladen/* /tracking/* /systemstatus /anfrage /danke.html /404.html
+	@non_search_pages path /verwaltung* /bestellen /bestellen/* /zahlung/* /kunden/* /hochladen/* /tracking/* /systemstatus /anfrage /danke.html /404.html
 	header @non_search_pages X-Robots-Tag "noindex, nofollow, noarchive"
 	@measurement_pages path / /index.html /danke.html
 	@other_pages not path / /index.html /danke.html
@@ -19,8 +19,20 @@ abrechnungs-navi.de {
 		output discard
 	}
 
+	request_body /kunden/* {
+		max_size 26MB
+	}
+
 	request_body /hochladen/api/* {
 		max_size 26MB
+	}
+
+	request_body /zahlung/* {
+		max_size 512B
+	}
+
+	request_body /bestellen/* {
+		max_size 20KB
 	}
 
 	request_body /anfrage {
@@ -40,6 +52,15 @@ abrechnungs-navi.de {
 		file_server
 	}
 
+	handle /zahlung/* {
+		reverse_proxy 127.0.0.1:8790
+	}
+
+	@checkout path /bestellen /bestellen/*
+	handle @checkout {
+		reverse_proxy 127.0.0.1:8790
+	}
+
 	handle /anfrage {
 		reverse_proxy 127.0.0.1:8790
 	}
@@ -47,6 +68,10 @@ abrechnungs-navi.de {
 		reverse_proxy 127.0.0.1:8790
 	}
 	handle /systemstatus {
+		reverse_proxy 127.0.0.1:8790
+	}
+
+	handle /kunden/* {
 		reverse_proxy 127.0.0.1:8790
 	}
 

@@ -1,0 +1,19 @@
+[Unit]
+Description=Abrechnungs-Navi Benachrichtigungsagent
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+User=annavi
+Group=annavi
+Environment=AN_DATA_DIR=/srv/an-upload/data
+LoadCredential=smtp-password:/etc/an-upload/smtp.conf
+ExecStart=/srv/an-upload/venv/bin/python /srv/an-upload/app/notification_worker.py
+TimeoutStartSec=300
+UMask=0077
+NoNewPrivileges=yes
+ProtectSystem=strict
+ProtectHome=yes
+PrivateTmp=yes
+ReadWritePaths=/srv/an-upload/data /srv/an-upload/invoices

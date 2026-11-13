@@ -1,0 +1,19 @@
+[Unit]
+Description=Abrechnungs-Navi Beleg- und Pruefagenten
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+User=annavi
+Group=annavi
+Environment=AN_DATA_DIR=/srv/an-upload/data
+LoadCredential=extend-key:/etc/an-upload/extend-production.key
+ExecStart=/srv/an-upload/venv/bin/python /srv/an-upload/app/agent_worker.py
+TimeoutStartSec=600
+UMask=0077
+NoNewPrivileges=yes
+ProtectSystem=strict
+ProtectHome=yes
+PrivateTmp=yes
+ReadWritePaths=/srv/an-upload/data /srv/an-upload/invoices

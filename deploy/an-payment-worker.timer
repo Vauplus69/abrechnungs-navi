@@ -1,0 +1,10 @@
+[Unit]
+Description=Regelmäßiger Zahlungsabgleich Abrechnungs-Navi
+
+[Timer]
+OnBootSec=30s
+OnUnitInactiveSec=15s
+Unit=an-payment-worker.service
+
+[Install]
+WantedBy=timers.target

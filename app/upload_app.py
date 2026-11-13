@@ -877,7 +877,7 @@ def install(app):
 
         def valid_customer(self, token):
             c = self.customer(token)
-            return c if c and not c.get('done') and not readiness() and self.session('customer', token) else None
+            return c if c and not c.get('done') and not readiness() and self.session('customer', token) and app.payment_clearance(c) else None
 
         def do_GET(self):
             path = urllib.parse.urlsplit(self.path).path
@@ -903,6 +903,8 @@ def install(app):
                     return self.send(404, app.page('Link nicht verfuegbar','<h1>Link ungueltig oder abgelaufen</h1><p>Bitte wenden Sie sich an kontakt@abrechnungs-navi.de.</p>'))
                 if not self.session('customer', token):
                     return self.send(200, app.page('Zugangscode', '<div class="card"><h1>Geschuetzter Kundenbereich</h1>'+form(f'/hochladen/{token}/anmelden','<label>Separat erhaltener Zugangscode<input name="code" type="password" required autocomplete="off"></label>','Oeffnen')+'</div>'))
+                if not app.payment_clearance(c):
+                    return self.send(409, app.page('Zahlungsprüfung', '<h1>Zahlung noch nicht freigegeben</h1><p>Der Zahlungseingang muss erneut bestätigt werden. Die Bearbeitung und Ergebnisbereitstellung bleiben bis dahin gesperrt.</p>'))
                 if len(parts) == 4 and parts[2] == 'datei':
                     name = urllib.parse.unquote(parts[3])
                     if Path(name).name != name or name.startswith('.') or name.endswith('.part') or name == 'ergebnis-entwurf.pdf':
@@ -1174,7 +1176,10 @@ def install(app):
     app.H=H
     app.readiness=readiness
     app.workflow_audit=audit
-
+    import checkout
+    checkout.install(app)
+    import automation_web
+    automation_web.install(app)
 # END GENERATED WORKFLOW
 
 if __name__ == "__main__":
